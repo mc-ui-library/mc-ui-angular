@@ -10,7 +10,7 @@ import {
 } from '@angular/common/http';
 import {
   Util
-} from './util/index';
+} from './util/util';
 
 interface Message {
   from ? : string;

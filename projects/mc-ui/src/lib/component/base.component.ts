@@ -7,10 +7,10 @@ import {
 } from '@angular/core';
 import {
   MCUIService
-} from '../index';
+} from '../mc-ui.service';
 import {
   Util
-} from '../util';
+} from '../util/util';
 import {
   Subscription
 } from 'rxjs';
