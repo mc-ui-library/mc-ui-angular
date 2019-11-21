@@ -1,0 +1,16 @@
+:host {
+  display: block;
+  position: relative;
+  .textarea--input {
+    resize: none;
+    display: inline-block;
+    width: 100%;
+  }
+
+  &.readonly {
+    .textarea--input {
+      border: 0;
+      outline: none;
+    }
+  }
+}

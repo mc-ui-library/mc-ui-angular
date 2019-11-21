@@ -1,0 +1,3 @@
+<div *ngFor="let item of data; trackBy: key" class="list--item" [style.height.px]="rowHeight" [attr.data-id]="item[idField]" data-action="select-item">
+  <mc-list-item [tpl]="itemTpl" [idField]="idField" [nameField]="nameField" [data]="item"></mc-list-item>
+</div>

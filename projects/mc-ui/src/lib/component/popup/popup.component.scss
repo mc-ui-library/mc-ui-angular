@@ -1,0 +1,11 @@
+:host {
+  position: absolute;
+  display: inline-block;
+  background-color: #fff;
+  &.center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}

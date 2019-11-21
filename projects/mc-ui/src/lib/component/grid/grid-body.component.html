@@ -1,0 +1,7 @@
+<table class="grid-body">
+    <tr *ngFor="let row of data; index as r" class="grid-body--row" [style.height.px]="rowHeight" >
+        <td *ngFor="let column of columns; index as c;" class="grid-body--row--cell" [attr.data-field]="column.field" [attr.data-id]="row[idField]" [attr.data-rowIndex]="r" [attr.data-cellIndex]="c" data-action="select-cell">
+            <div class="grid-body--row--cell--content" [style.lineHeight.px]="rowHeight" [style.height.px]="rowHeight" [style.width.px]="column.width" [title]="row[column.field]"><ng-container *ngTemplateOutlet="column.tpl; context: {$implicit: row}"></ng-container>{{column.tpl ? '' : row[column.field]}}</div>
+        </td>
+    </tr>
+</table>

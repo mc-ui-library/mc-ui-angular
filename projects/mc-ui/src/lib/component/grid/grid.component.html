@@ -1,0 +1,12 @@
+<mc-grid-header [columns]="data.columns" [data]="headerData" [rowHeight]="rowHeight"></mc-grid-header>
+<mc-infinite-scroll [page1Tpl]="page1Tpl" [page2Tpl]="page2Tpl" [rowHeight]="rowHeight" [rowCount]="rowCount"
+  [isLoading]="isLoading" (updatePage)="onUpdatePage($event)" [style.height.px]="bodyHeight" [style.width]="bodyWidth">
+  <ng-template #page1Tpl>
+    <mc-grid-body [columns]="data.columns" [rowHeight]="rowHeight" [data]="page1Data" [idField]="idField" (action)="onAction($event)">
+    </mc-grid-body>
+  </ng-template>
+  <ng-template #page2Tpl>
+    <mc-grid-body [columns]="data.columns" [rowHeight]="rowHeight" [data]="page2Data" [idField]="idField" (action)="onAction($event)">
+    </mc-grid-body>
+  </ng-template>
+</mc-infinite-scroll>

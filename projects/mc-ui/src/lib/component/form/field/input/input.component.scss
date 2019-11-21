@@ -1,0 +1,28 @@
+:host {
+  display: block;
+  position: relative;
+  .input--input {
+    display: inline-block;
+    width: 100%;
+    padding: 0.65rem 0.75rem;
+    line-height: 1.25;
+    color: #000;
+    background-color: #fff;
+    background-image: none;
+    background-clip: padding-box;
+    border: 1px solid #000;
+    border-radius: 3px;
+    transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+  }
+
+  &.readonly {
+    display: inline-block;
+    .input--input {
+      cursor: default;
+      pointer-events: none;
+      border: 0;
+      width: auto;
+      outline: none;
+    }
+  }
+}

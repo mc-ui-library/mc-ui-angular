@@ -1,0 +1,14 @@
+<div *ngIf="hasCheckBox" class="list-item--header"><input type="checkbox" [attr.data-id]="data[idField]"
+    data-action="check-checkbox"></div>
+<div class="list-item--body">
+  <ng-container *ngTemplateOutlet="tpl; context: {$implicit: data}"></ng-container>{{tpl ? '' : data[nameField]}}
+</div>
+<div *ngIf="hasDeleteButton" class="list-item--footer">
+  <mc-icon theme="trash"></mc-icon>
+  <div class="list-item--yes-no">
+    <div class="list-item--yes-no--yes" data-action="do-delete"><span class="list-item--yes-no--yes--text">Delete</span>
+    </div>
+    <div class="list-item--yes-no--no" data-action="cancel-delete"><span
+        class="list-item--yes-no--no--text">Cancel</span></div>
+  </div>
+</div>

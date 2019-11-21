@@ -1,0 +1,17 @@
+
+:host {
+  &.button {
+    &-signin {
+      width: 100%;
+      .button--button {
+        width: 100%;
+        color: #fff;
+      }
+    }
+    &-icon {
+      .button--button {
+        border: 0;
+      }
+    }
+  }
+}

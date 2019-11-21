@@ -1,0 +1,9 @@
+
+:host {
+  &.message-bar {
+    &-error {
+      color: red;
+      background-color: #fff;
+    }
+  }
+}

@@ -1,0 +1,22 @@
+
+
+:host {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+
+  .drawer {
+    display: inline-block;
+    position: absolute;
+    opacity: 0;
+    background-color: white;
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,0.26);
+    &-anim {
+      transition: transform 0.3s, opacity ease-in-out 0.3s;
+    }
+  }
+}
