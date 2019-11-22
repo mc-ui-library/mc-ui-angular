@@ -1,6 +1,5 @@
 import {
   Component,
-  Input,
   ElementRef
 } from '@angular/core';
 import {
@@ -12,7 +11,7 @@ import {
 
 @Component({
   selector: 'mc-icon',
-  styleUrls: ['icon.component.scss', 'icon.component.theme.scss'],
+  styleUrls: ['icon.component.scss'],
   template: ''
 })
 

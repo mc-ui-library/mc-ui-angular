@@ -2,10 +2,119 @@
   position: absolute;
   display: inline-block;
   background-color: #fff;
+
   &.center {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+  }
+
+  &.popup {
+    &-basic {
+      border: 1px solid silver;
+      padding: 20px;
+    }
+
+    &-indicator {
+      &:before {
+        content: '';
+        width: 17px;
+        height: 4px;
+        position: absolute;
+        background: #fff;
+        z-index: 2;
+      }
+
+      &:after {
+        content: '';
+        width: 16px;
+        height: 12px;
+        position: absolute;
+        z-index: 1;
+        background-color: #fff;
+      }
+
+      // the indicator location is top-right
+      &-top-right {
+        &:before {
+          transform: rotate(-35deg);
+          top: -6px;
+          right: -1px;
+          border-radius: 0 4px 0 0;
+          border-top: solid 1px #12102e;
+          border-right: solid 1px #12102e;
+        }
+
+        &:after {
+          top: -9px;
+          right: -1px;
+          border-radius: 0 4px 0 0;
+          border-right: solid 1px #12102e;
+        }
+      }
+
+      &-top-left {
+        &:before {
+          transform: scale(-1, 1) rotate(-35deg);
+          left: -1px;
+          top: -6px;
+          border-radius: 0 4px 0 0;
+          border-top: solid 1px #12102e;
+          border-right: solid 1px #12102e;
+        }
+
+        &:after {
+          transform: scale(-1, 1);
+          top: -9px;
+          left: -1px;
+          border-radius: 0 4px 0 0;
+          border-right: solid 1px #12102e;
+        }
+      }
+
+      &-bottom-right {
+        &:before {
+          transform: scale(-1, 1) rotate(-35deg);
+          right: -1px;
+          bottom: -6px;
+          border-radius: 0 0 0 4px;
+          border-bottom: solid 1px #12102e;
+          border-left: solid 1px #12102e;
+        }
+
+        &:after {
+          transform: scale(-1, 1);
+          right: -1px;
+          bottom: -9px;
+          border-radius: 0 0 0 4px;
+          border-left: solid 1px #12102e;
+        }
+      }
+
+      &-bottom-left {
+        &:before {
+          transform: rotate(-35deg);
+          bottom: -6px;
+          left: -1px;
+          border-radius: 0 0 0 4px;
+          border-bottom: solid 1px #12102e;
+          border-left: solid 1px #12102e;
+        }
+
+        &:after {
+          bottom: -9px;
+          left: -1px;
+          border-radius: 0 0 0 4px;
+          border-left: solid 1px #12102e;
+        }
+      }
+    }
+
+    &-audit {
+      width: 250px;
+      padding: 15px;
+      border: solid 1px #12102e;
+    }
   }
 }

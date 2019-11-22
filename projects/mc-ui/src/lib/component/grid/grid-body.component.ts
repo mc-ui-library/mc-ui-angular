@@ -16,7 +16,7 @@ import {
 
 @Component({
   selector: 'mc-grid-body',
-  styleUrls: ['grid-body.component.scss', 'grid-body.component.theme.scss'],
+  styleUrls: ['grid-body.component.scss'],
   templateUrl: './grid-body.component.html'
 })
 

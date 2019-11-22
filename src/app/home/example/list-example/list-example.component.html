@@ -1,0 +1,12 @@
+<div class="list-example--item">
+  <div class="list-example--item--header">
+    Infinite list
+  </div>
+  <div class="list-example--item--body" [style.height.px]="300">
+    <mc-infinite-list [data]="data" [itemTpl]="itemTpl">
+      <ng-template #itemTpl let-data>
+        {{data.index}}: {{data.name}}
+      </ng-template>
+    </mc-infinite-list>
+  </div>
+</div>

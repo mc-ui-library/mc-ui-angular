@@ -12,7 +12,7 @@ import {
 
 @Component({
   selector: 'mc-loader',
-  styleUrls: ['loader.component.scss', 'loader.component.theme.scss'],
+  styleUrls: ['loader.component.scss'],
   templateUrl: 'loader.component.html'
 })
 

@@ -1,0 +1,35 @@
+@import "vars";
+
+// naming conventions by BEM
+// basically, a container will define the child's size
+*,
+*:after,
+*:before {
+    box-sizing: border-box;
+}
+
+html {
+    font-family: sans-serif;
+    height: 100%;
+    body {
+        margin: 0;
+        font-family: sans-serif, "open sans", "Helvetica Neue", Helvetica, Arial;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        //color: $c-text;
+        text-align: left;
+        background-color: #fff;
+        height: 100%;
+        div {
+            position: relative;
+        }
+    }
+}
+
+input {
+  font-size: 0.875rem;
+}
+
+a {
+  text-decoration: none;
+}

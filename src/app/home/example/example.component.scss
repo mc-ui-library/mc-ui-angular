@@ -1,0 +1,5 @@
+@import '../../../css/vars';
+
+:host {
+  @include container;
+}

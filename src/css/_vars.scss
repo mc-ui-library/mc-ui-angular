@@ -1,0 +1,50 @@
+
+$c-green-light: #bcfcb1;
+$c-green: #23BF08;
+$c-green-dark: #1c9806;
+$c-orange: #F49917;
+$c-red-light: #f7d1d5;
+$c-red: #DC3545;
+$c-red-dark: #b51f2e;
+$c-blue: #0866C6;
+$c-black: #343a40;
+$c-gray: #d0d4e7;
+$c-teal: #17A2B8;
+$c-purple: #6610f2;
+
+$c-black-60: rgba(0, 0, 0, 0.6);
+$c-black-15: rgba(0, 0, 0, 0.15);
+$c-white-30: rgba(255, 255, 255, 0.3);
+$c-white-50: rgba(255, 255, 255, 0.5);
+
+$c-text-input: #495057;
+$c-text-light: #868e96;
+$c-text: $c-black;
+$c-border: #ced4da;
+
+$c-success: $c-green;
+$c-warning: $c-orange;
+$c-error: $c-red;
+
+
+@mixin container {
+  display: block;
+  position: relative;
+  height: 100%;
+}
+
+@mixin readonly {
+  cursor: default;
+  pointer-events: none;
+}
+
+@mixin rounded {
+  border-radius: 3px;
+}
+
+@mixin center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}

@@ -16,18 +16,31 @@ import {
 
 @Component({
   selector: 'mc-list',
-  styleUrls: ['list.component.scss', 'list.component.theme.scss'], 
+  styleUrls: ['list.component.scss'], 
   templateUrl: './list.component.html'
 })
 
 export class ListComponent extends BaseComponent {
 
-  private _data: any[]
+  private _data: any[];
+  private _selectedItems: any[];
 
-  @Input() itemTpl: any = null;
-  @Input() idField = 'id';
-  @Input() nameField = 'name';
+  // checking the selected item ids
+  selectedItemsMap = new Set();
+
   @Input() rowHeight = 30;
+  @Input() multiSelect = false;
+  @Input() 
+  set selectedItems(value: any[]) {
+    if (value) {
+      this.selectedItemsMap = new Set();
+      value.forEach(d => this.selectedItemsMap.add(d[this.idField]));
+    }
+  }
+  get selectedItems() {
+    return this._selectedItems;
+  }
+  @Input() delete = false;
   @Input()
   set data(value: any[]) {
     // convert string array to list data format
@@ -46,21 +59,12 @@ export class ListComponent extends BaseComponent {
   get data() {
     return this._data;
   }
+  // for ListItem
+  @Input() itemTpl: any = null;
+  @Input() idField = 'id';
+  @Input() nameField = 'name';
 
   @Output() action: EventEmitter < any > = new EventEmitter();
-
-  @HostListener('click', ['$event'])
-  onPress(e: any) {
-    const listItemEl = this.util.dom.findParent(e.target, '.list--item');
-    if (listItemEl) {
-      const dataset = listItemEl.dataset;
-      switch (dataset.action) {
-        case 'select-item':
-          this.action.emit({ event: e, action: dataset.action, target: this, id: dataset.id });
-          break;
-      }
-    }
-  }
 
   constructor(protected _el: ElementRef, protected _service: MCUIService) {
     super(_el, _service);
@@ -68,5 +72,13 @@ export class ListComponent extends BaseComponent {
 
   key(index: number, item: any) {
     return item[this.idField];
+  }
+
+  selectItem() {}
+
+  unselectItem() {}
+
+  onListItemAction(e) {
+    
   }
 }

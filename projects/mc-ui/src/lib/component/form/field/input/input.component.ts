@@ -5,7 +5,7 @@ import {MCUIService} from '../../../../mc-ui.service';
 @Component({
     selector: 'mc-input',
     styleUrls: [
-        'input.component.scss', 'input.component.theme.scss'
+        'input.component.scss'
     ],
     templateUrl: './input.component.html',
     

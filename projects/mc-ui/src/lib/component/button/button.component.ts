@@ -15,7 +15,7 @@ import {
 
 @Component({
   selector: 'mc-button',
-  styleUrls: ['button.component.scss', 'button.component.theme.scss'],
+  styleUrls: ['button.component.scss'],
   templateUrl: 'button.component.html'
 })
 

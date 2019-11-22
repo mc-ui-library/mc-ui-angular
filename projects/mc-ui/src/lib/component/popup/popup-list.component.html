@@ -1,0 +1,15 @@
+<mc-input (valueChange)="onValueChange($event)"></mc-input>
+<div *ngIf="multiSelect" class="popup-list--selected-items">
+  <div *ngFor="let item of selectedItems" class="popup-list--selected-items--item">
+    <div class="popup-list--selected-items--item--name">{{item[nameField]}}</div>
+    <div class="popup-list--selected-items--item--delete">
+      <mc-button theme="icon" (click)="onClicDeleteButton(item[idField])">
+        <mc-icon [theme]="['close', 'button']"></mc-icon>
+      </mc-button>
+    </div>
+  </div>
+</div>
+<mc-infinite-list [data]="data" [itemTpl]="itemTpl" [idField]="idField" [nameField]="nameField" [rowHeight]="rowHeight"
+  [multiSelect]="multiSelect" [data]="data" [additionalData]="additionalData" (action)="onAction($event)"
+  [style.height.px]="listHeight">
+</mc-infinite-list>

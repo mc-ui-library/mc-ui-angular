@@ -1,0 +1,19 @@
+<video src="../../../assets//videos/leaves.mp4" type="video/mp4" class="signin--video" autoplay muted loop (canplay)="onCanPlay($event)">
+</video>
+<div class="signin">
+  <div class="signin--header">
+    <div class="signin--header--title mc-logo-text"><span class="mc-logo-text--1">MC</span><span class="mc-logo-text--2">UI</span></div>
+    <div class="signin--header--description">Sign In to Your MC UI Account!</div>
+  </div>
+  <div class="signin--body">
+    <mc-form #frm>
+      <mc-field theme="dark" placeholder="Enter your username" name="username"></mc-field>
+      <mc-field type="password" theme="dark" placeholder="Enter your password" name="username"></mc-field>
+    </mc-form>
+    <div class="signin--body--forgot-password"><a href="#" (click)="onClickForgotPassword()">Forgot password?</a></div>
+    <mc-button theme="signin" (press)="onPressSignin()">Sign In</mc-button>
+  </div>
+  <div class="signin--footer">
+    Not yet a member? <a href="#" (click)="onSignup()">Sign Up</a>
+  </div>
+</div>

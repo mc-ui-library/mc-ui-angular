@@ -16,7 +16,7 @@ import {
 
 @Component({
   selector: 'mc-drawer',
-  styleUrls: ['drawer.component.scss', 'drawer.component.theme.scss'],
+  styleUrls: ['drawer.component.scss'],
   templateUrl: 'drawer.component.html'
 })
 

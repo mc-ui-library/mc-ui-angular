@@ -15,7 +15,7 @@ import {
 
 @Component({
   selector: 'mc-grid-header',
-  styleUrls: ['grid-header.component.scss', 'grid-header.component.theme.scss'],
+  styleUrls: ['grid-header.component.scss'],
   templateUrl: './grid-header.component.html'
 })
 

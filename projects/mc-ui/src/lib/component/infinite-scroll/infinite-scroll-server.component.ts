@@ -10,26 +10,11 @@ import {
   Output,
   EventEmitter
 } from '@angular/core';
-
-interface Column {
-  field?: string; // field name;
-  name?: string; // column name
-  tpl?: any; // column template
-  headerTpl?: any; // column header template
-  width?: number;
-}
-
-interface Data {
-  columns?: Column[];
-  action: 'append' | 'insert' | 'initialize';
-  rows: any[];
-  start: number;
-  rowCount: number;
-}
+import { ScrollData } from '../model';
 
 export class InfiniteScrollServerComponent extends BaseComponent {
 
-  private _data: Data;
+  private _data: ScrollData;
 
   private neededDataIndex = -1;
   private neededPageIndex = 1;
@@ -50,9 +35,9 @@ export class InfiniteScrollServerComponent extends BaseComponent {
   @Input() idField = 'id';
   @Input() rowHeight = 30;
   @Input()
-  set data(value: Data) {
+  set data(value: ScrollData) {
     if (value) {
-      let data: Data;
+      let data: ScrollData;
       if (Array.isArray(value)) {
         data = {
           action: 'initialize',
@@ -79,7 +64,7 @@ export class InfiniteScrollServerComponent extends BaseComponent {
   }
 
   @Input()
-  set additionalData(value: Data) {
+  set additionalData(value: ScrollData) {
     if (value) {
       const {
         action,

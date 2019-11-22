@@ -15,7 +15,7 @@ import {
 
 @Component({
   selector: 'mc-message-bar',
-  styleUrls: ['message-bar.component.scss', 'message-bar.component.theme.scss'],
+  styleUrls: ['message-bar.component.scss'],
   templateUrl: 'message-bar.component.html'
 })
 

@@ -12,5 +12,9 @@
     &--message {
       padding: 15px 20px;
     }
+    &-error {
+      color: red;
+      background-color: #fff;
+    }
   }
 }

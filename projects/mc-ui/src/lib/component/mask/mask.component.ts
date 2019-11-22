@@ -14,7 +14,7 @@ import {
 
 @Component({
   selector: 'mc-mask',
-  styleUrls: ['mask.component.scss', 'mask.component.theme.scss'],
+  styleUrls: ['mask.component.scss'],
   templateUrl: 'mask.component.html'
 })
 

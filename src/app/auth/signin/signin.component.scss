@@ -1,0 +1,56 @@
+@import '../../../css/vars';
+:host {
+    @include container;
+    display: grid;
+    place-items: center center;
+    color: $c-white-50;
+
+    a {
+      color: $c-teal;
+    }
+
+    .signin--video {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        z-index: -100;
+        background-size: cover;
+    }
+
+    .signin {
+      width: 350px;
+      padding: 40px;
+      background-color: $c-black-60;
+      @include rounded;
+      &--header {
+        .mc-logo-text {
+          font-size: 28px;
+          text-align: center;
+          color: #fff;
+          font-weight: 700;
+          &--1 {}
+          &--2 {
+              color: $c-green;
+          }
+        }
+        &--description {
+          text-align: center;
+        }
+      }
+      &--body {
+        padding-top: 60px;
+        &--forgot-password {
+          font-size: 12px;
+          margin-bottom: 10px;
+        }
+      }
+      &--footer {
+        margin-top: 60px;
+        text-align: center;
+      }
+    }
+}

@@ -1,5 +1,4 @@
-<div *ngIf="hasCheckBox" class="list-item--header"><input type="checkbox" [attr.data-id]="data[idField]"
-    data-action="check-checkbox"></div>
+<div *ngIf="hasCheckBox" class="list-item--header"><input type="checkbox" [attr.data-id]="data[idField]" data-action="check-checkbox" checked="selected" (change)="onChangeCheckbox($event)"></div>
 <div class="list-item--body">
   <ng-container *ngTemplateOutlet="tpl; context: {$implicit: data}"></ng-container>{{tpl ? '' : data[nameField]}}
 </div>

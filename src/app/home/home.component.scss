@@ -1,0 +1,21 @@
+@import '../../css/vars';
+
+:host {
+  @include container;
+  padding-left: 240px;
+  transition: padding 0.2s ease-in-out;
+
+  &.left-menu-minimized {
+    padding-left: 60px;
+  }
+}
+
+@media screen and (max-width: 960px) {
+  mc-home {
+    padding-left: 60px;
+
+    mc-home-left-menu {
+      width: 60px;
+    }
+  }
+}

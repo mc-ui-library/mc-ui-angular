@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+import { Component,  ViewContainerRef } from '@angular/core';
+import {
+  MCUIService
+} from 'mc-ui-angular';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +9,20 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'mc-ui-angular';
+
+  constructor(protected vr: ViewContainerRef, private service: MCUIService) {
+    this.service.message.subscribe(msg => {
+      if (msg.to === 'app') {
+        switch (msg.action) {
+          case 'error':
+            this.showMessage(msg.data.message);
+            break;
+        }
+      }
+    });
+  }
+
+  showMessage(message) {
+  }
+
 }

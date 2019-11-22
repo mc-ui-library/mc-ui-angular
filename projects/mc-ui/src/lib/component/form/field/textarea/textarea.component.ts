@@ -8,7 +8,7 @@ import { MCUIService } from '../../../../mc-ui.service';
 
 @Component({
   selector: 'mc-textarea',
-  styleUrls: ['textarea.component.scss', 'textarea.component.theme.scss'],
+  styleUrls: ['textarea.component.scss'],
   templateUrl: './textarea.component.html'
 })
 export class TextareaComponent extends FieldBaseComponent {

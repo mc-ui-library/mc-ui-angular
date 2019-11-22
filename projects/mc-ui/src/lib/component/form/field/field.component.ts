@@ -16,7 +16,7 @@ import { MCUIService } from '../../../mc-ui.service';
 
 @Component({
   selector: 'mc-field',
-  styleUrls: ['field.component.scss', 'field.component.theme.scss'],
+  styleUrls: ['field.component.scss'],
   templateUrl: './field.component.html'
 })
 export class FieldComponent extends FieldBaseComponent {

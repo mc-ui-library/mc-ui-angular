@@ -46,6 +46,10 @@ export class FieldBaseComponent extends BaseComponent {
   }
 
   onValueChange(e: any) {
-    this.value = e.value;
+    if (JSON.stringify(e.value) !== JSON.stringify(this.value)) {
+      const oldValue = this.value;
+      this.value = e.value;
+      this.valueChange.emit({ target: this, event: e, value: this.value, oldValue: oldValue });
+    }
   }
 }

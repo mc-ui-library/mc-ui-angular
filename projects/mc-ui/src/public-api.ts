@@ -67,5 +67,6 @@ export {
   PopupComponent
 } from './lib/component/popup/popup.component';
 export {
-  PopupMaskComponent
-} from './lib/component/popup/popup-mask.component';
+  Column,
+  ScrollData,
+} from './lib/component/model';

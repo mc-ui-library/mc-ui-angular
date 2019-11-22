@@ -25,7 +25,7 @@ interface State {
 
 @Component({
   selector: 'mc-infinite-scroll',
-  styleUrls: ['infinite-scroll.component.scss', 'infinite-scroll.component.theme.scss'],
+  styleUrls: ['infinite-scroll.component.scss'],
   templateUrl: './infinite-scroll.component.html'
 })
 

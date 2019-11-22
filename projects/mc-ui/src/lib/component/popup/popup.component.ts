@@ -16,7 +16,7 @@ import {
 
 @Component({
   selector: 'mc-popup',
-  styleUrls: ['popup.component.scss', 'popup.component.theme.scss'],
+  styleUrls: ['popup.component.scss'],
   templateUrl: 'popup.component.html'
 })
 

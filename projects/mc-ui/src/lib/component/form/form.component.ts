@@ -17,7 +17,7 @@ import {
 
 @Component({
   selector: 'mc-form',
-  styleUrls: ['form.component.scss', 'form.component.theme.scss'],
+  styleUrls: ['form.component.scss'],
   templateUrl: './form.component.html'
 })
 

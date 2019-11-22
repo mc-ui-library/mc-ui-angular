@@ -1,9 +1,13 @@
 {
   "name": "mc-ui-angular",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "MC UI Angular Presentational Components",
   "keywords": ["infinite scroll", "grid", "list", "popup", "drawer", "form", "field"],
   "homepage": "https://github.com/mc-ui-library/mc-ui-angular",
+  "author": {
+    "name": "Minchul Chae",
+    "email": "mcchae7@gmail.com"
+  },
   "bugs": {
     "url": "https://github.com/mc-ui-library/mc-ui-angular/issues"
   },
