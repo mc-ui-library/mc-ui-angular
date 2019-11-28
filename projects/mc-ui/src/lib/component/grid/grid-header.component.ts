@@ -7,7 +7,7 @@ import {
 import {
   Component,
   ElementRef,
-  
+
   Input,
   Output,
   EventEmitter
@@ -23,16 +23,14 @@ export class GridHeaderComponent extends BaseComponent {
 
   @Input() columns: any[];
   /**
-   * For headers, 
+   * For headers,
    * [
    *  [ { name: 'xxx', colspan: 2, rowspan: 1 }, ... ],
    *  [ { name: 'xxx', colspan: 1, rowspan: 1 }, ... ]
    * ]
    */
-  @Input() data: any[]; 
+  @Input() data: any[];
   @Input() rowHeight = 30;
-
-  @Output() action: EventEmitter < any > = new EventEmitter();
 
   constructor(protected _el: ElementRef, protected _service: MCUIService) {
     super(_el, _service);

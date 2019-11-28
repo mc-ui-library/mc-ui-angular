@@ -7,7 +7,7 @@ import {
 import {
   Component,
   ElementRef,
-  
+
   Input,
   Output,
   EventEmitter,
@@ -51,8 +51,6 @@ export class GridBodyComponent extends BaseComponent {
     return this._data;
   }
   @Input() idField = 'id';
-
-  @Output() action: EventEmitter < any > = new EventEmitter();
 
   @HostListener('click', ['$event'])
   onPress(e: any) {

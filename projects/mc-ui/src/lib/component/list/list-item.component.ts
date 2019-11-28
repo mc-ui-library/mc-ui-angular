@@ -22,6 +22,16 @@ import {
 
 export class ListItemComponent extends BaseComponent {
 
+  @Input() tpl;
+  @Input() data = {};
+  @Input() idField = 'id';
+  @Input() nameField = 'name';
+  @Input() hasCheckBox = false;
+  @Input() hasDeleteButton = false;
+
+  @HostBinding('class.selected') @Input() selected = false;
+  @HostBinding('style.height') @Input() height = '30px';
+
   @HostListener('click', ['$event'])
   onPress(e: any) {
     if (!this.hasCheckBox) {
@@ -30,24 +40,12 @@ export class ListItemComponent extends BaseComponent {
     }
   }
 
-  @HostBinding('class.selected') @Input() selected = false;
-  @HostBinding('style.height') @Input() height = '30px';
-
-  @Input() tpl;
-  @Input() data = {};
-  @Input() idField = 'id';
-  @Input() nameField = 'name';
-  @Input() hasCheckBox = false;
-  @Input() hasDeleteButton = false;
-  
-  @Output() action: EventEmitter<any> = new EventEmitter();
-
   constructor(protected er: ElementRef, protected service: MCUIService) {
     super(er, service);
   }
 
   emitSelectAction(e) {
-    this.action.emit({ target: this, action: 'select-list-item', event: e, selected: this.selected, data: this.data });
+    this.action.emit({ target: this, action: this.selected ? 'select-item' : 'unselect-item', event: e, selected: this.selected, data: this.data });
   }
 
   onChangeCheckbox(e) {

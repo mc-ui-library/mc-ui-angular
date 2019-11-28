@@ -1,0 +1,3 @@
+<div *ngFor="let item of data; trackBy: key" class="list--item" [style.height.px]="rowHeight">
+  <mc-list-item [tpl]="itemTpl" [idField]="idField" [nameField]="nameField" [data]="item" [hasCheckBox]="multiSelect" [hasDeleteButton]="delete" [selected]="selectedItemsMap.has('' + item[idField])" (action)="onListItemAction($event)"></mc-list-item>
+</div>

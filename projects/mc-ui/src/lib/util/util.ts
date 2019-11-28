@@ -3,15 +3,18 @@ import {
 } from '@angular/common/http';
 import { HttpUtil } from './http-util';
 import { DomUtil } from './dom-util';
+import { DataUtil } from './data-util';
 // You can add utilities like validator, date, data, visualization, etc...
 export class Util {
 
   http: HttpUtil;
   dom: DomUtil;
+  data: DataUtil;
 
   constructor(private hc: HttpClient) {
     this.http = new HttpUtil(this.hc);
     this.dom = new DomUtil();
+    this.data = new DataUtil();
   }
 
   isEmpty(val) {

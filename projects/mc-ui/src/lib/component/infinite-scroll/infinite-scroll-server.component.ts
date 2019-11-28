@@ -88,7 +88,6 @@ export class InfiniteScrollServerComponent extends BaseComponent {
 
   // there is no data, then it triggers "needData" event.
   @Output() needData: EventEmitter < any > = new EventEmitter();
-  @Output() action: EventEmitter < any > = new EventEmitter();
 
   constructor(protected _el: ElementRef, protected _service: MCUIService) {
     super(_el, _service);
@@ -116,6 +115,10 @@ export class InfiniteScrollServerComponent extends BaseComponent {
         this.page2Data = data;
       }
     }
+  }
+
+  getItems() {
+    return this.data.rows;
   }
 
   onUpdatePage(e: any) {

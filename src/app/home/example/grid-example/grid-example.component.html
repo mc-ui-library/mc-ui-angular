@@ -9,12 +9,12 @@
 <ng-template #popupTpl>
   {{gridCell.name}} {{gridCell.field}} {{gridCell.field === 'tags' ? '' : gridCell.value}}
   <ng-container *ngIf="gridCell.field === 'tags'">
-      <mc-list [data]="gridCell.value" style="height:100px;margin-top: 20px;"></mc-list>
+      <mc-list-basic [data]="gridCell.value" style="height:100px;margin-top: 20px;"></mc-list-basic>
   </ng-container>
 </ng-template>
 <ng-template #drawerTpl>
   <div style="padding: 20px;">
     {{gridCell.name}} {{gridCell.field}}
-    <mc-list [data]="gridCell.value" style="margin-top: 20px;"></mc-list>
+    <mc-list-basic [data]="gridCell.value" style="margin-top: 20px;"></mc-list-basic>
   </div>
 </ng-template>

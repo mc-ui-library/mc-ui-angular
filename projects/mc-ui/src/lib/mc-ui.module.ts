@@ -13,8 +13,8 @@ import { TextareaComponent } from './component/form/field/textarea/textarea.comp
 import { InputComponent } from './component/form/field/input/input.component';
 import { FormComponent } from './component/form/form.component';
 import { InfiniteScrollComponent } from './component/infinite-scroll/infinite-scroll.component';
-import { InfiniteListComponent } from './component/list/infinite-list.component';
 import { ListComponent } from './component/list/list.component';
+import { ListBasicComponent } from './component/list/list-basic.component';
 import { ButtonComponent } from './component/button/button.component';
 import { IconComponent } from './component/icon/icon.component';
 import { ListItemComponent } from './component/list/list-item.component';
@@ -26,7 +26,7 @@ import { GridBodyComponent } from './component/grid/grid-body.component';
 import { MaskComponent } from './component/mask/mask.component';
 import { GridComponent } from './component/grid/grid.component';
 import { PopupComponent } from './component/popup/popup.component';
-import { PopupMaskComponent } from './component/popup/popup-mask.component';
+import { PopupListComponent } from './component/popup/popup-list.component';
 import { MCUIService } from './mc-ui.service';
 
 @NgModule({
@@ -41,7 +41,7 @@ import { MCUIService } from './mc-ui.service';
     InputComponent,
     FormComponent,
     InfiniteScrollComponent,
-    InfiniteListComponent,
+    ListBasicComponent,
     ListComponent,
     ButtonComponent,
     IconComponent,
@@ -54,11 +54,11 @@ import { MCUIService } from './mc-ui.service';
     GridComponent,
     MaskComponent,
     PopupComponent,
-    PopupMaskComponent
+    PopupListComponent
   ],
   entryComponents: [
     PopupComponent,
-    PopupMaskComponent,
+    PopupListComponent,
     DrawerComponent
   ],
   exports: [
@@ -69,7 +69,7 @@ import { MCUIService } from './mc-ui.service';
     InputComponent,
     FormComponent,
     InfiniteScrollComponent,
-    InfiniteListComponent,
+    ListBasicComponent,
     ListComponent,
     ButtonComponent,
     IconComponent,
@@ -82,7 +82,7 @@ import { MCUIService } from './mc-ui.service';
     GridComponent,
     MaskComponent,
     PopupComponent,
-    PopupMaskComponent
+    PopupListComponent
   ],
   providers: [MCUIService]
 })

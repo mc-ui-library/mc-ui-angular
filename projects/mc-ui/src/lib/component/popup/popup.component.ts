@@ -27,9 +27,10 @@ export class PopupComponent extends BaseComponent {
   private _hasIndicator = false;
   // for body press event, it is triggered after clicking the target. We need to ignore the body event when visible = true;
   private bodyEventLock = false;
-  private lastTargetElCoord;
   private checkTargetElLocationIntervalId;
   private indicatorHeight = 10;
+
+  lastTargetElCoord;
 
   @Input() checkTargetLocation = false;
   // top left is the base state.
@@ -40,7 +41,10 @@ export class PopupComponent extends BaseComponent {
   @Input()
   set targetEl(value: HTMLElement) {
     this._targetEl = value;
-    this.show(value);
+    if (value) {
+      this.lastTargetElCoord = value.getBoundingClientRect();
+    }
+    this.show();
   }
   get targetEl() {
     return this._targetEl;
@@ -49,7 +53,7 @@ export class PopupComponent extends BaseComponent {
   set visible(value: boolean) {
     this._visible = value;
     if (value && this.targetEl) {
-      this.show(this.targetEl);
+      this.show();
     } else {
       this.hide();
     }
@@ -79,11 +83,11 @@ export class PopupComponent extends BaseComponent {
     this.subscriptions = service.bodyPress.subscribe(this.onPressBody.bind(this));
   }
 
-  show(targetEl) {
+  show() {
     if (!this.visible) {
       return;
     }
-    
+
     this.holdBodyEvent();
 
     if (this.center) {
@@ -99,7 +103,7 @@ export class PopupComponent extends BaseComponent {
     this.el.style.display = '';
     // after the targetEl is changed.
     setTimeout(() => {
-      const targetSize = targetEl.getBoundingClientRect();
+      const targetSize = this.lastTargetElCoord;
       // when the popup overflow the window size, we need to move into the window.
       const indicatorHeight = this.hasIndicator ? this.indicatorHeight : 0;
       const popupSize = this.el.getBoundingClientRect();
@@ -136,7 +140,6 @@ export class PopupComponent extends BaseComponent {
 
   checkTargetElLocation() {
     if (this.targetEl && this.checkTargetLocation) {
-      this.lastTargetElCoord = null;
       this.checkTargetElLocationIntervalId = setInterval(() => {
         const info = this.targetEl.getBoundingClientRect();
         const lastInfo = this.lastTargetElCoord;

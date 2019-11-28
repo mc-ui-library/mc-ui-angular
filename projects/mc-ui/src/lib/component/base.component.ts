@@ -3,7 +3,9 @@ import {
   OnInit,
   OnDestroy,
   AfterViewInit,
-  Input
+  Input,
+  Output,
+  EventEmitter
 } from '@angular/core';
 import {
   MCUIService
@@ -41,6 +43,8 @@ export class BaseComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  @Output() action: EventEmitter < any > = new EventEmitter();
+
   constructor(protected er: ElementRef, protected service: MCUIService) {
     this.el = this.er.nativeElement;
     this.util = this.service.util;
@@ -62,6 +66,7 @@ export class BaseComponent implements OnInit, OnDestroy, AfterViewInit {
     setTimeout(() => {
       this.afterRenderCmp();
       this.rendered = true;
+      this.action.emit({ target: this, action: 'rendered' });
     });
   }
 

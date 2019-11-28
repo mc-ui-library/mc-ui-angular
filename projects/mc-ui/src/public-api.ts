@@ -28,11 +28,11 @@ export {
   InfiniteScrollComponent
 } from './lib/component/infinite-scroll/infinite-scroll.component';
 export {
-  InfiniteListComponent
-} from './lib/component/list/infinite-list.component';
-export {
   ListComponent
 } from './lib/component/list/list.component';
+export {
+  ListBasicComponent
+} from './lib/component/list/list-basic.component';
 export {
   ButtonComponent
 } from './lib/component/button/button.component';
