@@ -8,18 +8,16 @@ MC UI Presentational Components Angular Library
 
 First Release
 
+- v0.1.1
+
+add example url
+
+https://mc-ui-library.github.io/
+
 ## Further help
 
 go check out the [MC UI](https://github.com/mc-ui-library/mc-ui-angular).
 
+## Example
 
-## Build
-
-- build
-npm run build mc-ui
-
-- local install
-npm i dist/mc-ui
-
-- publish, need to update the version
-npm publish
+https://mc-ui-library.github.io/
