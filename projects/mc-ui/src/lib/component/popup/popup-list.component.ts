@@ -50,10 +50,12 @@ export class PopupListComponent extends PopupComponent {
   get selectedItems() {
     return this._selectedItems;
   }
-  @Input() set data(value: ScrollData) {
+  @Input()
+  set data(value: ScrollData) {
     // input only
-    this.listData = value;
     this._data = value;
+    // update list for calculating scroll height after updating header height.
+    setTimeout(() => this.listData = value);
   }
   get data() {
     return this._data;
@@ -63,7 +65,6 @@ export class PopupListComponent extends PopupComponent {
 
   // popup
   @Input() height = 350;
-  @Input() isServerData = false;
   @Input() startFrom: 'start' = 'start';
 
   @Output() valueChange: EventEmitter<any> = new EventEmitter();
@@ -80,19 +81,10 @@ export class PopupListComponent extends PopupComponent {
 
   filter(keyword) {
     if (keyword !== this.keyword) {
-      if (this.isServerData) {
-        this.needData.emit({
-          target: this,
-          keyword
-        });
-      } else {
-        if (!keyword) {
-          this.listData = this.data;
-        } else {
-          const items = Array.isArray(this.data) ? this.data : this.data.rows;
-          this.listData = this.util.data.search(items, keyword, this.nameField);
-        }
-      }
+      this.needData.emit({
+        target: this,
+        keyword
+      });
     }
   }
 

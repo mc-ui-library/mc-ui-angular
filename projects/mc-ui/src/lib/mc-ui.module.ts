@@ -12,7 +12,7 @@ import { FieldComponent } from './component/form/field/field.component';
 import { TextareaComponent } from './component/form/field/textarea/textarea.component';
 import { InputComponent } from './component/form/field/input/input.component';
 import { FormComponent } from './component/form/form.component';
-import { InfiniteScrollComponent } from './component/infinite-scroll/infinite-scroll.component';
+import { ScrollComponent } from './component/scroll/scroll.component';
 import { ListComponent } from './component/list/list.component';
 import { ListBasicComponent } from './component/list/list-basic.component';
 import { ButtonComponent } from './component/button/button.component';
@@ -40,7 +40,7 @@ import { MCUIService } from './mc-ui.service';
     TextareaComponent,
     InputComponent,
     FormComponent,
-    InfiniteScrollComponent,
+    ScrollComponent,
     ListBasicComponent,
     ListComponent,
     ButtonComponent,
@@ -68,7 +68,7 @@ import { MCUIService } from './mc-ui.service';
     TextareaComponent,
     InputComponent,
     FormComponent,
-    InfiniteScrollComponent,
+    ScrollComponent,
     ListBasicComponent,
     ListComponent,
     ButtonComponent,

@@ -13,15 +13,15 @@ const CONS = {
       menu: [
         { id: '/home/example/list', name: 'List', depth: 0 },
         { id: '/home/example/grid', name: 'Grid', depth: 0 },
-        { id: '/home/example/button', name: 'Button', depth: 0 },
-        { id: '/home/example/drawer', name: 'Drawer', depth: 0 },
-        { id: '/home/example/form', name: 'Form', depth: 0 },
-        { id: '/home/example/input', name: 'Input', depth: 1 },
-        { id: '/home/example/textarea', name: 'TextArea', depth: 1 },
-        { id: '/home/example/field', name: 'Field', depth: 1 },
-        { id: '/home/example/icon', name: 'Icon', depth: 0 },
-        { id: '/home/example/loader', name: 'Loader', depth: 0 },
-        { id: '/home/example/message-bar', name: 'Message Bar', depth: 0 },
+        // { id: '/home/example/button', name: 'Button', depth: 0 },
+        // { id: '/home/example/drawer', name: 'Drawer', depth: 0 },
+        // { id: '/home/example/form', name: 'Form', depth: 0 },
+        // { id: '/home/example/input', name: 'Input', depth: 1 },
+        // { id: '/home/example/textarea', name: 'TextArea', depth: 1 },
+        // { id: '/home/example/field', name: 'Field', depth: 1 },
+        // { id: '/home/example/icon', name: 'Icon', depth: 0 },
+        // { id: '/home/example/loader', name: 'Loader', depth: 0 },
+        // { id: '/home/example/message-bar', name: 'Message Bar', depth: 0 },
       ]
     }
   }

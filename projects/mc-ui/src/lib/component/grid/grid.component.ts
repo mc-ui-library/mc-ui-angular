@@ -1,11 +1,11 @@
 import {
   MCUIService
 } from '../../mc-ui.service';
-import { InfiniteScrollServerComponent } from '../infinite-scroll/infinite-scroll-server.component';
+import { ScrollAsyncComponent } from '../scroll/scroll-async.component';
 import {
   Component,
   ElementRef,
-  
+
   Input,
 } from '@angular/core';
 
@@ -15,7 +15,7 @@ import {
   templateUrl: './grid.component.html'
 })
 
-export class GridComponent extends InfiniteScrollServerComponent {
+export class GridComponent extends ScrollAsyncComponent {
 
   bodyHeight;
   bodyWidth = '100%';

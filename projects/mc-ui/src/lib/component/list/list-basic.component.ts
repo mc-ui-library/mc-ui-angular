@@ -7,11 +7,7 @@ import {
 import {
   Component,
   ElementRef,
-
   Input,
-  Output,
-  EventEmitter,
-  HostListener
 } from '@angular/core';
 
 @Component({

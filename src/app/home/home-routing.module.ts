@@ -8,7 +8,6 @@ import {
 import {
   HomeComponent,
 } from '.';
-import { ExampleComponent } from './example';
 
 const homeRoutes: Routes = [{
   path: 'home',

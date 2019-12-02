@@ -1,7 +1,7 @@
 import {
   Component,
   ViewContainerRef,
-  
+
   HostBinding,
   Output,
   EventEmitter,
@@ -79,7 +79,7 @@ export class HomeLeftMenuComponent extends AppBaseComponent {
   onListAction(e) {
     switch (e.action) {
       case 'select-item':
-        this.router.navigate([e.id]);
+        this.router.navigate([e.data.id]);
         break;
     }
   }

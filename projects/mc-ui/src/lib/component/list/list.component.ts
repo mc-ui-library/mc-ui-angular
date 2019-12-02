@@ -1,7 +1,7 @@
 import {
   MCUIService
 } from '../../mc-ui.service';
-import { InfiniteScrollServerComponent } from '../infinite-scroll/infinite-scroll-server.component';
+import { ScrollAsyncComponent } from '../scroll/scroll-async.component';
 import {
   Component,
   ElementRef,
@@ -16,7 +16,7 @@ import { ListBasicComponent } from './list-basic.component';
   templateUrl: './list.component.html'
 })
 
-export class ListComponent extends InfiniteScrollServerComponent {
+export class ListComponent extends ScrollAsyncComponent {
 
   @ViewChild('listBasic1Cmp', {static: false}) listBasic1Cmp: ListBasicComponent;
   @ViewChild('listBasic2Cmp', {static: false}) listBasic2Cmp: ListBasicComponent;

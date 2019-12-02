@@ -7,7 +7,6 @@ import {
 import {
   Component,
   ElementRef,
-  
   Input,
   Output,
   EventEmitter
@@ -24,12 +23,12 @@ interface State {
 }
 
 @Component({
-  selector: 'mc-infinite-scroll',
-  styleUrls: ['infinite-scroll.component.scss'],
-  templateUrl: './infinite-scroll.component.html'
+  selector: 'mc-scroll',
+  styleUrls: ['scroll.component.scss'],
+  templateUrl: './scroll.component.html'
 })
 
-export class InfiniteScrollComponent extends BaseComponent {
+export class ScrollComponent extends BaseComponent {
 
   private scrollTop = 0;
   private oldScrollTop = -1;

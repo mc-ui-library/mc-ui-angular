@@ -25,8 +25,8 @@ export {
   FormComponent
 } from './lib/component/form/form.component';
 export {
-  InfiniteScrollComponent
-} from './lib/component/infinite-scroll/infinite-scroll.component';
+  ScrollComponent
+} from './lib/component/scroll/scroll.component';
 export {
   ListComponent
 } from './lib/component/list/list.component';

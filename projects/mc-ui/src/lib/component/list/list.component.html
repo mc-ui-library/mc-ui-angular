@@ -1,13 +1,13 @@
-<mc-infinite-scroll [page1Tpl]="page1Tpl" [page2Tpl]="page2Tpl" [rowHeight]="rowHeight" [rowCount]="rowCount"
+<mc-scroll [page1Tpl]="page1Tpl" [page2Tpl]="page2Tpl" [rowHeight]="rowHeight" [rowCount]="rowCount"
   [isLoading]="isLoading" (updatePage)="onUpdatePage($event)">
   <ng-template #page1Tpl>
-    <mc-list-basic #listBasic1Cmp [itemTpl]="itemTpl" [idField]="idField" [nameField]="nameField" [rowHeight]="rowHeight"
-      [data]="page1Data" (action)="onAction($event)">
+    <mc-list-basic #listBasic1Cmp [itemTpl]="itemTpl" [idField]="idField" [nameField]="nameField"
+      [rowHeight]="rowHeight" [data]="page1Data" (action)="onAction($event)">
     </mc-list-basic>
   </ng-template>
   <ng-template #page2Tpl>
-    <mc-list-basic #listBasic2Cmp [itemTpl]="itemTpl" [idField]="idField" [nameField]="nameField" [rowHeight]="rowHeight"
-      [data]="page2Data" (action)="onAction($event)">
+    <mc-list-basic #listBasic2Cmp [itemTpl]="itemTpl" [idField]="idField" [nameField]="nameField"
+      [rowHeight]="rowHeight" [data]="page2Data" (action)="onAction($event)">
     </mc-list-basic>
   </ng-template>
-</mc-infinite-scroll>
+</mc-scroll>

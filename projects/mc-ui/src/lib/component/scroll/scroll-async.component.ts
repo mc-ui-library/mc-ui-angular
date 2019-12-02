@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { ScrollData } from '../model';
 
-export class InfiniteScrollServerComponent extends BaseComponent {
+export class ScrollAsyncComponent extends BaseComponent {
 
   private _data: ScrollData;
 
