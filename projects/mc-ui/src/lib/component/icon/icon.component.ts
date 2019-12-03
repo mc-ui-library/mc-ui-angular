@@ -12,7 +12,7 @@ import {
 @Component({
   selector: 'mc-icon',
   styleUrls: ['icon.component.scss'],
-  template: ''
+  templateUrl: './icon.component.html'
 })
 
 export class IconComponent extends BaseComponent {
