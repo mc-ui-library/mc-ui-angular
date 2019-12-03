@@ -3,10 +3,10 @@
     @include container;
     display: grid;
     place-items: center center;
-    color: $c-white-50;
+    color: $c-gray;
 
     a {
-      color: $c-teal;
+      color: $c-cyan;
     }
 
     .signin--video {
@@ -24,7 +24,7 @@
     .signin {
       width: 350px;
       padding: 40px;
-      background-color: $c-black-60;
+      background-color: $c-gray-bb;
       @include rounded;
       &--header {
         .mc-logo-text {
@@ -34,7 +34,7 @@
           font-weight: 700;
           &--1 {}
           &--2 {
-              color: $c-green;
+              color: $c-cyan;
           }
         }
         &--description {

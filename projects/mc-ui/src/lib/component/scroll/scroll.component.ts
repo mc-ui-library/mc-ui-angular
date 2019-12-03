@@ -41,7 +41,7 @@ export class ScrollComponent extends BaseComponent {
 
   @Input() page1Tpl: any = null;
   @Input() page2Tpl: any = null;
-  @Input() rowHeight = 30;
+  @Input() rowHeight = 45;
   @Input() isLoading = false;
   @Input()
   set rowCount(value: number) {
@@ -137,7 +137,14 @@ export class ScrollComponent extends BaseComponent {
         page1StartIndex,
         page1EndIndex,
         page2StartIndex,
-        page2EndIndex
+        page2EndIndex,
+        page1Index,
+        page2Index,
+        pageLastIndex,
+        page1IsFirst: page1Index === 0,
+        page2IsFirst: page2Index === 0,
+        page1IsLast: page1Index === pageLastIndex,
+        page2IsLast: page2Index === pageLastIndex
       });
     }
     this.oldScrollTop = scrollTop;

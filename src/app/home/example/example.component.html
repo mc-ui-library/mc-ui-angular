@@ -1,1 +1,37 @@
-<router-outlet></router-outlet>
+<div class="example--header">
+  <h4>Component Examples</h4>
+</div>
+<div class="example--item">
+  <div class="example--item--header">
+    <h6>list with Infinity Scroll</h6>
+  </div>
+  <div class="example--item--body" [style.height.px]="300">
+    <mc-list [data]="data" [itemTpl]="itemTpl">
+      <ng-template #itemTpl let-data>
+        {{data.index}}: {{data.name}}
+      </ng-template>
+    </mc-list>
+  </div>
+</div>
+<div class="example--item">
+  <div class="example--item--header">
+    <h6>Grid with Infinity Scroll | Popup | Drawer</h6>
+    <p>- Popup example: Click a cell </p>
+    <p>- Drawer example: Click the friends column cell </p>
+  </div>
+  <div class="example--item--body" [style.height.px]="300">
+    <mc-grid [data]="data" (action)="onGridAction($event)"></mc-grid>
+    <ng-template #popupTpl>
+      <h6>{{gridCell.name}} {{gridCell.field}} {{gridCell.field === 'tags' ? '' : gridCell.value}}</h6>
+      <ng-container *ngIf="gridCell.field === 'tags'">
+        <mc-list-basic [data]="gridCell.value" style="height:100px;margin-top: 20px;"></mc-list-basic>
+      </ng-container>
+    </ng-template>
+    <ng-template #drawerTpl>
+      <div style="padding: 20px;padding-top: 75px;width: 240px;">
+        <h6>{{gridCell.name}} {{gridCell.field}}</h6>
+        <mc-list-basic [data]="gridCell.value" style="margin-top: 20px;"></mc-list-basic>
+      </div>
+    </ng-template>
+  </div>
+</div>

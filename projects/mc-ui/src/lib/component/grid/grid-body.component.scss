@@ -1,18 +1,37 @@
+@import "./../../css/vars";
 :host {
   display: block;
   position: relative;
   height: 100%;
+  border: 1px solid $c-border;
+  border-radius: 3px;
   .grid-body {
     border-collapse: collapse;
     border-spacing: 0;
     &--row {
+      border-top: 1px solid transparent;
+      border-bottom: 1px solid $c-border;
       &--cell {
         padding: 0;
+        cursor: pointer;
         &--content {
           text-overflow: ellipsis;
           white-space: nowrap;
           overflow: hidden;
           padding: 0 10px;
+        }
+      }
+    }
+  }
+
+  &.is-scroll-page {
+    border: 0;
+    &.is-last-page {
+      .grid-body {
+        &--row {
+          &:last-child {
+            border-bottom-color: transparent;
+          }
         }
       }
     }

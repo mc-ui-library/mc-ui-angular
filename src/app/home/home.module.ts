@@ -11,14 +11,14 @@ import {
 import {
     HomeRoutingModule
 } from './home-routing.module';
-import { HomeLeftMenuComponent } from './home-left-menu/home-left-menu.component';
 import { ExampleModule } from './example/example.module';
+import { HomeHeaderComponent } from './home-header/home-header.component';
 
 @NgModule({
     imports: [MCUIModule, HomeRoutingModule, ExampleModule],
     declarations: [
         HomeComponent,
-        HomeLeftMenuComponent,
+        HomeHeaderComponent,
     ],
     entryComponents: [
     ],

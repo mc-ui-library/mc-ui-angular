@@ -1,6 +1,21 @@
+@import "../../css/vars";
 :host {
   display: block;
   position: relative;
   height: 100%;
+  width: 100%;
   overflow: auto;
+  border: 1px solid $c-border;
+  border-radius: 3px;
+
+  &.horizontal {
+    border: 0;
+    border-radius: 0;
+    display: inline-block;
+    width: auto;
+  }
+
+  &.is-scroll-page {
+    border: 0;
+  }
 }

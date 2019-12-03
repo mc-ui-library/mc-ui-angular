@@ -1,5 +1,8 @@
+@import "../../css/vars";
 :host {
   display: block;
   position: relative;
   height: 100%;
+  border: 1px solid $c-border;
+  border-radius: 3px;
 }

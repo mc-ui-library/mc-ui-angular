@@ -1,5 +1,36 @@
+@import "./../../css/vars";
 :host {
     display: inline-block;
     position: relative;
     cursor: pointer;
+    padding: 0 20px;
+    width: 100%;
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid $c-border;
+
+    &:last-child {
+      border-bottom-color: transparent;
+    }
+
+    &.selected {}
+
+    &.horizontal {
+      float: left;
+      width: auto;
+      border-color: transparent;
+      &.selected {
+        border-bottom: 2px solid $c-gray-bbb;
+      }
+    }
+
+    &.is-scroll-page-item {
+        &:last-child {
+          border-bottom-color: $c-border;
+        }
+        &.is-last-page-item {
+            &:last-child {
+              border-bottom-color: transparent;
+            }
+        }
+    }
 }

@@ -1,3 +1,5 @@
-<div *ngFor="let item of data; trackBy: key" class="list--item" [style.height.px]="rowHeight">
-  <mc-list-item [tpl]="itemTpl" [idField]="idField" [nameField]="nameField" [data]="item" [hasCheckBox]="multiSelect" [hasDeleteButton]="delete" [selected]="selectedItemsMap.has('' + item[idField])" (action)="onListItemAction($event)"></mc-list-item>
-</div>
+<mc-list-item *ngFor="let item of data; trackBy: key" [style.height]="horizontal ? '100%' : rowHeight + 'px'" [style.lineHeight]="horizontal ? '' : (rowHeight - 2) + 'px'"
+  [tpl]="itemTpl" [idField]="idField" [nameField]="nameField" [data]="item" [hasCheckBox]="multiSelect"
+  [hasDeleteButton]="delete" [selected]="selectedItemsMap.has('' + item[idField])" [class.horizontal]="horizontal" [class.is-scroll-page-item]="isScrollPage"
+  [class.is-first-page-item]="isFirstPage" [class.is-last-page-item]="isLastPage" (action)="onListItemAction($event)">
+  </mc-list-item>

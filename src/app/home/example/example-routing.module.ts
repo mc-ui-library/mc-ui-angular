@@ -5,22 +5,12 @@ import {
   RouterModule,
   Routes
 } from '@angular/router';
-import {
-  GridExampleComponent,
-  ListExampleComponent
-} from './';
 import { ExampleComponent } from './example.component';
 
 const exampleRoutes: Routes = [{
   path: '',
   component: ExampleComponent,
-  children: [{
-    path: 'list',
-    component: ListExampleComponent
-  }, {
-    path: 'grid',
-    component: GridExampleComponent
-  }]
+  children: []
 }];
 
 @NgModule({

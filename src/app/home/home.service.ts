@@ -11,8 +11,7 @@ const CONS = {
   homeLeftMenu: {
     data: {
       menu: [
-        { id: '/home/example/list', name: 'List', depth: 0 },
-        { id: '/home/example/grid', name: 'Grid', depth: 0 },
+        { id: '/home/example', name: 'Components', depth: 0 },
         // { id: '/home/example/button', name: 'Button', depth: 0 },
         // { id: '/home/example/drawer', name: 'Drawer', depth: 0 },
         // { id: '/home/example/form', name: 'Form', depth: 0 },

@@ -1,10 +1,8 @@
 import {
   Component,
   Input,
-  EventEmitter,
   ElementRef,
   HostBinding,
-  Output,
   HostListener
 } from '@angular/core';
 import {
@@ -30,7 +28,6 @@ export class ListItemComponent extends BaseComponent {
   @Input() hasDeleteButton = false;
 
   @HostBinding('class.selected') @Input() selected = false;
-  @HostBinding('style.height') @Input() height = '30px';
 
   @HostListener('click', ['$event'])
   onPress(e: any) {

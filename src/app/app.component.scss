@@ -1,5 +1,6 @@
 @import '../css/vars';
 
-app-root {
+:host {
   @include container;
+  overflow: auto;
 }

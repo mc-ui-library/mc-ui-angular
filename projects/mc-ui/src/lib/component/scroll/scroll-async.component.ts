@@ -32,8 +32,13 @@ export class ScrollAsyncComponent extends BaseComponent {
   rowCount;
   isLoading = false;
 
+  page1IsFirst = false;
+  page2IsFirst = false;
+  page1IsLast = false;
+  page2IsLast = false;
+
   @Input() idField = 'id';
-  @Input() rowHeight = 30;
+  @Input() rowHeight = 45;
   @Input()
   set data(value: ScrollData) {
     if (value) {
@@ -132,6 +137,10 @@ export class ScrollAsyncComponent extends BaseComponent {
       this.page2Indexes.end = e.page2EndIndex;
       this.updateData(this.page2Indexes, 2);
     }
+    this.page1IsLast = e.page1IsLast;
+    this.page2IsLast = e.page2IsLast;
+    this.page1IsFirst = e.page1IsFirst;
+    this.page2IsFirst = e.page2IsFirst;
   }
 
   onAction(e) {

@@ -1,31 +1,30 @@
+// Primary colors
+$c-orange-b: #f36705;
+$c-orange: #f88300;
+$c-orange-l: #ffb302;
 
-$c-green-light: #bcfcb1;
-$c-green: #23BF08;
-$c-green-dark: #1c9806;
-$c-orange: #F49917;
-$c-red-light: #f7d1d5;
-$c-red: #DC3545;
-$c-red-dark: #b51f2e;
-$c-blue: #0866C6;
-$c-black: #343a40;
-$c-gray: #d0d4e7;
-$c-teal: #17A2B8;
-$c-purple: #6610f2;
+// Second colors
+$c-cyan-b: #39aaad;
+$c-cyan: #6bc3bd;
+$c-cyan-l: #e3f6f8;
 
-$c-black-60: rgba(0, 0, 0, 0.6);
-$c-black-15: rgba(0, 0, 0, 0.15);
-$c-white-30: rgba(255, 255, 255, 0.3);
-$c-white-50: rgba(255, 255, 255, 0.5);
+$c-yellow: #eef66d;
 
-$c-text-input: #495057;
-$c-text-light: #868e96;
-$c-text: $c-black;
-$c-border: #ced4da;
+// Gray
+$c-black: #000;
+$c-gray-bbb: #333333;
+$c-gray-bb: #726f6a;
+$c-gray-b: #c9c5bb;
+$c-gray: #ebe8e3;
+$c-gray-l: #f7f7f7;
+$c-white: #fff;
 
-$c-success: $c-green;
+$c-text: $c-gray-bbb;
+$c-border: $c-gray;
+
+$c-success: $c-cyan;
 $c-warning: $c-orange;
-$c-error: $c-red;
-
+$c-error: $c-orange-b;
 
 @mixin container {
   display: block;
@@ -47,4 +46,11 @@ $c-error: $c-red;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+@mixin card {
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.21);
+  border-radius: 3px;
+  padding: 25px;
 }

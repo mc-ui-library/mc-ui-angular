@@ -7,10 +7,7 @@ import {
 import {
   Component,
   ElementRef,
-
   Input,
-  Output,
-  EventEmitter,
   HostListener
 } from '@angular/core';
 
@@ -27,7 +24,7 @@ export class GridBodyComponent extends BaseComponent {
   private _columns;
   private lastWidth = 0;
 
-  @Input() rowHeight = 30;
+  @Input() rowHeight = 45;
   @Input()
   set columns(value) {
     this._columns = value;
@@ -75,7 +72,7 @@ export class GridBodyComponent extends BaseComponent {
 
   checkSize() {
     // emit width for prevent x scroll
-    const width = this.el.clientWidth;
+    const width = this.el.querySelector('.grid-body').clientWidth;
     if (width && this.lastWidth !== width) {
       this.lastWidth = width;
       this.action.emit({ action: 'update-width', target: this, width });

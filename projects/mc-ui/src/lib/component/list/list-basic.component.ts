@@ -8,6 +8,7 @@ import {
   Component,
   ElementRef,
   Input,
+  HostBinding,
 } from '@angular/core';
 
 @Component({
@@ -19,12 +20,11 @@ import {
 export class ListBasicComponent extends BaseComponent {
 
   private _data: any[];
-  private _selectedItems: any[];
 
   // checking the selected item ids
   selectedItemsMap = new Map();
 
-  @Input() rowHeight = 30;
+  @Input() rowHeight = 45; // horizontal ? 100% : rowHeight;
   @Input() multiSelect = false;
   @Input()
   set selectedItems(value: any[]) {
@@ -34,7 +34,7 @@ export class ListBasicComponent extends BaseComponent {
     }
   }
   get selectedItems() {
-    return this._selectedItems;
+    return this.getSelectedItems();
   }
   @Input() delete = false;
   @Input()
@@ -60,12 +60,31 @@ export class ListBasicComponent extends BaseComponent {
   @Input() idField = 'id';
   @Input() nameField = 'name';
 
+  @Input() isLastPage = false;
+  @Input() isFirstPage = false;
+  @HostBinding('class.is-scroll-page') @Input() isScrollPage = false;
+  @HostBinding('class.horizontal') @Input() horizontal = false;
+
   constructor(protected _el: ElementRef, protected _service: MCUIService) {
     super(_el, _service);
   }
 
+  afterRenderCmp() {
+    // if it has the selected item.
+    const selectedItems = this.getSelectedItems();
+    if (selectedItems.length) {
+      this.emitAction('select-item', selectedItems[0]);
+    }
+  }
+
   key(index: number, item: any) {
     return item[this.idField];
+  }
+
+  getSelectedItems() {
+    const items = [];
+    this.selectedItemsMap.forEach(value => items.push(value));
+    return items;
   }
 
   selectItem(item) {
@@ -78,6 +97,10 @@ export class ListBasicComponent extends BaseComponent {
     this.selectedItemsMap.delete(item[this.idField] + '');
   }
 
+  emitAction(actionType, selectedItem, event = null) {
+    this.action.emit({ target: this, action: actionType, event: event, selectedItem: selectedItem, selectedItems: this.getSelectedItems() });
+  }
+
   onListItemAction(e) {
     switch (e.action) {
       case 'unselect-item':
@@ -87,9 +110,7 @@ export class ListBasicComponent extends BaseComponent {
         } else {
           this.unselectItem(e.data);
         }
-        e.target = this;
-        e.selectedItems = this.selectedItemsMap.values();
-        this.action.emit(e);
+        this.emitAction(e.action, e.data, e.event);
         break;
     }
   }
