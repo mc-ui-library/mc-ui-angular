@@ -14,6 +14,11 @@ add example url
 
 https://mc-ui-library.github.io/
 
+- v0.1.2
+
+add styles for List and Grid Components
+Update Examples
+
 ## Further help
 
 go check out the [MC UI](https://github.com/mc-ui-library/mc-ui-angular).

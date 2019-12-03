@@ -6,7 +6,7 @@
     <div *ngFor="let item of popupSelectedItems" class="popup-list--header--selected-items--item">
       <div class="popup-list--header--selected-items--item--name">{{item[nameField]}}</div>
       <div class="popup-list--header--selected-items--item--delete">
-        <mc-button theme="icon" (click)="onClicUnselectButton(item)">
+        <mc-button theme="icon" (click)="onClickUnselectButton(item)">
           <mc-icon [theme]="['close', 'button']"></mc-icon>
         </mc-button>
       </div>

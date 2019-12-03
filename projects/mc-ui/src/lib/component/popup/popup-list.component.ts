@@ -92,7 +92,7 @@ export class PopupListComponent extends PopupComponent {
     this.filterDebounce(e.value);
   }
 
-  onClicUnselectButton(item) {
+  onClickUnselectButton(item) {
     this.listCmp.unselectItem(item);
   }
 

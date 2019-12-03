@@ -22,6 +22,9 @@ export {
   InputComponent
 } from './lib/component/form/field/input/input.component';
 export {
+  DropdownComponent
+} from './lib/component/form/field/dropdown/dropdown.component';
+export {
   FormComponent
 } from './lib/component/form/form.component';
 export {
@@ -66,6 +69,9 @@ export {
 export {
   PopupComponent
 } from './lib/component/popup/popup.component';
+export {
+  PopupListComponent
+} from './lib/component/popup/popup-list.component';
 export {
   Column,
   ScrollData,

@@ -28,6 +28,7 @@ import { GridComponent } from './component/grid/grid.component';
 import { PopupComponent } from './component/popup/popup.component';
 import { PopupListComponent } from './component/popup/popup-list.component';
 import { MCUIService } from './mc-ui.service';
+import { DropdownComponent } from './component/form/field/dropdown/dropdown.component';
 
 @NgModule({
   imports: [
@@ -54,7 +55,8 @@ import { MCUIService } from './mc-ui.service';
     GridComponent,
     MaskComponent,
     PopupComponent,
-    PopupListComponent
+    PopupListComponent,
+    DropdownComponent
   ],
   entryComponents: [
     PopupComponent,
@@ -82,7 +84,8 @@ import { MCUIService } from './mc-ui.service';
     GridComponent,
     MaskComponent,
     PopupComponent,
-    PopupListComponent
+    PopupListComponent,
+    DropdownComponent
   ],
   providers: [MCUIService]
 })

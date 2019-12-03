@@ -2,6 +2,7 @@
 
 :host {
   @include container;
+  background-color: $c-bg;
   .example {
     &--header {
       padding: 5px 0 25px 0;
