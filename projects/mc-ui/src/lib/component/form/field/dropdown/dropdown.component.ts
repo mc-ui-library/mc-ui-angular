@@ -30,9 +30,9 @@ export class DropdownComponent extends FieldBaseComponent {
 
   // **** bypass popup list properties ****
   @Input() itemTpl: any;
-  @Input() idField: string;
-  @Input() nameField: string;
-  @Input() rowHeight: number;
+  @Input() idField = 'id';
+  @Input() nameField = 'name';
+  @Input() rowHeight = 45;
   @Input() multiSelect = false;
   @Input() selectedItems: any[] = [];
   @Input() data: ScrollData;

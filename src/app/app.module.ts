@@ -4,7 +4,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SigninComponent, AuthService } from './auth';
 import { HomeModule } from './home/home.module';
-import { MCUIModule } from '../../projects/mc-ui/src/lib/mc-ui.module'; //'mc-ui-angular';
+import { MCUIModule } from 'projects/mc-ui/src/public-api';
 
 @NgModule({
   declarations: [

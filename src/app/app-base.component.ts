@@ -8,9 +8,7 @@ import {
 import {
   Subscription
 } from 'rxjs';
-import {
-  MCUIService
-} from 'mc-ui-angular';
+import { MCUIService } from 'projects/mc-ui/src/public-api';
 
 export class AppBaseComponent implements OnInit, OnDestroy, AfterViewInit {
 

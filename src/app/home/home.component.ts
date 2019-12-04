@@ -2,14 +2,11 @@
 import {
   Component,
   ViewContainerRef,
-  HostBinding,
 } from '@angular/core';
 import {
   AppBaseComponent
 } from '../index';
-import {
-  MCUIService
-} from 'mc-ui-angular';
+import { MCUIService } from 'projects/mc-ui/src/public-api';
 
 @Component({
   selector: 'mc-home',

@@ -6,17 +6,13 @@ import {
 import {
   AppBaseComponent
 } from '../../index';
-import {
-  MCUIService
-} from 'mc-ui-angular';
+import { MCUIService, PopupComponent, DrawerComponent } from 'projects/mc-ui/src/public-api';
 import {
   HomeService
 } from '../home.service';
 import {
   TemplateRef
 } from '@angular/core';
-import { PopupComponent } from 'mc-ui-angular';
-import { DrawerComponent } from 'mc-ui-angular';
 
 @Component({
   selector: 'mc-example',

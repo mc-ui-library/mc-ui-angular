@@ -8,9 +8,7 @@ import {
 import {
   Router
 } from '@angular/router';
-import {
-  MCUIService
-} from 'mc-ui-angular';
+import { MCUIService } from 'projects/mc-ui/src/public-api';
 import { HomeService } from '../home.service';
 
 @Component({

@@ -1,11 +1,10 @@
-import {
-  MCUIService
-} from 'mc-ui-angular';
+
 import {
   OnDestroy
 } from '@angular/core';
 import { map, catchError } from 'rxjs/operators';
 import { Url } from 'src/config/url';
+import { MCUIService } from 'projects/mc-ui/src/public-api';
 
 const CONS = {};
 

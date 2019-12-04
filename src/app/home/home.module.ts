@@ -5,9 +5,7 @@ import {
     HomeComponent,
     HomeService,
 } from '.';
-import {
-    MCUIModule
-} from '../../../projects/mc-ui/src/lib/mc-ui.module'; //'mc-ui-angular';
+import { MCUIModule } from 'projects/mc-ui/src/public-api';
 import {
     HomeRoutingModule
 } from './home-routing.module';

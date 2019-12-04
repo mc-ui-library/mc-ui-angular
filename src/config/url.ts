@@ -1,6 +1,4 @@
-import {
-  MCUIService
-} from 'mc-ui-angular';
+import { MCUIService } from 'projects/mc-ui/src/public-api';
 import {
   user_mock
 } from 'src/test/api/user_mock';

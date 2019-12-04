@@ -1,9 +1,7 @@
 import {
   Injectable
 } from '@angular/core';
-import {
-  MCUIService
-} from 'mc-ui-angular';
+import { MCUIService } from 'projects/mc-ui/src/public-api';
 import { AppBaseService } from '../app-base.service';
 import { user_mock } from 'src/test/api';
 

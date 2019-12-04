@@ -6,9 +6,7 @@ import {
   AppBaseComponent
 } from '../../index';
 import { Router } from '@angular/router';
-import {
-  MCUIService
-} from 'mc-ui-angular';
+import { MCUIService } from 'projects/mc-ui/src/public-api';
 import { AuthService } from '../auth.service';
 
 @Component({
