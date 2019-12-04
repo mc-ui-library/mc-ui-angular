@@ -1,18 +1,16 @@
+@import "../../../../css/vars";
 :host {
   display: block;
   position: relative;
   .input--input {
     display: inline-block;
     width: 100%;
-    padding: 0.65rem 0.75rem;
-    line-height: 1.25;
-    color: #000;
+    padding: 0 10px;
+    line-height: 43px; // since the field height is 45px with border.
+    color: $c-text;
     background-color: #fff;
-    background-image: none;
-    background-clip: padding-box;
-    border: 1px solid #000;
+    border: 1px solid $c-border;
     border-radius: 3px;
-    transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
   }
 
   &.readonly {

@@ -46,7 +46,6 @@ export class ExampleComponent extends AppBaseComponent {
     super(er, service);
   }
 
-
   showPopup(el) {
     let instance = this.popupCmp ? this.popupCmp.instance : null;
     if (!this.popupCmp) {
@@ -97,10 +96,10 @@ export class ExampleComponent extends AppBaseComponent {
 
   destroyCmp() {
     if (this.popupCmp) {
-      this.popupCmp.destroy();
+      this.service.removeComponent(this.popupCmp);
     }
     if (this.drawerCmp) {
-      this.drawerCmp.destroy();
+      this.service.removeComponent(this.drawerCmp);
     }
   }
 }

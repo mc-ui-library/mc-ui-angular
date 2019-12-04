@@ -1,6 +1,10 @@
-<div class="popup-list--header">
-  <div class="popup-list--header--input" [style.width.px]="lastTargetElCoord.width" [style.height.px]="lastTargetElCoord.height">
-    <mc-input (valueChange)="onValueChange($event)"></mc-input>
+<div *ngIf="indicatorLocation[0] === 't'" class="popup-list--header">
+  <div class="popup-list--header--input" [style.width.px]="lastTargetElCoord.width"
+    [style.height.px]="lastTargetElCoord.height">
+    <mc-input class="popup-list--header--input--input" (valueChange)="onValueChange($event)"></mc-input>
+    <div class="popup-list--header--input--icon">
+      <mc-icon theme="down"></mc-icon>
+    </div>
   </div>
   <div *ngIf="multiSelect" class="popup-list--header--selected-items">
     <div *ngFor="let item of popupSelectedItems" class="popup-list--header--selected-items--item">
@@ -15,5 +19,24 @@
 </div>
 <mc-list #listCmp [data]="listData" [itemTpl]="itemTpl" [idField]="idField" [nameField]="nameField"
   [rowHeight]="rowHeight" [multiSelect]="multiSelect" [selectedItems]="selectedItems"
-  [additionalData]="additionalData" (action)="onListAction($event)" [style.height.px]="listHeight">
+  [additionalData]="additionalData" (needData)="onListNeedData($event)" (action)="onListAction($event)" [style.height.px]="listHeight">
 </mc-list>
+<div *ngIf="indicatorLocation[0] !== 't'" class="popup-list--header">
+  <div *ngIf="multiSelect" class="popup-list--header--selected-items">
+    <div *ngFor="let item of popupSelectedItems" class="popup-list--header--selected-items--item">
+      <div class="popup-list--header--selected-items--item--name">{{item[nameField]}}</div>
+      <div class="popup-list--header--selected-items--item--delete">
+        <mc-button theme="icon" (click)="onClickUnselectButton(item)">
+          <mc-icon [theme]="['close', 'button']"></mc-icon>
+        </mc-button>
+      </div>
+    </div>
+  </div>
+  <div class="popup-list--header--input" [style.width.px]="lastTargetElCoord.width"
+    [style.height.px]="lastTargetElCoord.height">
+    <mc-input class="popup-list--header--input--input" (valueChange)="onValueChange($event)"></mc-input>
+    <div class="popup-list--header--input--icon">
+      <mc-icon theme="down"></mc-icon>
+    </div>
+  </div>
+</div>

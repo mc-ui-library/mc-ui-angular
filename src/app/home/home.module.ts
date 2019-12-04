@@ -7,7 +7,7 @@ import {
 } from '.';
 import {
     MCUIModule
-  } from 'mc-ui-angular';
+} from '../../../projects/mc-ui/src/lib/mc-ui.module'; //'mc-ui-angular';
 import {
     HomeRoutingModule
 } from './home-routing.module';

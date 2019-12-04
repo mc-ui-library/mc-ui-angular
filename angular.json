@@ -29,7 +29,8 @@
             ],
             "styles": [
               "src/css/main.scss",
-              "src/css/theme.scss"
+              "src/css/theme.scss",
+              "src/css/icon.scss"
             ],
             "scripts": []
           },
@@ -95,7 +96,8 @@
             ],
             "styles": [
               "src/css/main.scss",
-              "src/css/theme.scss"
+              "src/css/theme.scss",
+              "src/css/icon.scss"
             ],
             "scripts": []
           }

@@ -31,12 +31,14 @@ export class PopupComponent extends BaseComponent {
   private indicatorHeight = 10;
 
   lastTargetElCoord;
+  indicatorLocation = 'bl'; // 'tl' | 'tr' | 'bl' | 'br' = 'bl'
 
   @Input() checkTargetLocation = false;
   // top left is the base state.
-  @Input() startFrom: 'center' | 'start' = 'center';
+  @Input() startFrom: 'center' | 'start' | 'overlap' = 'center';
   @Input() offsetX = 0;
   @Input() offsetY = 0;
+  @Input() useTargetWidth = false;
   @Input() tpl: TemplateRef < any > = null;
   @Input()
   set targetEl(value: HTMLElement) {
@@ -99,6 +101,8 @@ export class PopupComponent extends BaseComponent {
     this.uncheckTargetLocation();
     this.checkTargetElLocation();
 
+    // for updating the last size;
+    this.lastTargetElCoord = this.targetEl.getBoundingClientRect();
     this.el.style.visibility = 'hidden';
     this.el.style.display = '';
     // after the targetEl is changed.
@@ -113,8 +117,8 @@ export class PopupComponent extends BaseComponent {
       const isLeft = targetSize.left + (this.startFrom === 'center' ? targetSize.width / 2 : 0) + popupSize.width  + this.offsetX <= windowSize.width;
       const isTop =  targetSize.top  + targetSize.height    + popupSize.height + this.offsetY + indicatorHeight <= windowSize.height;
       const left = isLeft ? targetSize.left + (this.startFrom === 'center' ? targetSize.width / 2 : 0) + this.offsetX : targetSize.left - popupSize.width + (this.startFrom === 'center' ? targetSize.width / 2 : targetSize.width) - this.offsetX;
-      const top = isTop ? targetSize.top + targetSize.height + this.offsetY + indicatorHeight : targetSize.top - popupSize.height - this.offsetY - indicatorHeight;
-
+      const top = isTop ? targetSize.top + (this.startFrom === 'overlap' ? 0 : targetSize.height) + this.offsetY + indicatorHeight : targetSize.top - popupSize.height - this.offsetY - indicatorHeight + (this.startFrom === 'overlap' ? targetSize.height : 0);
+      this.indicatorLocation = (isTop ? 't' : 'b') + (isLeft ? 'l' : 'r');
       this.el.style.left = left + 'px';
       this.el.style.top = top + 'px';
       // remove the prev indicator and add the new indicator

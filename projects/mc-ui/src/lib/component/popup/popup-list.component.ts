@@ -23,7 +23,6 @@ export class PopupListComponent extends PopupComponent {
 
   private filterDebounce;
   private keyword;
-  private items: any;
 
   private _data: ScrollData;
   private _selectedItems: any[];
@@ -65,7 +64,7 @@ export class PopupListComponent extends PopupComponent {
 
   // popup
   @Input() height = 350;
-  @Input() startFrom: 'start' = 'start';
+  @Input() startFrom: 'overlap' = 'overlap';
 
   @Output() valueChange: EventEmitter<any> = new EventEmitter();
   @Output() needData: EventEmitter<any> = new EventEmitter();
@@ -77,6 +76,10 @@ export class PopupListComponent extends PopupComponent {
 
   show() {
     super.show();
+    setTimeout(() => {
+      // focus
+      this.el.querySelector('.popup-list--header--input--input').querySelector('input').focus();
+    });
   }
 
   filter(keyword) {
@@ -110,5 +113,10 @@ export class PopupListComponent extends PopupComponent {
         this.action.emit(e);
         break;
     }
+  }
+
+  onListNeedData(e) {
+    e.target = this;
+    this.needData.emit(e);
   }
 }

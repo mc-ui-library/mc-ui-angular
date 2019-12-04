@@ -50,9 +50,10 @@ export class MCUIService {
     return cmp;
   }
 
-  removeComponentEl(cmp) {
+  removeComponent(cmp) {
     this.appRef.detachView(cmp.hostView);
     cmp.destroy();
+    cmp = null;
   }
 
   getBody() {
