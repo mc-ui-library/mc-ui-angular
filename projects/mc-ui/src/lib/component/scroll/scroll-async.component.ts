@@ -41,7 +41,12 @@ export class ScrollAsyncComponent extends BaseComponent {
   @Input() rowHeight = 45;
   @Input()
   set data(value: ScrollData) {
+    // console.log('update scroll data', value);
     if (value) {
+      // init page
+      this.page1Indexes = { start: 0, end: 0 };
+      this.page2Indexes = { start: 0, end: 0 };
+
       let data: ScrollData;
       if (Array.isArray(value)) {
         data = {
@@ -101,13 +106,14 @@ export class ScrollAsyncComponent extends BaseComponent {
   updateData(indexes, pageIndex) {
     const start = indexes.start;
     const end = indexes.end;
-    if (!this.data.rows[start]) {
+    if (this.rowCount && !this.data.rows[start]) {
       this.neededPageIndex = pageIndex;
       // skip the same request.
       if (this.neededDataIndex !== start) {
         this.isLoading = true;
         this.neededDataIndex = start;
         this.needData.emit({
+          target: this,
           index: this.neededDataIndex,
           action: 'append'
         }); // when tree, it needs to insert data

@@ -89,12 +89,17 @@ export class ListBasicComponent extends BaseComponent {
 
   selectItem(item) {
     // TODO: check the list is rerendered.
+    if (!this.multiSelect) {
+      this.selectedItemsMap = new Map();
+    }
     this.selectedItemsMap.set(item[this.idField] + '', item);
   }
 
   unselectItem(item) {
     // TODO: check the list is rerendered.
-    this.selectedItemsMap.delete(item[this.idField] + '');
+    if (this.multiSelect) {
+      this.selectedItemsMap.delete(item[this.idField] + '');
+    }
   }
 
   emitAction(actionType, selectedItem, event = null) {

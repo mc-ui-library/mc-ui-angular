@@ -1,7 +1,8 @@
 <div *ngIf="indicatorLocation[0] === 't'" class="popup-list--header">
   <div class="popup-list--header--input" [style.width.px]="lastTargetElCoord.width"
     [style.height.px]="lastTargetElCoord.height">
-    <mc-input class="popup-list--header--input--input" (valueChange)="onValueChange($event)"></mc-input>
+    <mc-input #inputCmp1 class="popup-list--header--input--input" [value]="lastSelectedName"
+      (valueChange)="onValueChange($event)"></mc-input>
     <div class="popup-list--header--input--icon">
       <mc-icon theme="down"></mc-icon>
     </div>
@@ -18,7 +19,7 @@
   </div>
 </div>
 <mc-list #listCmp [data]="listData" [itemTpl]="itemTpl" [idField]="idField" [nameField]="nameField"
-  [rowHeight]="rowHeight" [multiSelect]="multiSelect" [selectedItems]="selectedItems"
+  [rowHeight]="rowHeight" [multiSelect]="multiSelect" [selectedItems]="listSelectedItems"
   [additionalData]="additionalData" (needData)="onListNeedData($event)" (action)="onListAction($event)" [style.height.px]="listHeight">
 </mc-list>
 <div *ngIf="indicatorLocation[0] !== 't'" class="popup-list--header">
@@ -34,7 +35,7 @@
   </div>
   <div class="popup-list--header--input" [style.width.px]="lastTargetElCoord.width"
     [style.height.px]="lastTargetElCoord.height">
-    <mc-input class="popup-list--header--input--input" (valueChange)="onValueChange($event)"></mc-input>
+    <mc-input #inputCmp2 class="popup-list--header--input--input" [value]="lastSelectedName" (valueChange)="onValueChange($event)"></mc-input>
     <div class="popup-list--header--input--icon">
       <mc-icon theme="down"></mc-icon>
     </div>

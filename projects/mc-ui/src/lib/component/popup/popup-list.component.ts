@@ -1,3 +1,5 @@
+// TODO: When the rowCount is under the 1page row count, it triggers needdata, also, the list height is still keep the max height. The height should be adjusted. Grid also needs that.
+
 import {
   Component,
   ElementRef,
@@ -12,6 +14,7 @@ import { PopupComponent } from './popup.component';
 import { EventEmitter } from '@angular/core';
 import { ScrollData } from '../model';
 import { ListComponent } from '../list/list.component';
+import { InputComponent } from '../form/field/input/input.component';
 
 @Component({
   selector: 'mc-popup-list',
@@ -25,13 +28,17 @@ export class PopupListComponent extends PopupComponent {
   private keyword;
 
   private _data: ScrollData;
-  private _selectedItems: any[];
 
   listData: any;
   listHeight = 300;
-  popupSelectedItems = [];
+  // for displaying the selections.
+  popupSelectedItems: any[] = [];
+  listSelectedItems: any[] = [];
+  lastSelectedName = '';
 
   @ViewChild('listCmp', {static: false}) listCmp: ListComponent;
+  @ViewChild('inputCmp1', { static: false }) inputCmp1: InputComponent;
+  @ViewChild('inputCmp2', { static: false }) inputCmp2: InputComponent;
 
   // list properties
   @Input() itemTpl: any;
@@ -39,20 +46,20 @@ export class PopupListComponent extends PopupComponent {
   @Input() nameField: string;
   @Input() rowHeight: number;
   @Input() multiSelect = false;
-  @Input()
-  set selectedItems(value: any[]) {
+  // read only
+  @Input() 
+  set selectedItems(value) {
     if (value) {
-      // input only
       this.popupSelectedItems = value.concat();
+      this.listSelectedItems = value.concat();
+      this.lastSelectedName = value.length ? value[0][this.nameField] : '';
     }
-  }
-  get selectedItems() {
-    return this._selectedItems;
   }
   @Input()
   set data(value: ScrollData) {
     // input only
     this._data = value;
+    // console.log('update popup list data', value);
     // update list for calculating scroll height after updating header height.
     setTimeout(() => this.listData = value);
   }
@@ -66,7 +73,6 @@ export class PopupListComponent extends PopupComponent {
   @Input() height = 350;
   @Input() startFrom: 'overlap' = 'overlap';
 
-  @Output() valueChange: EventEmitter<any> = new EventEmitter();
   @Output() needData: EventEmitter<any> = new EventEmitter();
 
   constructor(protected er: ElementRef, protected service: MCUIService) {
@@ -74,11 +80,16 @@ export class PopupListComponent extends PopupComponent {
     this.filterDebounce = this.util.debounce(this.filter, 300, this);
   }
 
+  getInputCmp() {
+    return this.indicatorLocation[0] === 't' ? this.inputCmp1 : this.inputCmp2;
+  }
+
   show() {
     super.show();
     setTimeout(() => {
       // focus
-      this.el.querySelector('.popup-list--header--input--input').querySelector('input').focus();
+      const inputCmp = this.getInputCmp();
+      inputCmp.focus();
     });
   }
 
@@ -86,13 +97,17 @@ export class PopupListComponent extends PopupComponent {
     if (keyword !== this.keyword) {
       this.needData.emit({
         target: this,
+        action: 'filter',
         keyword
       });
     }
   }
 
   onValueChange(e) {
-    this.filterDebounce(e.value);
+    // console.log('valueChange', e);
+    if (e.by === 'keyboard') {
+      this.filterDebounce(e.value);
+    }
   }
 
   onClickUnselectButton(item) {
@@ -103,16 +118,16 @@ export class PopupListComponent extends PopupComponent {
     switch (e.action) {
       case 'unselect-item':
       case 'select-item':
-        // update popup selected item
-        if (e.action === 'select-item') {
-          this.popupSelectedItems.push(e.item);
-        } else {
-          this.popupSelectedItems = this.popupSelectedItems.filter(d => d[this.idField] + '' !== e.item[this.idField] + '');
+        // for display the selections.
+        this.popupSelectedItems = e.selectedItems.concat();
+        if (!this.multiSelect) {
+          this.visible = false;
         }
-        e.target = this;
-        this.action.emit(e);
+        this.lastSelectedName = e.selectedItem[this.nameField];
         break;
     }
+    e.target = this;
+    this.action.emit(e);
   }
 
   onListNeedData(e) {

@@ -6,7 +6,7 @@ import {
 import {
   AppBaseComponent
 } from '../../index';
-import { MCUIService, PopupComponent, DrawerComponent } from 'projects/mc-ui/src/public-api';
+import { MCUIService, PopupComponent, DrawerComponent, ScrollData } from 'projects/mc-ui/src/public-api';
 import {
   HomeService
 } from '../home.service';
@@ -26,6 +26,9 @@ export class ExampleComponent extends AppBaseComponent {
 
   data = this.homeService.getUserListMock().data;
   gridCell: any = {};
+  dropdownData = this.data.concat();
+  listData = this.data.concat();
+  gridData = this.data.concat();
 
   @ViewChild('popupTpl', {
     static: false
@@ -86,6 +89,15 @@ export class ExampleComponent extends AppBaseComponent {
         } else {
           this.showDrawer();
         }
+        break;
+    }
+  }
+
+  onDropdownNeedData(e) {
+    switch(e.action) {
+      case 'filter':
+        this.dropdownData = this.service.util.data.search(this.data, e.keyword, 'name');
+        console.log('dropdown filter', this.dropdownData);
         break;
     }
   }

@@ -12,6 +12,8 @@ export class FieldBaseComponent extends BaseComponent {
 
   private _value: any = '';
 
+  valueChangedBy = '';
+
   @HostBinding('class.readonly') @Input() readonly = false;
 
   @Input() label = '';
@@ -30,6 +32,7 @@ export class FieldBaseComponent extends BaseComponent {
       this._value = value;
       this.valueChange.emit({
         target: this,
+        by: this.valueChangedBy,
         oldValue,
         value: this._value
       });
@@ -44,6 +47,8 @@ export class FieldBaseComponent extends BaseComponent {
   constructor(protected er: ElementRef, protected service: MCUIService) {
     super(er, service);
   }
+
+  focus() {}
 
   onValueChange(e: any) {
     if (JSON.stringify(e.value) !== JSON.stringify(this.value)) {

@@ -47,9 +47,14 @@ export class ScrollComponent extends BaseComponent {
   set rowCount(value: number) {
     if (!this.util.isEmpty(value)) {
       this._rowCount = value;
+      // init value
+      this.page1Index = -2;
+      this.page2Index = -1;
+      this.scrollTop = 0;
+      this.oldScrollTop = -1;
       // row count can be updated after rendering ui
       if (this.rendered) {
-        this.updateState();
+        this.updateState(true);
       }
     }
   }
@@ -80,7 +85,7 @@ export class ScrollComponent extends BaseComponent {
     };
   }
 
-  updateState() {
+  updateState(refresh = false) {
     const scrollTop = this.scrollTop;
     const isDown = this.oldScrollTop < scrollTop;
     const rowHeight = this.rowHeight;
@@ -95,7 +100,7 @@ export class ScrollComponent extends BaseComponent {
     const pageLastIndex = Math.floor(contentHeight / pageHeight);
     const nextPageIndex = isDown ? Math.ceil(scrollTop / pageHeight) : Math.floor(scrollTop / pageHeight);
     // console.log(nextPageIndex, pageLastIndex, page1Index, page2Index);
-    if (nextPageIndex <= pageLastIndex && page1Index !== nextPageIndex && page2Index !== nextPageIndex) {
+    if (refresh || (nextPageIndex <= pageLastIndex && page1Index !== nextPageIndex && page2Index !== nextPageIndex)) {
       // It may not have two pages at all. keep the full logic for readability.
       if (page1Index === -2) {
         // init
@@ -140,11 +145,13 @@ export class ScrollComponent extends BaseComponent {
         page2EndIndex,
         page1Index,
         page2Index,
+        rowCount,
         pageLastIndex,
         page1IsFirst: page1Index === 0,
         page2IsFirst: page2Index === 0,
         page1IsLast: page1Index === pageLastIndex,
-        page2IsLast: page2Index === pageLastIndex
+        page2IsLast: page2Index === pageLastIndex,
+        refresh
       });
     }
     this.oldScrollTop = scrollTop;

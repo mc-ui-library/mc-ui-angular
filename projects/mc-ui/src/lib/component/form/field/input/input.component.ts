@@ -18,22 +18,24 @@ import {
 })
 export class InputComponent extends FieldBaseComponent {
 
+  private inputEl: HTMLInputElement;
+
   constructor(protected er: ElementRef, protected service: MCUIService) {
     super(er, service);
   }
 
+  focus(select = true) {
+    this.inputEl = this.inputEl || this.el.querySelector('.input--input');
+    this.inputEl.focus();
+    if (select) {
+      this.inputEl.select();
+    }
+  }
+
   onKeyUp(e) {
     // recommend strong typing, weak -> e.event.target
-    const value = e.target.value;
-    if (value !== this.value) {
-      const oldValue = this.value;
-      this.value = value;
-      this.valueChange.emit({
-        target: this,
-        event: e,
-        value: this.value,
-        oldValue
-      });
-    }
+    this.valueChangedBy = 'keyboard';
+    this.value = e.target.value;
+    this.valueChangedBy = '';
   }
 }

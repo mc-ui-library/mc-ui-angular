@@ -6,7 +6,7 @@
     <h6>list with Infinity Scroll</h6>
   </div>
   <div class="example--item--body" [style.height.px]="300">
-    <mc-list [data]="data" [itemTpl]="itemTpl">
+    <mc-list [data]="listData" [itemTpl]="itemTpl">
       <ng-template #itemTpl let-data>
         {{data.index}}: {{data.name}}
       </ng-template>
@@ -20,7 +20,7 @@
     <p>- Drawer example: Click the friends column cell </p>
   </div>
   <div class="example--item--body" [style.height.px]="300">
-    <mc-grid [data]="data" (action)="onGridAction($event)"></mc-grid>
+    <mc-grid [data]="gridData" (action)="onGridAction($event)"></mc-grid>
     <ng-template #popupTpl>
       <h6>{{gridCell.name}} {{gridCell.field}} {{gridCell.field === 'tags' ? '' : gridCell.value}}</h6>
       <ng-container *ngIf="gridCell.field === 'tags'">
@@ -40,6 +40,6 @@
     <h6>Dropdown</h6>
   </div>
   <div class="example--item--body" [style.height.px]="500">
-    <mc-dropdown [data]="data"></mc-dropdown>
+    <mc-dropdown [data]="dropdownData" (needData)="onDropdownNeedData($event)"></mc-dropdown>
   </div>
 </div>

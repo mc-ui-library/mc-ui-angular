@@ -26,6 +26,9 @@ export class DropdownComponent extends FieldBaseComponent {
 
   private popupListCmp: any;
 
+  private _selectedItems: any[] = [];
+  private _data: ScrollData;
+
   @Input() emptyText = 'Select...';
 
   // **** bypass popup list properties ****
@@ -34,8 +37,26 @@ export class DropdownComponent extends FieldBaseComponent {
   @Input() nameField = 'name';
   @Input() rowHeight = 45;
   @Input() multiSelect = false;
-  @Input() selectedItems: any[] = [];
-  @Input() data: ScrollData;
+  @Input() 
+  set data(value: ScrollData) {
+    if (value) {
+      this._data = value;
+      this.updatePopupListData(value);
+    }
+  }
+  get data() {
+    return this._data;
+  }
+  @Input()
+  set selectedItems(value: any[]) {
+    if (value) {
+      this._selectedItems = value;
+      this.updateSummary(value);
+    }
+  }
+  get selectedItems() {
+    return this._selectedItems;
+  }
 
   // infinite scroll
   @Input() additionalData: ScrollData;
@@ -54,6 +75,16 @@ export class DropdownComponent extends FieldBaseComponent {
     super(er, service);
   }
 
+  updateSummary(value) {
+    this.summary = value.length ? value.map(val => val[this.nameField]).join(', ') : this.emptyText;
+  }
+
+  updatePopupListData(data) {
+    if (data && this.popupListCmp) {
+      this.popupListCmp.instance.data = data;
+    }
+  }
+
   showPopupList() {
     let instance: PopupListComponent = this.popupListCmp ? this.popupListCmp.instance : null;
     if (!this.popupListCmp) {
@@ -67,19 +98,21 @@ export class DropdownComponent extends FieldBaseComponent {
       instance.nameField = this.nameField;
       instance.rowHeight = this.rowHeight;
       instance.multiSelect = this.multiSelect;
-      instance.selectedItems = this.selectedItems;
+      instance.selectedItems = this.selectedItems.concat();
       instance.additionalData = this.additionalData;
       instance.targetEl = this.el;
-      this.subscriptions = instance.valueChange.subscribe(e => {
-        e.target = this;
-        this.valueChange.emit(e);
-      });
       this.subscriptions = instance.needData.subscribe(e => {
         e.target = this;
         this.needData.emit(e);
       });
       this.subscriptions = instance.action.subscribe(e => {
         e.target = this;
+        switch (e.action) {
+          case 'unselect-item':
+          case 'select-item':
+            this.selectedItems = e.selectedItems;
+            break;
+        }
         this.action.emit(e);
       });
     }
