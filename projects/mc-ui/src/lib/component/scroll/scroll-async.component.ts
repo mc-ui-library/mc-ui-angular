@@ -21,12 +21,12 @@ export class ScrollAsyncComponent extends BaseComponent {
   private neededDataIndex = -1;
   private neededPageIndex = 1;
   private page1Indexes = {
-    start: 0,
-    end: 0
+    start: -1,
+    end: -1
   };
   private page2Indexes = {
-    start: 0,
-    end: 0
+    start: -1,
+    end: -1
   };
 
   page1Data;
@@ -48,8 +48,8 @@ export class ScrollAsyncComponent extends BaseComponent {
     // console.log('update scroll data', value);
     if (value) {
       // init page
-      this.page1Indexes = { start: 0, end: 0 };
-      this.page2Indexes = { start: 0, end: 0 };
+      this.page1Indexes = { start: -1, end: -1 };
+      this.page2Indexes = { start: -1, end: -1 };
 
       let data: ScrollData;
       if (Array.isArray(value)) {
@@ -73,7 +73,8 @@ export class ScrollAsyncComponent extends BaseComponent {
       this.rowCount = data.rowCount;
       // after rendering, it need to update the scroll state manually whenever the data is updated since the scroll doesn't have data property.
       if (this.rendered) {
-        this.scrollCmp.updateState(true);
+        // update after the rowCount is applied.
+        setTimeout(() => this.scrollCmp.updateState(true));
       }
     }
   }
@@ -114,8 +115,7 @@ export class ScrollAsyncComponent extends BaseComponent {
   updateData(indexes, pageIndex) {
     const start = indexes.start;
     const end = indexes.end;
-    const isEmptyPage = this.rowCount <= start;
-    if (this.rowCount && !isEmptyPage && !this.data.rows[start]) {
+    if (this.rowCount && !this.data.rows[start]) {
       this.neededPageIndex = pageIndex;
       // skip the same request.
       if (this.neededDataIndex !== start) {
@@ -128,7 +128,7 @@ export class ScrollAsyncComponent extends BaseComponent {
         }); // when tree, it needs to insert data
       }
     } else {
-      const data = !isEmptyPage ? this.data.rows.slice(start, end + 1) : [];
+      const data = this.data.rows.slice(start, end + 1);
       if (pageIndex === 1) {
         this.page1Data = data;
       } else {
@@ -142,15 +142,27 @@ export class ScrollAsyncComponent extends BaseComponent {
   }
 
   onUpdatePage(e: any) {
-    if (this.page1Indexes.start !== e.page1StartIndex || this.page1Indexes.end !== e.page1EndIndex) {
+    if (e.page1StartIndex < 0) {
       this.page1Indexes.start = e.page1StartIndex;
       this.page1Indexes.end = e.page1EndIndex;
-      this.updateData(this.page1Indexes, 1);
+      this.page1Data = [];
+    } else {
+      if (this.page1Indexes.start !== e.page1StartIndex || this.page1Indexes.end !== e.page1EndIndex) {
+        this.page1Indexes.start = e.page1StartIndex;
+        this.page1Indexes.end = e.page1EndIndex;
+        this.updateData(this.page1Indexes, 1);
+      }
     }
-    if (this.page2Indexes.start !== e.page2StartIndex || this.page2Indexes.end !== e.page2EndIndex) {
+    if (e.page2StartIndex < 0) {
       this.page2Indexes.start = e.page2StartIndex;
       this.page2Indexes.end = e.page2EndIndex;
-      this.updateData(this.page2Indexes, 2);
+      this.page2Data = [];
+    } else {
+      if (this.page2Indexes.start !== e.page2StartIndex || this.page2Indexes.end !== e.page2EndIndex) {
+        this.page2Indexes.start = e.page2StartIndex;
+        this.page2Indexes.end = e.page2EndIndex;
+        this.updateData(this.page2Indexes, 2);
+      }
     }
     this.page1IsLast = e.page1IsLast;
     this.page2IsLast = e.page2IsLast;

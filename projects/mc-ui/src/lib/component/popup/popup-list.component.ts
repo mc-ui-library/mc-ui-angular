@@ -1,5 +1,3 @@
-// TODO: after filtering and close and re-open the popup, the text box still has the last input, it should be initialized.
-
 import {
   Component,
   ElementRef,
@@ -25,16 +23,17 @@ import { InputComponent } from '../form/field/input/input.component';
 export class PopupListComponent extends PopupComponent {
 
   private filterDebounce;
-  private keyword;
+  private keyword = '';
 
   private _data: ScrollData;
 
   listData: any;
-  adjustedListHeight = '300px';
+  adjustedListHeight = 300;
   // for displaying the selections.
   popupSelectedItems: any[] = [];
   listSelectedItems: any[] = [];
   lastSelectedName = '';
+  lastSelectedItem;
 
   @ViewChild('listCmp', {static: false}) listCmp: ListComponent;
   @ViewChild('inputCmp1', { static: false }) inputCmp1: InputComponent;
@@ -48,17 +47,17 @@ export class PopupListComponent extends PopupComponent {
   @Input() rowHeight = 45;
   @Input() multiSelect = false;
   // read only
-  @Input() 
+  @Input()
   set selectedItems(value) {
     if (value) {
       this.popupSelectedItems = value.concat();
       this.listSelectedItems = value.concat();
-      this.lastSelectedName = value.length ? value[0][this.nameField] : '';
+      this.lastSelectedItem = value.length ? value[0] : null;
     }
   }
   @Input()
   set data(value: ScrollData) {
-    this.adjustedListHeight = this.listHeight + 'px';
+    this.adjustedListHeight = this.listHeight;
     // input only
     this._data = value;
     // console.log('update popup list data', value);
@@ -87,6 +86,11 @@ export class PopupListComponent extends PopupComponent {
   }
 
   show() {
+    // init filter
+    if (this.keyword) {
+      this.filter('');
+    }
+    this.updateLastSelectedItemName();
     super.show();
     setTimeout(() => {
       // focus
@@ -97,12 +101,19 @@ export class PopupListComponent extends PopupComponent {
 
   filter(keyword) {
     if (keyword !== this.keyword) {
+      this.keyword = keyword;
+      // it can assign 2 times but it is the same value, so it is not infinity loop.
+      this.lastSelectedName = keyword;
       this.needData.emit({
         target: this,
         action: 'filter',
         keyword
       });
     }
+  }
+
+  updateLastSelectedItemName() {
+    this.lastSelectedName = this.lastSelectedItem ? this.lastSelectedItem[this.nameField] : '';
   }
 
   onValueChange(e) {
@@ -125,11 +136,17 @@ export class PopupListComponent extends PopupComponent {
         if (!this.multiSelect) {
           this.visible = false;
         }
-        this.lastSelectedName = e.selectedItem[this.nameField];
+        this.lastSelectedItem = e.selectedItem;
         break;
       case 'pages-rendered':
         // remove the empty space of the list
-        setTimeout(() => this.adjustedListHeight = e.rowCount * e.rowHeight < this.listHeight ? (e.rowCount * e.rowHeight) + 'px' : this.listHeight + 'px');
+        setTimeout(() => {
+          if (e.rowCount * e.rowHeight < this.listHeight) {
+            this.adjustedListHeight = e.rowCount * e.rowHeight + 2;
+          } else {
+            this.adjustedListHeight = this.listHeight;
+          }
+        });
         break;
     }
     e.target = this;
@@ -139,5 +156,9 @@ export class PopupListComponent extends PopupComponent {
   onListNeedData(e) {
     e.target = this;
     this.needData.emit(e);
+  }
+
+  onClickListBody() {
+    this.visible = false;
   }
 }

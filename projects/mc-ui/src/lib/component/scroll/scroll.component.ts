@@ -93,7 +93,7 @@ export class ScrollComponent extends BaseComponent {
     const pageRowCount = Math.round((containerHeight / rowHeight) * 1.5);
     const pageHeight = pageRowCount * rowHeight;
     const contentHeight = rowCount === 0 ? rowHeight : rowHeight * rowCount;
-    const pageLastIndex = Math.floor(contentHeight / pageHeight);
+    const pageLastIndex = Math.floor((contentHeight - 1) / pageHeight); // -1 for if it is the same as with the pageHeight, the page can be +1.
     const nextPageIndex = isDown ? Math.ceil(scrollTop / pageHeight) : Math.floor(scrollTop / pageHeight);
     // console.log(nextPageIndex, pageLastIndex, page1Index, page2Index);
     if (refresh || (nextPageIndex <= pageLastIndex && page1Index !== nextPageIndex && page2Index !== nextPageIndex)) {
@@ -113,10 +113,27 @@ export class ScrollComponent extends BaseComponent {
         page2Index = page1Index + 1;
       }
 
-      const page1StartIndex = page1Index * pageRowCount;
-      const page2StartIndex = page2Index * pageRowCount;
-      const page1EndIndex = page1StartIndex + pageRowCount - 1;
-      const page2EndIndex = page2StartIndex + pageRowCount - 1;
+      let page1StartIndex = page1Index * pageRowCount;
+      let page2StartIndex = page2Index * pageRowCount;
+      let page1EndIndex = page1StartIndex + pageRowCount - 1;
+      let page2EndIndex = page2StartIndex + pageRowCount - 1;
+
+      if (page1StartIndex >= rowCount) {
+        page1StartIndex = -1;
+        page1EndIndex = -1;
+        page1Index = -2;
+      } else if (page1EndIndex >= rowCount) {
+        page1EndIndex = rowCount - 1;
+      }
+
+      if (page2StartIndex >= rowCount) {
+        page2StartIndex = -1;
+        page2EndIndex = -1;
+        page2Index = -1;
+      } else if (page2EndIndex >= rowCount) {
+        page2EndIndex = rowCount - 1;
+      }
+
       const page1Top = page1StartIndex * rowHeight;
       const page2Top = page2StartIndex * rowHeight;
       this.page1Index = page1Index;
@@ -145,8 +162,8 @@ export class ScrollComponent extends BaseComponent {
         pageLastIndex,
         page1IsFirst: page1Index === 0,
         page2IsFirst: page2Index === 0,
-        page1IsLast: page1Index === pageLastIndex,
-        page2IsLast: page2Index === pageLastIndex,
+        page1IsLast: page1Index !== -1 && page1Index === pageLastIndex,
+        page2IsLast: page2Index !== -1 && page2Index === pageLastIndex,
         refresh
       });
     }

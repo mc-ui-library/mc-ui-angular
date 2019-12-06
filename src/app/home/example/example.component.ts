@@ -97,7 +97,7 @@ export class ExampleComponent extends AppBaseComponent {
     switch(e.action) {
       case 'filter':
         this.dropdownData = this.service.util.data.search(this.data, e.keyword, 'name');
-        console.log('dropdown filter', this.dropdownData);
+        // console.log('dropdown filter', this.dropdownData);
         break;
     }
   }

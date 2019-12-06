@@ -19,6 +19,10 @@ https://mc-ui-library.github.io/
 add styles for List and Grid Components
 Update Examples
 
+- v0.1.3
+
+add Dropdown Example
+
 ## Further help
 
 go check out the [MC UI](https://github.com/mc-ui-library/mc-ui-angular).
