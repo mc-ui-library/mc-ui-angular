@@ -8,9 +8,11 @@ import {
   ElementRef,
   Input,
   Output,
-  EventEmitter
+  EventEmitter,
+  ViewChild
 } from '@angular/core';
 import { ScrollData } from '../model';
+import { ScrollComponent } from './scroll.component';
 
 export class ScrollAsyncComponent extends BaseComponent {
 
@@ -36,6 +38,8 @@ export class ScrollAsyncComponent extends BaseComponent {
   page2IsFirst = false;
   page1IsLast = false;
   page2IsLast = false;
+
+  @ViewChild('scrollCmp', { static: false }) scrollCmp: ScrollComponent;
 
   @Input() idField = 'id';
   @Input() rowHeight = 45;
@@ -66,7 +70,11 @@ export class ScrollAsyncComponent extends BaseComponent {
         }) : null;
       }
       this._data = data;
-      this.rowCount = this._data.rowCount;
+      this.rowCount = data.rowCount;
+      // after rendering, it need to update the scroll state manually whenever the data is updated since the scroll doesn't have data property.
+      if (this.rendered) {
+        this.scrollCmp.updateState(true);
+      }
     }
   }
   get data() {
@@ -106,7 +114,8 @@ export class ScrollAsyncComponent extends BaseComponent {
   updateData(indexes, pageIndex) {
     const start = indexes.start;
     const end = indexes.end;
-    if (this.rowCount && !this.data.rows[start]) {
+    const isEmptyPage = this.rowCount <= start;
+    if (this.rowCount && !isEmptyPage && !this.data.rows[start]) {
       this.neededPageIndex = pageIndex;
       // skip the same request.
       if (this.neededDataIndex !== start) {
@@ -119,7 +128,7 @@ export class ScrollAsyncComponent extends BaseComponent {
         }); // when tree, it needs to insert data
       }
     } else {
-      const data = this.data.rows.slice(start, end + 1);
+      const data = !isEmptyPage ? this.data.rows.slice(start, end + 1) : [];
       if (pageIndex === 1) {
         this.page1Data = data;
       } else {
@@ -147,6 +156,9 @@ export class ScrollAsyncComponent extends BaseComponent {
     this.page2IsLast = e.page2IsLast;
     this.page1IsFirst = e.page1IsFirst;
     this.page2IsFirst = e.page2IsFirst;
+    this.action.emit({
+      target: this, action: 'pages-rendered', rowCount: this.rowCount, rowHeight: this.rowHeight
+    });
   }
 
   onAction(e) {

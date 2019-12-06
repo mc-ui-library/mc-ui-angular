@@ -52,10 +52,6 @@ export class ScrollComponent extends BaseComponent {
       this.page2Index = -1;
       this.scrollTop = 0;
       this.oldScrollTop = -1;
-      // row count can be updated after rendering ui
-      if (this.rendered) {
-        this.updateState(true);
-      }
     }
   }
   get rowCount() {

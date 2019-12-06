@@ -1,4 +1,4 @@
-// TODO: When the rowCount is under the 1page row count, it triggers needdata, also, the list height is still keep the max height. The height should be adjusted. Grid also needs that.
+// TODO: after filtering and close and re-open the popup, the text box still has the last input, it should be initialized.
 
 import {
   Component,
@@ -30,7 +30,7 @@ export class PopupListComponent extends PopupComponent {
   private _data: ScrollData;
 
   listData: any;
-  listHeight = 300;
+  adjustedListHeight = '300px';
   // for displaying the selections.
   popupSelectedItems: any[] = [];
   listSelectedItems: any[] = [];
@@ -40,11 +40,12 @@ export class PopupListComponent extends PopupComponent {
   @ViewChild('inputCmp1', { static: false }) inputCmp1: InputComponent;
   @ViewChild('inputCmp2', { static: false }) inputCmp2: InputComponent;
 
+  @Input() listHeight = 300;
   // list properties
   @Input() itemTpl: any;
   @Input() idField: string;
   @Input() nameField: string;
-  @Input() rowHeight: number;
+  @Input() rowHeight = 45;
   @Input() multiSelect = false;
   // read only
   @Input() 
@@ -57,6 +58,7 @@ export class PopupListComponent extends PopupComponent {
   }
   @Input()
   set data(value: ScrollData) {
+    this.adjustedListHeight = this.listHeight + 'px';
     // input only
     this._data = value;
     // console.log('update popup list data', value);
@@ -124,6 +126,10 @@ export class PopupListComponent extends PopupComponent {
           this.visible = false;
         }
         this.lastSelectedName = e.selectedItem[this.nameField];
+        break;
+      case 'pages-rendered':
+        // remove the empty space of the list
+        setTimeout(() => this.adjustedListHeight = e.rowCount * e.rowHeight < this.listHeight ? (e.rowCount * e.rowHeight) + 'px' : this.listHeight + 'px');
         break;
     }
     e.target = this;

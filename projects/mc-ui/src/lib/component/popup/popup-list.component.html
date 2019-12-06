@@ -20,7 +20,8 @@
 </div>
 <mc-list #listCmp [data]="listData" [itemTpl]="itemTpl" [idField]="idField" [nameField]="nameField"
   [rowHeight]="rowHeight" [multiSelect]="multiSelect" [selectedItems]="listSelectedItems"
-  [additionalData]="additionalData" (needData)="onListNeedData($event)" (action)="onListAction($event)" [style.height.px]="listHeight">
+  [additionalData]="additionalData" (needData)="onListNeedData($event)" (action)="onListAction($event)"
+  [style.height]="adjustedListHeight">
 </mc-list>
 <div *ngIf="indicatorLocation[0] !== 't'" class="popup-list--header">
   <div *ngIf="multiSelect" class="popup-list--header--selected-items">

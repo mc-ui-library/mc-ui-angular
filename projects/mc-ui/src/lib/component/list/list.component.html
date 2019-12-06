@@ -1,4 +1,4 @@
-<mc-scroll [page1Tpl]="page1Tpl" [page2Tpl]="page2Tpl" [rowHeight]="rowHeight" [rowCount]="rowCount"
+<mc-scroll #scrollCmp [page1Tpl]="page1Tpl" [page2Tpl]="page2Tpl" [rowHeight]="rowHeight" [rowCount]="rowCount"
   [isLoading]="isLoading" (updatePage)="onUpdatePage($event)">
   <ng-template #page1Tpl>
     <mc-list-basic #listBasic1Cmp [itemTpl]="itemTpl" [idField]="idField" [nameField]="nameField"
