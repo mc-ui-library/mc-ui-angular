@@ -3,6 +3,15 @@
 </div>
 <div class="example--item">
   <div class="example--item--header">
+    <h6>Basic List - Horizontal Toggle</h6>
+  </div>
+  <div class="example--item--body">
+    <mc-list-basic [data]="listBasicToggleData" [selectedItems]="[listBasicToggleData[0]]" [horizontal]="true"
+      [style.lineHeight.px]="53"></mc-list-basic>
+  </div>
+</div>
+<div class="example--item">
+  <div class="example--item--header">
     <h6>list with Infinity Scroll</h6>
   </div>
   <div class="example--item--body" [style.height.px]="300">

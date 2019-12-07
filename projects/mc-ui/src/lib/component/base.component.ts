@@ -57,12 +57,12 @@ export class BaseComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit() {
     this.initCmp();
-    // theme should be the last class for priority
-    this.applyThemeClass();
   }
 
   ngAfterViewInit() {
     this.afterInitCmp();
+    // theme should be the last class for priority
+    this.applyThemeClass();
     setTimeout(() => {
       this.afterRenderCmp();
       this.rendered = true;

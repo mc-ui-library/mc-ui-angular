@@ -1,4 +1,4 @@
-export const user_mock = {
+export const user_mock: any = {
   data: [{
       id: '5dca5313812afa710a41b47e',
       index: 0,

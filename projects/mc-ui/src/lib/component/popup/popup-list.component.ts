@@ -28,12 +28,11 @@ export class PopupListComponent extends PopupComponent {
   private _data: ScrollData;
 
   listData: any;
-  adjustedListHeight = 300;
   // for displaying the selections.
   popupSelectedItems: any[] = [];
   listSelectedItems: any[] = [];
   lastSelectedName = '';
-  lastSelectedItem;
+  lastSelectedItem: any;
 
   @ViewChild('listCmp', {static: false}) listCmp: ListComponent;
   @ViewChild('inputCmp1', { static: false }) inputCmp1: InputComponent;
@@ -57,7 +56,6 @@ export class PopupListComponent extends PopupComponent {
   }
   @Input()
   set data(value: ScrollData) {
-    this.adjustedListHeight = this.listHeight;
     // input only
     this._data = value;
     // console.log('update popup list data', value);
@@ -137,16 +135,6 @@ export class PopupListComponent extends PopupComponent {
           this.visible = false;
         }
         this.lastSelectedItem = e.selectedItem;
-        break;
-      case 'pages-rendered':
-        // remove the empty space of the list
-        setTimeout(() => {
-          if (e.rowCount * e.rowHeight < this.listHeight) {
-            this.adjustedListHeight = e.rowCount * e.rowHeight + 2;
-          } else {
-            this.adjustedListHeight = this.listHeight;
-          }
-        });
         break;
     }
     e.target = this;

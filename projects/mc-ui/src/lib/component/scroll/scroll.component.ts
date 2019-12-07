@@ -164,6 +164,7 @@ export class ScrollComponent extends BaseComponent {
         page2IsFirst: page2Index === 0,
         page1IsLast: page1Index !== -1 && page1Index === pageLastIndex,
         page2IsLast: page2Index !== -1 && page2Index === pageLastIndex,
+        height: contentHeight,
         refresh
       });
     }

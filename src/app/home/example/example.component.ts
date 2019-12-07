@@ -26,9 +26,10 @@ export class ExampleComponent extends AppBaseComponent {
 
   data = this.homeService.getUserListMock().data;
   gridCell: any = {};
-  dropdownData = this.data.concat();
-  listData = this.data.concat();
-  gridData = this.data.concat();
+  dropdownData: any[];
+  listBasicToggleData: any[];
+  listData: any[];
+  gridData: any[];
 
   @ViewChild('popupTpl', {
     static: false
@@ -43,6 +44,23 @@ export class ExampleComponent extends AppBaseComponent {
     private homeService: HomeService
   ) {
     super(er, service);
+  }
+
+  initCmp() {
+    this.dropdownData = this.data.concat();
+    this.listBasicToggleData = this.data.map((d, i) => {
+      const item = {
+        id: d.id,
+        name: d.name,
+        theme: ['tag']
+      };
+      if (i % 2 === 0) {
+        item.theme.push('tag-orange');
+      }
+      return item;
+    });
+    this.listData = this.data.concat();
+    this.gridData = this.data.concat();
   }
 
   showPopup(el) {

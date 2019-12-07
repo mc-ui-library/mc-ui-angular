@@ -29,6 +29,8 @@ export class ScrollAsyncComponent extends BaseComponent {
     end: -1
   };
 
+  originHeight: number;
+
   page1Data;
   page2Data;
   rowCount;
@@ -137,6 +139,18 @@ export class ScrollAsyncComponent extends BaseComponent {
     }
   }
 
+  updateHeight(height: number) {
+    // when the items height are smaller than container height.
+    if (!this.originHeight) {
+      this.originHeight = this.el.clientHeight;
+    }
+    if (this.originHeight > height) {
+      this.el.style.height = height + 'px';
+    } else {
+      this.el.style.height = this.originHeight + 'px';
+    }
+  }
+
   getItems() {
     return this.data.rows;
   }
@@ -168,9 +182,7 @@ export class ScrollAsyncComponent extends BaseComponent {
     this.page2IsLast = e.page2IsLast;
     this.page1IsFirst = e.page1IsFirst;
     this.page2IsFirst = e.page2IsFirst;
-    this.action.emit({
-      target: this, action: 'pages-rendered', rowCount: this.rowCount, rowHeight: this.rowHeight
-    });
+    this.updateHeight(e.height);
   }
 
   onAction(e) {

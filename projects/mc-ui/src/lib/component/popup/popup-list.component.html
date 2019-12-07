@@ -18,11 +18,11 @@
     </div>
   </div>
 </div>
-<div class="popup-list--body" [style.height.px]="listHeight" [class.popup-list--body-t]="indicatorLocation[0] !== 't' && listHeight !== adjustedListHeight" (click)="onClickListBody();">
+<div class="popup-list--body" [style.height.px]="listHeight" [class.popup-list--body-t]="indicatorLocation[0] !== 't'" (click)="onClickListBody();">
   <mc-list #listCmp [data]="listData" [itemTpl]="itemTpl" [idField]="idField" [nameField]="nameField"
     [rowHeight]="rowHeight" [multiSelect]="multiSelect" [selectedItems]="listSelectedItems"
     [additionalData]="additionalData" (needData)="onListNeedData($event)" (action)="onListAction($event)"
-    [style.height.px]="adjustedListHeight">
+    [style.height.px]="listHeight">
   </mc-list>
 </div>
 <div *ngIf="indicatorLocation[0] !== 't'" class="popup-list--header">
