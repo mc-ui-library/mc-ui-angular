@@ -8,4 +8,5 @@
     </div>
   </div>
 </div>
+<div *ngIf="!rowCount" class="scroll--empty" [style.lineHeight.px]="rowHeight">{{emptyText}}</div>
 <mc-loader [style.display]="isLoading ? '' : 'none'" [theme]="['ring', 'small']"></mc-loader>

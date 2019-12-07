@@ -41,10 +41,15 @@
   &.list-item {
     &-tag {
       margin-right: 10px;
-      background-color: $c-gray;
+      padding: 0 15px;
+      font-size: 9px;
+      background-color: $c-gray-bbb;
       color: $c-white;
       &-orange {
         background-color: $c-orange;
+      }
+      &.selected {
+        border-bottom: 1px solid transparent;
       }
     }
   }

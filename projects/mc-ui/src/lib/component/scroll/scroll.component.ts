@@ -39,6 +39,7 @@ export class ScrollComponent extends BaseComponent {
 
   state: State;
 
+  @Input() emptyText = 'No Data';
   @Input() page1Tpl: any = null;
   @Input() page2Tpl: any = null;
   @Input() rowHeight = 45;
@@ -164,7 +165,6 @@ export class ScrollComponent extends BaseComponent {
         page2IsFirst: page2Index === 0,
         page1IsLast: page1Index !== -1 && page1Index === pageLastIndex,
         page2IsLast: page2Index !== -1 && page2Index === pageLastIndex,
-        height: contentHeight,
         refresh
       });
     }

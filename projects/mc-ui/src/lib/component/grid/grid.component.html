@@ -1,7 +1,7 @@
 <mc-grid-header [columns]="data.columns" [data]="headerData" [rowHeight]="rowHeight" [style.width]="bodyWidth">
 </mc-grid-header>
 <mc-scroll [page1Tpl]="page1Tpl" [page2Tpl]="page2Tpl" [rowHeight]="rowHeight" [rowCount]="rowCount"
-  [isLoading]="isLoading" (updatePage)="onUpdatePage($event)" [style.height.px]="bodyHeight" [style.width]="bodyWidth">
+  [isLoading]="isLoading"  [emptyText]="emptyText" (updatePage)="onUpdatePage($event)" [style.height.px]="bodyHeight" [style.width]="bodyWidth">
   <ng-template #page1Tpl>
     <mc-grid-body [class.is-scroll-page]="true" [class.is-last-page]="page1IsLast" [columns]="data.columns"
       [rowHeight]="rowHeight" [data]="page1Data" [idField]="idField"

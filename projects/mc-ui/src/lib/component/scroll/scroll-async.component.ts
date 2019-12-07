@@ -43,6 +43,7 @@ export class ScrollAsyncComponent extends BaseComponent {
 
   @ViewChild('scrollCmp', { static: false }) scrollCmp: ScrollComponent;
 
+  @Input() emptyText = 'No Data';
   @Input() idField = 'id';
   @Input() rowHeight = 45;
   @Input()
@@ -75,6 +76,7 @@ export class ScrollAsyncComponent extends BaseComponent {
       this.rowCount = data.rowCount;
       // after rendering, it need to update the scroll state manually whenever the data is updated since the scroll doesn't have data property.
       if (this.rendered) {
+        this.updateHeight();
         // update after the rowCount is applied.
         setTimeout(() => this.scrollCmp.updateState(true));
       }
@@ -114,6 +116,12 @@ export class ScrollAsyncComponent extends BaseComponent {
     super(_el, _service);
   }
 
+  afterInitCmp() {
+    // the content height is smaller than container height, adjust container height.
+    // this needs to run before rendering scroll.
+    this.updateHeight();
+  }
+
   updateData(indexes, pageIndex) {
     const start = indexes.start;
     const end = indexes.end;
@@ -139,8 +147,9 @@ export class ScrollAsyncComponent extends BaseComponent {
     }
   }
 
-  updateHeight(height: number) {
+  updateHeight() {
     // when the items height are smaller than container height.
+    const height = this.rowCount === 0 ? this.rowHeight : this.rowHeight * this.rowCount;
     if (!this.originHeight) {
       this.originHeight = this.el.clientHeight;
     }
@@ -182,7 +191,6 @@ export class ScrollAsyncComponent extends BaseComponent {
     this.page2IsLast = e.page2IsLast;
     this.page1IsFirst = e.page1IsFirst;
     this.page2IsFirst = e.page2IsFirst;
-    this.updateHeight(e.height);
   }
 
   onAction(e) {
