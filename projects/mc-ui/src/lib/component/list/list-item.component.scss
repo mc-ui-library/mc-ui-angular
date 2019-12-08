@@ -18,11 +18,6 @@
   &.horizontal {
     width: auto;
     border-color: transparent;
-
-    &.selected {
-      margin-top: -1px;
-      border-bottom: 2px solid $c-gray-bbb;
-    }
   }
 
   &.is-scroll-page-item {
@@ -33,23 +28,6 @@
     &.is-last-page-item {
       &:last-child {
         border-bottom-color: transparent;
-      }
-    }
-  }
-
-  // Themes
-  &.list-item {
-    &-tag {
-      margin-right: 10px;
-      padding: 0 15px;
-      font-size: 9px;
-      background-color: $c-gray-bbb;
-      color: $c-white;
-      &-orange {
-        background-color: $c-orange;
-      }
-      &.selected {
-        border-bottom: 1px solid transparent;
       }
     }
   }

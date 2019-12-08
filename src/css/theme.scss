@@ -1,3 +1,4 @@
+@import './vars';
 mc-button {
   &.button {
     &-signin {
@@ -18,15 +19,41 @@ mc-button {
 }
 
 mc-icon {
-  &.icon-button {
-    line-height: 58px;
-    height: 58px;
-    &:hover {
-      color: #000;
+  &.icon {
+    &-button {
+      line-height: 58px;
+      height: 58px;
+
+      &:hover {
+        color: #000;
+      }
+    }
+    &-field {
+      cursor: default;
     }
   }
+}
 
-  &.icon-field {
-    cursor: default;
+mc-list-item {
+  &.horizontal {
+    &.selected {
+      margin-top: -1px;
+      border-bottom: 2px solid $c-gray-bbb;
+    }
+  }
+  &.list-item {
+    &-tag {
+      margin-right: 10px;
+      padding: 0 15px;
+      font-size: 9px;
+      background-color: $c-gray-bbb;
+      color: $c-white;
+      &-orange {
+        background-color: $c-orange;
+      }
+      &.selected {
+        border-bottom: 1px solid transparent;
+      }
+    }
   }
 }
