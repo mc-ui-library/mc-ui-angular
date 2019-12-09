@@ -28,17 +28,7 @@ export class ExampleComponent extends AppBaseComponent {
   gridCell: any = {};
   dropdownData = this.data.concat();
   listBasicToggleData = this.data.concat();
-  listBasicTagsData = this.data.map((d, i) => {
-    const item = {
-      id: d.id,
-      name: d.name,
-      theme: ['tag']
-    };
-    if (i % 2 === 0) {
-      item.theme.push('tag-orange');
-    }
-    return item;
-  });
+  listBasicTagsData = this.data.map((d, i) => this.getTagThemeItem(d, i));
   listData = this.data.concat();
   gridData = this.data.concat();
 
@@ -55,6 +45,18 @@ export class ExampleComponent extends AppBaseComponent {
     private homeService: HomeService
   ) {
     super(er, service);
+  }
+
+  getTagThemeItem(d: any, i: number) {
+    const item = {
+      id: d.id ? d.id : d,
+      name: d.name ? d.name : d,
+      theme: ['tag']
+    };
+    if (i % 2 === 0) {
+      item.theme.push('tag-orange');
+    }
+    return item;
   }
 
   showPopup(el) {
@@ -94,9 +96,10 @@ export class ExampleComponent extends AppBaseComponent {
       case 'select-cell':
         const rowData = this.getCellValue(e.id);
         e.value = rowData[e.field];
-        e.name = rowData['name'];
+        e.name = rowData.name;
         this.gridCell = e;
         if (e.field !== 'friends') {
+          this.gridCell.value = this.gridCell.value ? this.gridCell.value.map((d, i) => this.getTagThemeItem(d, i)) : [];
           this.showPopup(e.el);
         } else {
           this.showDrawer();
