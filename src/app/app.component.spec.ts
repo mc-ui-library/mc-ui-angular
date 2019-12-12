@@ -44,6 +44,7 @@ describe('AppComponent', () => {
         }
       },
       // { provide: HeroService,    useClass: TestHeroService }, // You can user mock service class also. you can use spy or mock class etc.
+      // HttpClient needs to import HttpClientTestingModule 
     ]
     });
     // .compileComponents();  // compile template and css
