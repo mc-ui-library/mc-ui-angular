@@ -1,20 +1,20 @@
 :host {
+  display: inline-block;
+  position: relative;
+  .button--button {
     display: inline-block;
-    position: relative;
-    .button--button {
-      display: inline-block;
-      padding: 0;
-      line-height: 34px;
-      background: #fff;
-      -webkit-appearance: none;
-      border-radius: 3px;
-      outline: none;
-      cursor: pointer;
-      text-align: center;
-      white-space: nowrap;
-      vertical-align: middle;
-      user-select: none;
-      border: 1px solid transparent;
-      font-size: 0.875rem;
-    }
+    padding: 0;
+    line-height: 34px;
+    background: #fff;
+    -webkit-appearance: none;
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    user-select: none;
+    border: 1px solid transparent;
+    font-size: 0.875rem;
+  }
 }

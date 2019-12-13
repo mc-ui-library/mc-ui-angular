@@ -13,7 +13,7 @@ import {
 } from './util/util';
 
 interface Message {
-  from ? : string;
+  from?: string;
   to: string;
   action: string;
   data: any;
