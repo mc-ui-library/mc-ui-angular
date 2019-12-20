@@ -99,7 +99,8 @@ export class ExampleComponent extends AppBaseComponent {
         e.name = rowData.name;
         this.gridCell = e;
         if (e.field !== 'friends') {
-          this.gridCell.value = this.gridCell.value ? this.gridCell.value.map((d, i) => this.getTagThemeItem(d, i)) : [];
+          const value = this.gridCell.value;
+          this.gridCell.value = Array.isArray(value) ? value.map((d, i) => this.getTagThemeItem(d, i)) : value;
           this.showPopup(e.el);
         } else {
           this.showDrawer();
