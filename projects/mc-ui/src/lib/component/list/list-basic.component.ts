@@ -36,7 +36,6 @@ export class ListBasicComponent extends BaseComponent {
   get selectedItems() {
     return this.getSelectedItems();
   }
-  @Input() delete = false;
   @Input()
   set data(value: any[]) {
     // convert string array to list data format
@@ -59,6 +58,7 @@ export class ListBasicComponent extends BaseComponent {
   @Input() itemTpl: any = null;
   @Input() idField = 'id';
   @Input() nameField = 'name';
+  @Input() hasDelete = false;
 
   @Input() isLastPage = false;
   @Input() isFirstPage = false;
@@ -103,7 +103,7 @@ export class ListBasicComponent extends BaseComponent {
   }
 
   emitAction(actionType, selectedItem, event = null) {
-    this.action.emit({ target: this, action: actionType, event: event, selectedItem: selectedItem, selectedItems: this.getSelectedItems() });
+    this.action.emit({ target: this, action: actionType, event, selectedItem, selectedItems: this.getSelectedItems() });
   }
 
   onListItemAction(e) {

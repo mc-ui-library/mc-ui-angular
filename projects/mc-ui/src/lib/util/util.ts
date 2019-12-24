@@ -1,3 +1,4 @@
+// TODO: All utils should defined as a separeated functions for importing one by one.
 import {
   HttpClient
 } from '@angular/common/http';

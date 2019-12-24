@@ -27,7 +27,13 @@ export class ListItemComponent extends BaseComponent {
   @Input() hasCheckBox = false;
   @Input() hasDeleteButton = false;
 
+  @HostBinding('style.height') @Input() height = '45px';
+  @HostBinding('style.lineHeight') @Input() lineHeight = '43px';
   @HostBinding('class.selected') @Input() selected = false;
+  @HostBinding('class.is-scroll-page-item') @Input() isScrollPageItem = false;
+  @HostBinding('class.is-first-page-item') @Input() isFirstPageItem = false;
+  @HostBinding('class.is-last-page-item') @Input() isLastPageItem = false;
+  @HostBinding('class.horizontal') @Input() horizontal = false;
 
   @HostListener('click', ['$event'])
   onPress(e: any) {

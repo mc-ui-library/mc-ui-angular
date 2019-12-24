@@ -1,5 +1,4 @@
 export class DomUtil {
-
   // selector: class name(.class-name) or tag name (mc-componentname)
   findParent(dom: any, selector: string, depth: number = 10) {
     let cls = '';
@@ -64,24 +63,24 @@ export class DomUtil {
     if (dom && dom.parentElement) {
       dom.parentElement.removeChild(dom);
     }
-    dom = null;
   }
 
-  openUrl(url, target = '', fileName = '') {
+  openUrl(url: string, target = '', fileName = '') {
     let a = document.createElement('a');
     a.href = url;
-    if (fileName) a.download = fileName;
-    if (target) a.target = target;
+    if (fileName) {
+      a.download = fileName;
+    }
+    if (target) {
+      a.target = target;
+    }
     document.body.append(a);
     a.click();
     a.remove();
-    a = null;
   }
 
-  exportFile(fileName, content, mimeType = 'text/csv', charset = 'utf-8') {
-    const blob = new Blob([content], {
-      type: `type:${mimeType};charset=${charset};`
-    });
+  exportFile(fileName: string, content: string, mimeType = 'text/csv', charset = 'utf-8') {
+    const blob = new Blob([content], { type: `type:${mimeType};charset=${charset};` });
     if (navigator.msSaveBlob) {
       navigator.msSaveBlob(blob, fileName);
     } else {
@@ -89,4 +88,17 @@ export class DomUtil {
     }
   }
 
+  getClassName(componentName: string, theme: string | string[], classNames: string[] = []) {
+    const cls = [];
+    cls.push('mc-' + componentName.toLowerCase());
+    if (theme) {
+      if (!Array.isArray(theme)) {
+        cls.push(theme);
+      } else {
+        cls.push(...theme);
+      }
+    }
+    cls.push(...classNames);
+    return cls.join(' ');
+  }
 }
