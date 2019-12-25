@@ -64,6 +64,7 @@ export class ListBasicComponent extends BaseComponent {
   @Input() isFirstPage = false;
   @HostBinding('class.is-scroll-page') @Input() isScrollPage = false;
   @HostBinding('class.horizontal') @Input() horizontal = false;
+  @HostBinding('style.lineHeight') @Input() horizontalLineHeight = '43px';
 
   constructor(protected _el: ElementRef, protected _service: MCUIService) {
     super(_el, _service);
