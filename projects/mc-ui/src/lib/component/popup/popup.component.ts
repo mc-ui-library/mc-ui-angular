@@ -27,10 +27,10 @@ export class PopupComponent extends BaseComponent {
   private _hasIndicator = false;
   // for body press event, it is triggered after clicking the target. We need to ignore the body event when visible = true;
   private bodyEventLock = false;
-  private checkTargetElLocationIntervalId;
+  private checkTargetElLocationIntervalId: number;
   private indicatorHeight = 10;
 
-  lastTargetElCoord;
+  lastTargetElCoord: ClientRect;
   indicatorLocation = 'bl'; // 'tl' | 'tr' | 'bl' | 'br' = 'bl'
 
   @Input() checkTargetLocation = false;
@@ -85,7 +85,7 @@ export class PopupComponent extends BaseComponent {
     this.subscriptions = service.bodyPress.subscribe(this.onPressBody.bind(this));
   }
 
-  show() {
+  show(resizeOnly = false) {
     if (!this.visible) {
       return;
     }
@@ -98,13 +98,17 @@ export class PopupComponent extends BaseComponent {
     }
 
     // renew check.
-    this.uncheckTargetLocation();
-    this.checkTargetElLocation();
+    if (!resizeOnly) {
+      this.uncheckTargetLocation();
+      this.checkTargetElLocation();
+    }
 
     // for updating the last size;
     this.lastTargetElCoord = this.targetEl.getBoundingClientRect();
-    this.el.style.visibility = 'hidden';
-    this.el.style.display = '';
+    if (!resizeOnly) {
+      this.el.style.visibility = 'hidden';
+      this.el.style.display = '';
+    }
     // after the targetEl is changed.
     setTimeout(() => {
       const targetSize = this.lastTargetElCoord;
@@ -126,8 +130,14 @@ export class PopupComponent extends BaseComponent {
       classNames = classNames.filter(d => d.indexOf('popup-indicator-') === -1);
       classNames.push('popup-indicator-' + (isTop ? 'top' : 'bottom') + '-' + (isLeft ? 'left' : 'right'));
       this.el.className = classNames.join(' ');
-      this.el.style.visibility = '';
+      if (!resizeOnly) {
+        this.el.style.visibility = '';
+      }
     });
+  }
+
+  resize() {
+    this.show(true);
   }
 
   hide() {
@@ -144,7 +154,7 @@ export class PopupComponent extends BaseComponent {
 
   checkTargetElLocation() {
     if (this.targetEl && this.checkTargetLocation) {
-      this.checkTargetElLocationIntervalId = setInterval(() => {
+      this.checkTargetElLocationIntervalId = window.setInterval(() => {
         const info = this.targetEl.getBoundingClientRect();
         const lastInfo = this.lastTargetElCoord;
         if (lastInfo) {
