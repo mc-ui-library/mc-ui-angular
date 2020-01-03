@@ -33,7 +33,7 @@ export class BaseComponent implements OnInit, OnDestroy, AfterViewInit {
   el: HTMLElement;
   util: Util;
 
-  // special members that can be changed during run-time or important member. like data, additionalData etc.
+  // special members that can be changed during run-time or important member. like data etc.
   // theme classes
   @Input() theme: string | string[];
   @Input()

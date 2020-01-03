@@ -37,7 +37,7 @@ export class DropdownComponent extends FieldBaseComponent {
   @Input() nameField = 'name';
   @Input() rowHeight = 45;
   @Input() multiSelect = false;
-  @Input() 
+  @Input()
   set data(value: ScrollData) {
     if (value) {
       this._data = value;
@@ -57,9 +57,6 @@ export class DropdownComponent extends FieldBaseComponent {
   get selectedItems() {
     return this._selectedItems;
   }
-
-  // infinite scroll
-  @Input() additionalData: ScrollData;
 
   @Output() needData: EventEmitter<any> = new EventEmitter();
   // ***************************************
@@ -99,7 +96,6 @@ export class DropdownComponent extends FieldBaseComponent {
       instance.rowHeight = this.rowHeight;
       instance.multiSelect = this.multiSelect;
       instance.selectedItems = this.selectedItems.concat();
-      instance.additionalData = this.additionalData;
       instance.targetEl = this.el;
       this.subscriptions = instance.needData.subscribe(e => {
         e.target = this;

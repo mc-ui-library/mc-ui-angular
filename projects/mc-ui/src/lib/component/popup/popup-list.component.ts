@@ -65,8 +65,6 @@ export class PopupListComponent extends PopupComponent {
   get data() {
     return this._data;
   }
-  // infinite scroll
-  @Input() additionalData: ScrollData;
 
   // popup
   @Input() height = 350;
