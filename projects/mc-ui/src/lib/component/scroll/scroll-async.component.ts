@@ -34,7 +34,7 @@ export class ScrollAsyncComponent extends BaseComponent {
   page1Data;
   page2Data;
   rowCount;
-  isLoading = false;
+  isLoading = true;
 
   page1IsFirst = false;
   page2IsFirst = false;
@@ -50,10 +50,6 @@ export class ScrollAsyncComponent extends BaseComponent {
   set data(value: ScrollData) {
     // console.log('update scroll data', value);
     if (value) {
-      // init page
-      this.page1Indexes = { start: -1, end: -1 };
-      this.page2Indexes = { start: -1, end: -1 };
-
       let data: ScrollData;
       if (Array.isArray(value)) {
         data = {
@@ -72,41 +68,32 @@ export class ScrollAsyncComponent extends BaseComponent {
           };
         }) : null;
       }
+
       this._data = data;
       this.rowCount = data.rowCount;
-      // after rendering, it need to update the scroll state manually whenever the data is updated since the scroll doesn't have data property.
-      if (this.rendered) {
-        this.updateHeight();
-        // update after the rowCount is applied.
-        setTimeout(() => this.scrollCmp.updateState(true));
+
+      data.action = data.action ? data.action : 'initialize';
+
+      if (data.action === 'initialize') {
+        // init page
+        this.page1Indexes = { start: -1, end: -1 };
+        this.page2Indexes = { start: -1, end: -1 };
+
+        // after rendering, it need to update the scroll state manually whenever the data is updated since the scroll doesn't have data property.
+        if (this.rendered) {
+          this.updateHeight();
+          // update after the rowCount is applied.
+          setTimeout(() => this.scrollCmp.updateState(true));
+        }
+      } else {
+        this.updateData(this.neededPageIndex === 1 ? this.page1Indexes : this.page2Indexes, this.neededPageIndex);
       }
+
+      this.isLoading = false;
     }
   }
   get data() {
     return this._data;
-  }
-
-  @Input()
-  set additionalData(value: ScrollData) {
-    if (value) {
-      const {
-        action,
-        rows,
-        start,
-        rowCount
-      } = value;
-      const currRows = this.data.rows.concat();
-      if (action === 'append') {
-        rows.forEach((d, i) => currRows[i + start] = d);
-        this.data.rows = rows;
-      } else if (action === 'insert') {
-        currRows.splice(start, 0, ...rows);
-        this.data.rows = currRows;
-      }
-      this.rowCount = rowCount;
-      this.updateData(this.neededPageIndex === 1 ? this.page1Indexes : this.page2Indexes, this.neededPageIndex);
-      this.isLoading = false;
-    }
   }
 
   // there is no data, then it triggers "needData" event.
