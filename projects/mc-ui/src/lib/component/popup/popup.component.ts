@@ -177,7 +177,12 @@ export class PopupComponent extends BaseComponent {
 
   onPressBody(e) {
     if (!this.bodyEventLock && !this.el.contains(e.target)) {
-      this.visible = false;
+      const pos = this.el.compareDocumentPosition(e.target);
+      // console.log('compareDocumentPosition:' + pos);
+      // some overlay items can't be in the container. it returns 35 or 37.
+      if (pos < 33) {
+        this.visible = false;
+      }
     }
   }
 

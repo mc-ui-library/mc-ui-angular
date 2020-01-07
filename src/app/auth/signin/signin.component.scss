@@ -24,7 +24,7 @@
     .signin {
       width: 350px;
       padding: 40px;
-      background-color: $c-gray-bb;
+      background-color: rgba(0, 0, 0, 0.6);
       @include rounded;
       &--header {
         .mc-logo-text {
