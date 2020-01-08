@@ -57,7 +57,7 @@ export class PopupComponent extends BaseComponent {
     if (value && this.targetEl) {
       this.show();
     } else {
-      this.hide();
+      this.doHide();
     }
   }
   get visible() {
@@ -76,7 +76,7 @@ export class PopupComponent extends BaseComponent {
     return this._hasIndicator;
   }
 
-  @Output() hided: EventEmitter < any > = new EventEmitter();
+  @Output() hide: EventEmitter < any > = new EventEmitter();
 
   @HostBinding('class.center') @Input() center = false;
 
@@ -140,10 +140,10 @@ export class PopupComponent extends BaseComponent {
     this.show(true);
   }
 
-  hide() {
+  doHide() {
     this.uncheckTargetLocation();
     this.el.style.display = 'none';
-    this.hided.emit({ target: this });
+    this.hide.emit({ target: this });
   }
 
   // the body click event is triggered after clicking the target and it closes the popup, so need to prevent it.
