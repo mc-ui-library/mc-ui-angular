@@ -28,6 +28,10 @@ add Dropdown Example
 When the components that are using scroll component has content that is smaller than the container height, it adjusts the container height.
 Add basic list examples.
 
+- v0.1.5
+
+fix minor bugs for list and scroll
+
 ## Further help
 
 go check out the [MC UI](https://github.com/mc-ui-library/mc-ui-angular).
@@ -35,3 +39,5 @@ go check out the [MC UI](https://github.com/mc-ui-library/mc-ui-angular).
 ## Example
 
 https://mc-ui-library.github.io/
+
+* build: ng build mc-ui, cd dist/mc-ui npm publish 

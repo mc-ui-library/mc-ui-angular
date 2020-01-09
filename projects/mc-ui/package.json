@@ -1,6 +1,6 @@
 {
   "name": "mc-ui-angular",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "MC UI Angular Presentational Components",
   "keywords": ["infinite scroll", "grid", "list", "popup", "drawer", "form", "field"],
   "homepage": "https://mc-ui-library.github.io/",
