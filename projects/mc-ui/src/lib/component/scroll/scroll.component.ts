@@ -171,14 +171,22 @@ export class ScrollComponent extends BaseComponent {
   }
 
   onScroll(e: any) {
+    const el = e.target;
+    this.scrollTop = el.scrollTop;
     if (!this.ticking) {
       requestAnimationFrame(() => {
         // for direction: up / down
-        this.scrollTop = e.target.scrollTop;
         this.updateState();
         this.ticking = false;
       });
       this.ticking = true;
+    }
+    // when the scroll is the end, sometimes it is not updated.
+    const scrollHeight = el.scrollHeight;
+    const height = el.offsetHeight;
+    if (this.scrollTop + height === scrollHeight) {
+      this.updateState();
+      this.ticking = false;
     }
   }
 }
