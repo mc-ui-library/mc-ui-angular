@@ -150,7 +150,6 @@ export class ScrollComponent extends BaseComponent {
         page2EndIndex
       };
       this.state = state;
-      // console.log(state, page1Index, page2Index);
       this.updatePage.emit({
         target: this,
         page1StartIndex,
@@ -172,10 +171,10 @@ export class ScrollComponent extends BaseComponent {
   }
 
   onScroll(e: any) {
-    this.scrollTop = e.target.scrollTop;
     if (!this.ticking) {
       requestAnimationFrame(() => {
         // for direction: up / down
+        this.scrollTop = e.target.scrollTop;
         this.updateState();
         this.ticking = false;
       });

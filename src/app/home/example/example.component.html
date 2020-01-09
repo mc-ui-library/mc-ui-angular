@@ -33,7 +33,7 @@
     <ng-template #popupTpl>
       <h6>{{gridCell.name}} {{gridCell.field}} {{gridCell.field === 'tags' ? '' : gridCell.value}}</h6>
       <ng-container *ngIf="gridCell.field === 'tags'">
-        <mc-list-basic [data]="gridCell.value" [horizontal]="true" [style.lineHeight.px]="18" style="margin-top: 20px;white-space: normal;"></mc-list-basic>
+        <mc-list-basic [data]="gridCell.value" [horizontal]="true" [rowHeight]="20" style="margin-top: 20px;white-space: normal;"></mc-list-basic>
       </ng-container>
     </ng-template>
     <ng-template #drawerTpl>
