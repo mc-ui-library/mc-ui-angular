@@ -1,0 +1,26 @@
+<mc-grid-header
+  [columns]="columns"
+  [data]="headerData"
+  [rowHeight]="rowHeight"
+  [style.width]="bodyWidth"
+>
+</mc-grid-header>
+<div
+  class="grid-basic--scroll"
+  [style.height.px]="bodyHeight"
+  [style.width]="bodyWidth"
+>
+  <mc-grid-body
+    [columns]="columns"
+    [rowHeight]="rowHeight"
+    [data]="data"
+    [idField]="idField"
+    [class.is-basic]="true"
+    (action)="onAction($event)"
+  >
+  </mc-grid-body>
+</div>
+<mc-loader
+  [style.display]="isLoading ? '' : 'none'"
+  [theme]="['ring', 'small']"
+></mc-loader>

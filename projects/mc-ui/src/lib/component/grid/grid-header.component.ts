@@ -7,10 +7,7 @@ import {
 import {
   Component,
   ElementRef,
-
-  Input,
-  Output,
-  EventEmitter
+  Input
 } from '@angular/core';
 
 @Component({
@@ -40,7 +37,9 @@ export class GridHeaderComponent extends BaseComponent {
     if (!this.data) {
       // generate header data
       // TODO: update column width for colspan
-      this.data = [this.columns.map(column => { return { id: column.field, name: column.name || column.field, tpl: column.headerTpl, width: column.width };})];
+      this.data = [this.columns.map(column => {
+        return { id: column.field, name: column.name || column.field, tpl: column.headerTpl, width: column.width };
+      })];
     }
   }
 }

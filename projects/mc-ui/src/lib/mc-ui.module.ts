@@ -25,6 +25,7 @@ import { GridHeaderComponent } from './component/grid/grid-header.component';
 import { GridBodyComponent } from './component/grid/grid-body.component';
 import { MaskComponent } from './component/mask/mask.component';
 import { GridComponent } from './component/grid/grid.component';
+import { GridBasicComponent } from './component/grid/grid-basic.component';
 import { PopupComponent } from './component/popup/popup.component';
 import { PopupListComponent } from './component/popup/popup-list.component';
 import { MCUIService } from './mc-ui.service';
@@ -53,6 +54,7 @@ import { DropdownComponent } from './component/form/field/dropdown/dropdown.comp
     GridHeaderComponent,
     GridBodyComponent,
     GridComponent,
+    GridBasicComponent,
     MaskComponent,
     PopupComponent,
     PopupListComponent,
@@ -82,6 +84,7 @@ import { DropdownComponent } from './component/form/field/dropdown/dropdown.comp
     GridHeaderComponent,
     GridBodyComponent,
     GridComponent,
+    GridBasicComponent,
     MaskComponent,
     PopupComponent,
     PopupListComponent,

@@ -1,13 +1,10 @@
-import {
-  MCUIService
-} from '../../mc-ui.service';
 import { ScrollAsyncComponent } from '../scroll/scroll-async.component';
 import {
   Component,
-  ElementRef,
-
   Input,
+  ElementRef,
 } from '@angular/core';
+import { MCUIService } from '../../mc-ui.service';
 
 @Component({
   selector: 'mc-grid',
@@ -38,7 +35,7 @@ export class GridComponent extends ScrollAsyncComponent {
 
   afterRenderCmp() {
     const headerEl = this.el.querySelector('mc-grid-header');
-    this.bodyHeight = this.el.clientHeight - headerEl.clientHeight;
+    this.bodyHeight = this.el.clientHeight - headerEl.clientHeight - 2; // header borders
   }
 
   onAction(e) {
