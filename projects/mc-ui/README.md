@@ -32,6 +32,11 @@ Add basic list examples.
 
 fix minor bugs for list and scroll
 
+- v0.1.6
+
+fix grid cell template bugs
+add custom grid headers and cells example
+
 ## Further help
 
 go check out the [MC UI](https://github.com/mc-ui-library/mc-ui-angular).
