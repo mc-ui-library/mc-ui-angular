@@ -53,10 +53,7 @@ export class ScrollAsyncComponent extends BaseComponent {
       let data: ScrollData;
       if (Array.isArray(value)) {
         data = {
-          action: 'initialize',
-          rows: value,
-          start: 0,
-          rowCount: value.length
+          rows: value
         };
       } else {
         data = value;
@@ -68,11 +65,12 @@ export class ScrollAsyncComponent extends BaseComponent {
           };
         }) : null;
       }
+      data.rowCount = data.rowCount ? data.rowCount : data.rows ? data.rows.length : 0;
+      data.start = data.start ? data.start : 0;
+      data.action = data.action ? data.action : 'initialize';
 
       this._data = data;
       this.rowCount = data.rowCount;
-
-      data.action = data.action ? data.action : 'initialize';
 
       if (data.action === 'initialize') {
         // init page

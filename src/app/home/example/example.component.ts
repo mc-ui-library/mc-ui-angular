@@ -27,17 +27,19 @@ export class ExampleComponent extends AppBaseComponent {
   data = this.homeService.getUserListMock().data;
   gridCell: any = {};
   dropdownData = this.data.concat();
-  listBasicToggleData = this.data.concat();
-  listBasicTagsData = this.data.map((d, i) => this.getTagThemeItem(d, i));
+  listBasicToggleData = this.data.slice(0, 10);
+  listBasicTagsData = this.data.map((d, i) => this.getTagThemeItem(d, i)).slice(0, 10);
   listData = this.data.concat();
+  gridBasicData = this.data.slice(0, 20);
   gridData = this.data.concat();
+  gridCustomData = this.getCustomGridData();
 
   @ViewChild('popupTpl', {
     static: false
-  }) popupTpl: TemplateRef < any > ;
+  }) popupTpl: TemplateRef<any>;
   @ViewChild('drawerTpl', {
     static: false
-  }) drawerTpl: TemplateRef < any > ;
+  }) drawerTpl: TemplateRef<any>;
 
   constructor(
     protected er: ViewContainerRef,
@@ -45,6 +47,66 @@ export class ExampleComponent extends AppBaseComponent {
     private homeService: HomeService
   ) {
     super(er, service);
+  }
+
+  getCustomGridData() {
+    const headerData = [
+      [
+        { name: 'ID', rowspan: 2 },
+        { name: 'Active', rowspan: 2 },
+        { name: 'Balance', rowspan: 2 },
+        { name: 'Tags', rowspan: 2 },
+        { name: 'Personal Detail', colspan: 5 },
+        { name: 'Contact Info', colspan: 3 },
+      ],
+      [
+        { name: 'Age' },
+        { name: 'Eye Color' },
+        { name: 'Name' },
+        { name: 'Gender' },
+        { name: 'Company' },
+        { name: 'Email' },
+        { name: 'Mobile' },
+        { name: 'Address' },
+      ]
+    ];
+    const columns = [
+      {
+        field: 'id'
+      }, {
+        field: 'isActive'
+      }, {
+        field: 'balance'
+      }, {
+        field: 'tags'
+      }, {
+        field: 'age'
+      }, {
+        field: 'eyeColor'
+      }, {
+        field: 'name'
+      }, {
+        field: 'gender'
+      }, {
+        field: 'company'
+      }, {
+        field: 'email'
+      }, {
+        field: 'phone'
+      }, {
+        field: 'address'
+      }
+    ];
+
+    const data = {
+      headerData,
+      columns,
+      rows: this.data.map((d: any) => {
+        d.tags = d.tags ? d.tags.map((d, i) => this.getTagThemeItem(d, i)) : null;
+        return d;
+      })
+    };
+    return data;
   }
 
   getTagThemeItem(d: any, i: number) {
@@ -110,7 +172,7 @@ export class ExampleComponent extends AppBaseComponent {
   }
 
   onDropdownNeedData(e) {
-    switch(e.action) {
+    switch (e.action) {
       case 'filter':
         this.dropdownData = this.service.util.data.search(this.data, e.keyword, 'name');
         // console.log('dropdown filter', this.dropdownData);

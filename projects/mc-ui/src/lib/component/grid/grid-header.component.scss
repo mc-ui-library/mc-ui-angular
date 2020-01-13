@@ -12,12 +12,16 @@
     &--row {
       &--cell {
         padding: 0;
+        border-bottom: 1px solid $c-border;
         cursor: pointer;
         &--content {
           text-overflow: ellipsis;
           white-space: nowrap;
           overflow: hidden;
           padding: 0 10px;
+        }
+        &.is-last-row {
+          border-bottom: 0;
         }
       }
     }

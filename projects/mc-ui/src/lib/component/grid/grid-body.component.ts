@@ -48,6 +48,7 @@ export class GridBodyComponent extends BaseComponent {
     return this._data;
   }
   @Input() idField = 'id';
+  @Input() tpls = {};
 
   @HostListener('click', ['$event'])
   onPress(e: any) {

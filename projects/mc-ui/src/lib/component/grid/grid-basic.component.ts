@@ -7,6 +7,7 @@ import {
   BaseComponent
 } from '../base.component';
 import { MCUIService } from '../../mc-ui.service';
+import { ScrollData } from '../model';
 
 @Component({
   selector: 'mc-grid-basic',
@@ -23,7 +24,7 @@ export class GridBasicComponent extends BaseComponent {
   bodyHeight;
   bodyWidth = '100%';
 
-  private _data: any[];
+  private _data: ScrollData;
 
   @Input() rowHeight = 45;
   @Input() columns: any[];
@@ -31,16 +32,24 @@ export class GridBasicComponent extends BaseComponent {
   @Input() idField = 'id';
   @Input() isLoading = true;
   @Input()
-  set data(value: any[]) {
+  set data(value: ScrollData) {
     if (value) {
-      if (!this.columns) {
-        this.columns = value[0] ? Object.keys(value[0]).map(key => {
+      let data: ScrollData;
+      if (Array.isArray(value)) {
+        data = {
+          rows: value
+        };
+      } else {
+        data = value;
+      }
+      if (!data.columns) {
+        data.columns = data.rows[0] ? Object.keys(data.rows[0]).map(key => {
           return {
             field: key
           };
         }) : null;
       }
-      this._data = value;
+      this._data = data;
       this.isLoading = false;
     }
   }
@@ -54,11 +63,11 @@ export class GridBasicComponent extends BaseComponent {
 
   initCmp() {
     // update column width
-    if (this.columns && !this.columns[0].width) {
+    if (this.data.columns && !this.data.columns[0].width) {
       const containerWidth = this.el.clientWidth;
-      let colWidth = containerWidth / this.columns.length;
+      let colWidth = containerWidth / this.data.columns.length;
       colWidth = colWidth < 100 ? 100 : colWidth;
-      this.columns.forEach(column => column.width = colWidth);
+      this.data.columns.forEach(column => column.width = colWidth);
     }
   }
 

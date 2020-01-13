@@ -6,8 +6,16 @@
     <h6>Basic List - Horizontal Toggle</h6>
   </div>
   <div class="example--item--body">
-    <mc-list-basic [data]="listBasicToggleData" [selectedItems]="[listBasicToggleData[0]]" [horizontal]="true"></mc-list-basic>
-    <mc-list-basic [data]="listBasicTagsData" [horizontal]="true" [rowHeight]="20"></mc-list-basic>
+    <mc-list-basic
+      [data]="listBasicToggleData"
+      [selectedItems]="[listBasicToggleData[0]]"
+      [horizontal]="true"
+    ></mc-list-basic>
+    <mc-list-basic
+      [data]="listBasicTagsData"
+      [horizontal]="true"
+      [rowHeight]="20"
+    ></mc-list-basic>
   </div>
 </div>
 <div class="example--item">
@@ -17,39 +25,97 @@
   <div class="example--item--body" [style.height.px]="300">
     <mc-list [data]="listData" [itemTpl]="itemTpl">
       <ng-template #itemTpl let-data>
-        {{data.index}}: {{data.name}}
+        {{ data.index }}: {{ data.name }}
       </ng-template>
     </mc-list>
   </div>
 </div>
-<div class="example--item">
+<!-- <div class="example--item">
   <div class="example--item--header">
     <h6>Basic Grid</h6>
   </div>
   <div class="example--item--body" [style.height.px]="300">
-    <mc-grid-basic [data]="gridData"></mc-grid-basic>
+    <mc-grid-basic [data]="gridBasicData"></mc-grid-basic>
   </div>
-</div>
+</div> -->
 <div class="example--item">
   <div class="example--item--header">
     <h6>Grid with Infinity Scroll | Popup | Drawer</h6>
-    <p>- Popup example: Click a cell </p>
-    <p>- Drawer example: Click the friends column cell </p>
+    <p>- Popup example: Click a cell</p>
+    <p>- Drawer example: Click the friends column cell</p>
   </div>
   <div class="example--item--body" [style.height.px]="300">
     <mc-grid [data]="gridData" (action)="onGridAction($event)"></mc-grid>
     <ng-template #popupTpl>
-      <h6>{{gridCell.name}} {{gridCell.field}} {{gridCell.field === 'tags' ? '' : gridCell.value}}</h6>
+      <h6>
+        {{ gridCell.name }} {{ gridCell.field }}
+        {{ gridCell.field === "tags" ? "" : gridCell.value }}
+      </h6>
       <ng-container *ngIf="gridCell.field === 'tags'">
-        <mc-list-basic [data]="gridCell.value" [horizontal]="true" [rowHeight]="20" style="margin-top: 20px;white-space: normal;"></mc-list-basic>
+        <mc-list-basic
+          [data]="gridCell.value"
+          [horizontal]="true"
+          [rowHeight]="20"
+          style="margin-top: 20px;white-space: normal;"
+        ></mc-list-basic>
       </ng-container>
     </ng-template>
     <ng-template #drawerTpl>
       <div style="padding: 20px;padding-top: 75px;width: 240px;">
-        <h6>{{gridCell.name}} {{gridCell.field}}</h6>
-        <mc-list-basic [data]="gridCell.value" style="margin-top: 20px;"></mc-list-basic>
+        <h6>{{ gridCell.name }} {{ gridCell.field }}</h6>
+        <mc-list-basic
+          [data]="gridCell.value"
+          style="margin-top: 20px;"
+        ></mc-list-basic>
       </div>
     </ng-template>
+  </div>
+</div>
+<div class="example--item">
+  <div class="example--item--header">
+    <h6>Grid with Custom Headers and cells</h6>
+  </div>
+  <div class="example--item--body" [style.height.px]="300">
+    <mc-grid
+      [data]="gridCustomData"
+      [columnTpls]="{ isActive: isActiveTpl, eyeColor: eyeColorTpl, tags: tagsTpl }"
+    >
+      <ng-template #isActiveTpl let-row>
+        <div [style.textAlign]="'center'">
+        <div
+          [ngStyle]="{
+            display: 'inline-block',
+            backgroundColor: row.isActive ? 'green' : 'silver',
+            width: '20px',
+            height: '20px',
+            borderRadius: '50%',
+            verticalAlign: 'middle'
+          }"
+        ></div>
+        </div>
+      </ng-template>
+      <ng-template #eyeColorTpl let-row>
+        <div [style.textAlign]="'center'">
+          <mc-icon
+            theme="eye-o"
+            [ngStyle]="{
+              color: row.eyeColor,
+              fontWeight: 'bold',
+              fontSize: '30px'
+            }"
+          ></mc-icon>
+        </div>
+      </ng-template>
+      <ng-template #tagsTpl let-row>
+        <div>
+          <mc-list-basic
+            [data]="row.tags"
+            [horizontal]="true"
+            [rowHeight]="20"
+          ></mc-list-basic>
+        </div>
+      </ng-template>
+    </mc-grid>
   </div>
 </div>
 <div class="example--item">
@@ -57,6 +123,9 @@
     <h6>Dropdown</h6>
   </div>
   <div class="example--item--body" [style.height.px]="500">
-    <mc-dropdown [data]="dropdownData" (needData)="onDropdownNeedData($event)"></mc-dropdown>
+    <mc-dropdown
+      [data]="dropdownData"
+      (needData)="onDropdownNeedData($event)"
+    ></mc-dropdown>
   </div>
 </div>

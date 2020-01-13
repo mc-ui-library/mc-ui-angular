@@ -17,7 +17,8 @@ export class GridComponent extends ScrollAsyncComponent {
   bodyHeight;
   bodyWidth = '100%';
 
-  @Input() headerData: any[];
+  @Input() columnTpls = {};
+  @Input() headerTpls = {};
 
   constructor(protected _el: ElementRef, protected _service: MCUIService) {
     super(_el, _service);

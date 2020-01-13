@@ -1,7 +1,30 @@
 <table class="grid-header">
-    <tr class="grid-header--row" *ngFor="let cells of data;" [style.height.px]="rowHeight" >
-        <th class="grid-header--row--cell" *ngFor="let cell of cells;" [attr.data-id]="cell.id" data-action="select-cell" [colSpan]="cell.colspan || 1" [rowSpan]="cell.rowspan || 1">
-            <div class="grid-header--row--cell--content" [style.lineHeight.px]="rowHeight - 2" [style.height.px]="rowHeight - 2" [style.width.px]="cell.width" [title]="cell.name"><ng-container *ngTemplateOutlet="cell.tpl; context: {$implicit: cell}"></ng-container>{{cell.tpl ? '' : cell.name}}</div>
-        </th>
-    </tr>
+  <tr
+    class="grid-header--row"
+    *ngFor="let cells of data"
+    [style.height.px]="rowHeight"
+  >
+    <th
+      class="grid-header--row--cell"
+      *ngFor="let cell of cells"
+      [class.is-last-row]="cell.isLastRow"
+      [attr.data-id]="cell.id"
+      data-action="select-cell"
+      [colSpan]="cell.colspan || 1"
+      [rowSpan]="cell.rowspan || 1"
+    >
+      <div
+        class="grid-header--row--cell--content"
+        [style.lineHeight.px]="rowHeight - 2"
+        [style.height.px]="rowHeight - 2"
+        [style.width.px]="cell.width"
+        [title]="cell.name"
+      >
+        <ng-container
+          *ngTemplateOutlet="tpls[cell.name]; context: { $implicit: cell }"
+        ></ng-container
+        >{{ tpls[cell.name] ? "" : cell.name }}
+      </div>
+    </th>
+  </tr>
 </table>

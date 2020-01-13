@@ -1,15 +1,14 @@
 export interface Column {
   field?: string; // field name;
   name?: string; // column name
-  tpl?: any; // column template
-  headerTpl?: any; // column header template
   width?: number;
 }
 
 export interface ScrollData {
+  headerData?: any[];
   columns?: Column[];
-  action: 'append' | 'insert' | 'initialize';
+  action?: 'append' | 'insert' | 'initialize';
   rows: any[];
-  start: number;
-  rowCount: number;
+  start?: number;
+  rowCount?: number;
 }

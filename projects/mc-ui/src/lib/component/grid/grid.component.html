@@ -1,8 +1,9 @@
 <mc-grid-header
   [columns]="data.columns"
-  [data]="headerData"
+  [data]="data.headerData"
   [rowHeight]="rowHeight"
   [style.width]="bodyWidth"
+  [tpls]="headerTpls"
 >
 </mc-grid-header>
 <mc-scroll
@@ -24,6 +25,7 @@
       [rowHeight]="rowHeight"
       [data]="page1Data"
       [idField]="idField"
+      [tpls]="columnTpls"
       (action)="onAction($event)"
     >
     </mc-grid-body>
@@ -36,6 +38,7 @@
       [rowHeight]="rowHeight"
       [data]="page2Data"
       [idField]="idField"
+      [tpls]="columnTpls"
       (action)="onAction($event)"
     >
     </mc-grid-body>

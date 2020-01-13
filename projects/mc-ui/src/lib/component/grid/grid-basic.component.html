@@ -1,6 +1,6 @@
 <mc-grid-header
-  [columns]="columns"
-  [data]="headerData"
+  [columns]="data.columns"
+  [data]="data.headerData"
   [rowHeight]="rowHeight"
   [style.width]="bodyWidth"
 >
@@ -11,9 +11,9 @@
   [style.width]="bodyWidth"
 >
   <mc-grid-body
-    [columns]="columns"
+    [columns]="data.columns"
     [rowHeight]="rowHeight"
-    [data]="data"
+    [data]="data.rows"
     [idField]="idField"
     [class.is-basic]="true"
     (action)="onAction($event)"
