@@ -12,3 +12,10 @@ export interface ScrollData {
   start?: number;
   rowCount?: number;
 }
+
+export interface Box {
+  width?: number;
+  height?: number;
+  left?: number;
+  top?: number;
+}

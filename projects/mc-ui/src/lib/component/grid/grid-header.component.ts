@@ -37,7 +37,6 @@ export class GridHeaderComponent extends BaseComponent {
   initCmp() {
     if (!this.data) {
       // generate header data
-      // TODO: update column width for colspan
       this.data = [this.columns.map(column => {
         return { id: column.field, name: column.name || column.field, width: column.width };
       })];
