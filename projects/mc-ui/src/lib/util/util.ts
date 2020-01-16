@@ -1,3 +1,4 @@
+import { ChartUtil } from './chart-util';
 // TODO: All utils should defined as a separeated functions for importing one by one.
 import {
   HttpClient
@@ -11,11 +12,13 @@ export class Util {
   http: HttpUtil;
   dom: DomUtil;
   data: DataUtil;
+  chart: ChartUtil;
 
   constructor(private hc: HttpClient) {
     this.http = new HttpUtil(this.hc);
     this.dom = new DomUtil();
     this.data = new DataUtil();
+    this.chart = new ChartUtil();
   }
 
   isEmpty(val) {

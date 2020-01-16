@@ -1,8 +1,57 @@
-import { Box } from './../component/model';
+import {
+  Box,
+  ChartData,
+  BarDomain
+} from './../component/model';
 import * as d3 from 'd3';
 
 export class ChartUtil {
   // ********************** Chart Utils *************************
+
+  getBarDataDomain(data: ChartData[], zeroLikeValue = 5, fixedMin = null, fixedMax = null): BarDomain {
+    let lastVal = 0;
+    let max;
+    let min;
+    let max1;
+    let min1;
+    // need sum of the series data
+    data.forEach((item, i) => {
+      lastVal = 0;
+      item.values.forEach((val: any, j) => {
+        const v = +val.value;
+        if (i === 0 && j === 0) {
+          min = max = v;
+        } else {
+          // v can be undefined or null
+          min = v < min ? v : min;
+          max = v > max ? v : max;
+        }
+        val.value0 = lastVal;
+        val.value1 = lastVal + v;
+        lastVal = val.value1;
+      });
+      if (i === 0) {
+        max1 = min1 = lastVal;
+      } else {
+        max1 = lastVal > max1 ? lastVal : max1;
+        min1 = lastVal < min1 ? lastVal : min1;
+      }
+    });
+
+    if (fixedMin !== null) {
+      min = fixedMin;
+    }
+    if (fixedMax !== null) {
+      max = fixedMax;
+    }
+    if (min <= zeroLikeValue) {
+      min = 0;
+    }
+
+    return {
+      min, max, min1, max1, hasNegative: min < 0
+    };
+  }
 
   renderContainer(el: HTMLElement, themeClass: string[] = []) {
     return d3.select(el).append('svg').attr('class', themeClass.join(' ')).attr('width', el.offsetWidth).attr('height', el.offsetHeight);
@@ -160,39 +209,39 @@ export class ChartUtil {
         });
     } else {
       rects
-      .attr('data-series', d => d.series)
+        .attr('data-series', d => d.series)
         .attr('class', 'mc-chart--item')
-      .attr('height', d => {
+        .attr('height', d => {
           let h = stacked ? scaleY.bandwidth() : scaleY1.bandwidth();
           h = h < 1 ? 1 : h;
           return h;
-      })
-      .attr('y', (d, i) => {
+        })
+        .attr('y', (d, i) => {
           let y = stacked ? scaleY(d.series) : scaleY1(d.series);
           y = isNaN(y) ? 0 : y;
           return y;
-      })
-      .attr('fill', d => d.color ? d.color : color(colorBySize ? d.value : d.series))
-      .attr('title', d => d.title || `${d.series}: ${d.value}`)
-      .attr('x', !hasNegativeValue ? 0 : scaleX(0))
-      .attr('width', 0)
-      .transition()
-      .duration(duration)
-      .ease(d3.easeSinOut)
-      .attr('x', d => {
+        })
+        .attr('fill', d => d.color ? d.color : color(colorBySize ? d.value : d.series))
+        .attr('title', d => d.title || `${d.series}: ${d.value}`)
+        .attr('x', !hasNegativeValue ? 0 : scaleX(0))
+        .attr('width', 0)
+        .transition()
+        .duration(duration)
+        .ease(d3.easeSinOut)
+        .attr('x', d => {
           let x;
           if (stacked) {
-              x = scaleX(d.value1);
+            x = scaleX(d.value1);
           } else {
-              x = +d.value > 0 ? hasNegativeValue ? scaleX(0) : scaleX(minX) : scaleX(d.value);
+            x = +d.value > 0 ? hasNegativeValue ? scaleX(0) : scaleX(minX) : scaleX(d.value);
           }
           return x;
-      })
-      .attr('width', d => {
+        })
+        .attr('width', d => {
           let w = stacked ? scaleX(d.value1 - d.value0) : hasNegativeValue ? Math.abs(scaleX(d.value) - scaleX(0)) : scaleX(d.value);
           w = w < 1 ? 1 : w;
           return w;
-      });
+        });
     }
   }
 }

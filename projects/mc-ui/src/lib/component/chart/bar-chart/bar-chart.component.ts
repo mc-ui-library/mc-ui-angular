@@ -1,3 +1,4 @@
+import { ChartData } from './../../model';
 import {
   ChartBaseComponent
 } from './../chart-base.component';
@@ -14,6 +15,7 @@ import {
   HostBinding,
   HostListener
 } from '@angular/core';
+import { BarChartConfig } from '../../model';
 
 /**
  * data: [
@@ -30,23 +32,22 @@ import {
 
 export class BarChartComponent extends ChartBaseComponent {
 
-  chartType = 'bar';
-
-  private barType = '';
-  private halfShift = false;
-  private rectWidth = 20;
-  private animDuration = 500;
-  private domain: any = {};
-  private hasNegativeValue = false;
-  private valueLikeZero = 5;
-  // for beauty
-  private minRatio;
-  private maxRatio;
-  private maxValue;
-  private minValue;
-  private maxBarWidth = 100;
+  // Basic Properties
+  chartConfig: BarChartConfig = {
+    type: 'bar',
+    subType: 'vertical',
+    data: [],
+    rectWidth: 20,
+    zeroLikeValue: 5,
+    minRatio: 0.95,
+    maxRatio: 1.05
+  };
 
   constructor(protected er: ElementRef, protected service: MCUIService) {
     super(er, service);
+  }
+
+  calcDomain(config: BarChartConfig) {
+    return this.service.util.chart.getBarDataDomain(config.data, config.zeroLikeValue, config.minValue, config.maxValue);
   }
 }
