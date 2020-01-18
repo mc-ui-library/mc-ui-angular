@@ -1,4 +1,4 @@
-import { ChartData } from './../../model';
+import { ChartData, BarTypes } from './../../model';
 import {
   ChartBaseComponent
 } from './../chart-base.component';
@@ -35,7 +35,7 @@ export class BarChartComponent extends ChartBaseComponent {
   // Basic Properties
   chartConfig: BarChartConfig = {
     type: 'bar',
-    subType: 'vertical',
+    subType: BarTypes.VERTICAL,
     data: [],
     rectWidth: 20,
     zeroLikeValue: 5,

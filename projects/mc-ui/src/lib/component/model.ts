@@ -50,9 +50,10 @@ export interface ChartConfig {
 
 export interface BarChartConfig extends ChartConfig {
   type?: 'bar';
-  subType?: 'vertical' | 'horizontal' | 'stacked';
+  subType?: BarTypes;
   rectWidth?: number;
   zeroLikeValue?: number;
+  autoWidth?: boolean;
   minRatio?: number;
   maxRatio?: number;
   maxValue?: number;
@@ -69,4 +70,12 @@ export interface BarDomain {
   min1: number;
   max1: number;
   hasNegative: boolean;
+}
+
+
+// ************* enums **************
+export enum BarTypes {
+  VERTICAL = 'vertical',
+  HORIZONTAL = 'horizontal',
+  STACKED = 'stacked'
 }

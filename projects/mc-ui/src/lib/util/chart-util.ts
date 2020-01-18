@@ -1,13 +1,19 @@
 import {
   Box,
   ChartData,
-  BarDomain
+  BarDomain,
+  BarTypes
 } from './../component/model';
 import * as d3 from 'd3';
 
 export class ChartUtil {
   // ********************** Chart Utils *************************
 
+  getBarContainerWidth(el: HTMLElement, seriseCount, labelCount, subType: BarTypes = BarTypes.VERTICAL, autoWidth = false, rectWidth = 20) {
+
+  }
+
+  // for horizontal / vertical / stacked bar
   getBarDataDomain(data: ChartData[], zeroLikeValue = 5, fixedMin = null, fixedMax = null): BarDomain {
     let lastVal = 0;
     let max;
