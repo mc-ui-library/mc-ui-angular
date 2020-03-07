@@ -30,14 +30,7 @@ export class ChartBaseComponent extends BaseComponent {
     super(er, service);
   }
 
-  calcDomain(config) {}
-
-  initConfig(config: any = {}) {
-    this.domain = this.calcDomain(config);
-  }
-
   render(config = null) {
-    this.initConfig(config);
   }
 
 }

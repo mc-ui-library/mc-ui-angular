@@ -9,8 +9,15 @@ import * as d3 from 'd3';
 export class ChartUtil {
   // ********************** Chart Utils *************************
 
-  getBarContainerWidth(el: HTMLElement, seriseCount, labelCount, subType: BarTypes = BarTypes.VERTICAL, autoWidth = false, rectWidth = 20) {
-
+  /**
+   * Group bar chart
+   * When the bar width is fixed, we can calculate the container size.
+   * When the container width is fixed, we don't need to calculate it.
+   * When it is a stacked bar chart, childCount will be 1.
+   */
+  getFixedGroupBarContainerWidth(count: number, childCount: number, rectWidth = 20, overlapWidth = 0, paddingInnerRate = 0.2, ) {
+    const groupWidth = childCount * rectWidth - (childCount - 1) * overlapWidth;
+    return count * groupWidth + groupWidth * paddingInnerRate * (count - 1);
   }
 
   // for horizontal / vertical / stacked bar
@@ -60,10 +67,11 @@ export class ChartUtil {
   }
 
   renderContainer(el: HTMLElement, themeClass: string[] = []) {
+    themeClass.unshift('mc-chart');
     return d3.select(el).append('svg').attr('class', themeClass.join(' ')).attr('width', el.offsetWidth).attr('height', el.offsetHeight);
   }
 
-  getScale(type: 'band' | 'linear' | 'quantile', domain: any[], range: any, paddingInner: number = null, paddingOuter: number = null, padding: number = null) {
+  getScale(type: 'band' | 'linear' | 'quantile', domain: any[], range: any, paddingInnerRate = 0.2, paddingOuterRate = 0, padding = 0) {
     let scale: any;
     switch (type) {
       case 'band':
@@ -77,11 +85,11 @@ export class ChartUtil {
     if (padding !== null) {
       scale = scale.padding(padding);
     }
-    if (paddingInner !== null) {
-      scale = scale.paddingInner(paddingInner);
+    if (paddingInnerRate !== null) {
+      scale = scale.paddingInner(paddingInnerRate);
     }
-    if (paddingOuter !== null) {
-      scale = scale.paddingOuter(paddingOuter);
+    if (paddingOuterRate !== null) {
+      scale = scale.paddingOuter(paddingOuterRate);
     }
     return scale;
   }
@@ -109,6 +117,7 @@ export class ChartUtil {
   }
 
   renderAxis(svg: any, location: 'left' | 'bottom' | 'right', axis, box: Box, themeClass: string[] = []) {
+    themeClass.unshift(...['mc-chart--axis', 'mc-chart--axis-' + location ]);
     svg = svg.append('g').attr('class', themeClass.join(' '));
     switch (location) {
       case 'left':

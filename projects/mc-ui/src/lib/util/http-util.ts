@@ -7,10 +7,10 @@ export class HttpUtil {
 
   constructor(private _http: HttpClient) {}
 
-  http(type, url, params, options) {
+  http(type, url, params = null, options = null) {
     let http;
     options = options || {};
-    options.headers = this.createHeaders();
+    // options.headers = this.createHeaders();
     switch (type) {
       case 'get':
         http = this._http.get(url, options);

@@ -28,23 +28,8 @@ export class AppBaseService implements OnDestroy {
     return this.util.clone(CONS[id]);
   }
 
-  http(type, url, params, options) {
-    let http;
-    switch (type) {
-        case 'get':
-            http = this.util.http.get('get', url, null, options);
-            break;
-        case 'post':
-            http = this.util.http.post('post', url, params, options);
-            break;
-        case 'put':
-            http = this.util.http.put('put', url, params, options);
-            break;
-        case 'delete':
-            http = this.util.http.delete('delete', url, params, options);
-            break;
-    }
-    return http.pipe(
+  http(type, url, params = null, options = null) {
+    return this.util.http(type, url, params, options).pipe(
         map((data: any) => {
             this.util.log([url, data]);
             return data;
