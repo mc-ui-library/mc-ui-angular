@@ -1,10 +1,8 @@
 import {
   Component,
-  ElementRef
+  ElementRef,
+  Input
 } from '@angular/core';
-import {
-  MCUIService
-} from '../../mc-ui.service';
 import {
   BaseComponent
 } from '../base.component';
@@ -16,7 +14,15 @@ import {
 })
 
 export class IconComponent extends BaseComponent {
-  constructor(protected _el: ElementRef, protected _service: MCUIService) {
-    super(_el, _service);
+  @Input() icon: string;
+
+  constructor(protected er: ElementRef) {
+    super(er);
+  }
+
+  beforeThemeInit() {
+    if (this.icon) {
+      this.el.classList.add('icon', 'icon-' + this.icon);
+    }
   }
 }

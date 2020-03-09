@@ -58,10 +58,13 @@ export {
   GridHeaderComponent
 } from './lib/component/grid/grid-header.component';
 export {
+  GridBasicComponent
+} from './lib/component/grid/grid-basic.component';
+export {
   GridBodyComponent
 } from './lib/component/grid/grid-body.component';
 export {
-  MaskComponent
+  MaskComponent,
 } from './lib/component/mask/mask.component';
 export {
   GridComponent
@@ -76,3 +79,6 @@ export {
   Column,
   ScrollData,
 } from './lib/component/model';
+export {
+  ScrollbarComponent
+} from './lib/component/scrollbar/scrollbar.component';

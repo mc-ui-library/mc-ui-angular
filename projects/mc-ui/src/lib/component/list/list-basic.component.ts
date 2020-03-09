@@ -1,36 +1,28 @@
-import {
-  MCUIService
-} from '../../mc-ui.service';
-import {
-  BaseComponent
-} from '../base.component';
-import {
-  Component,
-  ElementRef,
-  Input,
-  HostBinding,
-} from '@angular/core';
+import { ListAction } from './../../models';
+import { BaseComponent } from '../base.component';
+import { Component, Input, HostBinding } from '@angular/core';
 
 @Component({
   selector: 'mc-list-basic',
   styleUrls: ['list-basic.component.scss'],
   templateUrl: './list-basic.component.html'
 })
-
 export class ListBasicComponent extends BaseComponent {
-
   private _data: any[];
 
   // checking the selected item ids
   selectedItemsMap = new Map();
 
-  @Input() rowHeight = 45; // horizontal ? 100% : rowHeight;
+  @Input() rowHeight: number;
   @Input() multiSelect = false;
+  @Input() toggleSelect = false;
   @Input()
   set selectedItems(value: any[]) {
     if (value) {
-      this.selectedItemsMap = new Map();
-      value.forEach(d => this.selectedItemsMap.set('' + d[this.idField], d));
+      const selectedItemsMap = new Map();
+      this.hasSelectedItem = value.length > 0;
+      value.forEach(d => selectedItemsMap.set('' + d[this.idField], d));
+      this.selectedItemsMap = selectedItemsMap;
     }
   }
   get selectedItems() {
@@ -44,9 +36,7 @@ export class ListBasicComponent extends BaseComponent {
         value = [value];
       }
       if (typeof value[0] === 'string') {
-        value = value.map((d, idx) => {
-          return { id: idx, name: d};
-        });
+        value = value.map((d, idx) => ({ id: idx, name: d }));
       }
     }
     this._data = value;
@@ -58,22 +48,17 @@ export class ListBasicComponent extends BaseComponent {
   @Input() itemTpl: any = null;
   @Input() idField = 'id';
   @Input() nameField = 'name';
-  @Input() hasDelete = false;
-
-  @Input() isLastPage = false;
+  @Input() isScrollPage = false;
   @Input() isFirstPage = false;
-  @HostBinding('class.is-scroll-page') @Input() isScrollPage = false;
+  @Input() isLastPage = false;
   @HostBinding('class.horizontal') @Input() horizontal = false;
-
-  constructor(protected _el: ElementRef, protected _service: MCUIService) {
-    super(_el, _service);
-  }
+  @HostBinding('class.has-selected-item') @Input() hasSelectedItem = false;
 
   afterRenderCmp() {
     // if it has the selected item.
     const selectedItems = this.getSelectedItems();
     if (selectedItems.length) {
-      this.emitAction('select-item', selectedItems[0]);
+      this.emitAction(ListAction.SELECTED_ITEM, selectedItems[0]);
     }
   }
 
@@ -93,12 +78,15 @@ export class ListBasicComponent extends BaseComponent {
       this.selectedItemsMap = new Map();
     }
     this.selectedItemsMap.set(item[this.idField] + '', item);
+    this.hasSelectedItem = true;
   }
 
   unselectItem(item) {
-    // TODO: check the list is rerendered.
-    if (this.multiSelect) {
+    if (this.multiSelect || this.toggleSelect) {
       this.selectedItemsMap.delete(item[this.idField] + '');
+      if (this.selectedItemsMap.size === 0) {
+        this.hasSelectedItem = false;
+      }
     }
   }
 
@@ -108,9 +96,9 @@ export class ListBasicComponent extends BaseComponent {
 
   onListItemAction(e) {
     switch (e.action) {
-      case 'unselect-item':
-      case 'select-item':
-        if (e.action === 'select-item') {
+      case ListAction.UNSELECTED_ITEM:
+      case ListAction.SELECTED_ITEM:
+        if (e.action === ListAction.SELECTED_ITEM) {
           this.selectItem(e.data);
         } else {
           this.unselectItem(e.data);

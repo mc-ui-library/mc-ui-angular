@@ -1,7 +1,7 @@
 import {
   Component,
   Input,
-  
+
   Output,
   ElementRef,
   EventEmitter
@@ -9,9 +9,6 @@ import {
 import {
   BaseComponent
 } from '../base.component';
-import {
-  MCUIService
-} from '../../mc-ui.service';
 
 @Component({
   selector: 'mc-button',
@@ -25,8 +22,8 @@ export class ButtonComponent extends BaseComponent {
 
   @Output() press: EventEmitter < any > = new EventEmitter();
 
-  constructor(protected er: ElementRef, protected service: MCUIService) {
-    super(er, service);
+  constructor(protected er: ElementRef) {
+    super(er);
   }
 
   onClick(e) {

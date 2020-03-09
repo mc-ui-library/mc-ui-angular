@@ -1,25 +1,27 @@
 import {
-  MCUIService
-} from '../../mc-ui.service';
-import {
-  BaseComponent
-} from '../base.component';
-import {
-  ElementRef,
-  Input,
-  Output,
-  EventEmitter,
-  ViewChild
-} from '@angular/core';
-import { ScrollData } from '../model';
+  GridAction,
+  ScrollData,
+  SortItem,
+  SortDirection,
+  GridBodyData,
+  GridHeaderData,
+  ScrollDataAction,
+  Column
+} from './../../models';
+import { BaseComponent } from '../base.component';
+import { ElementRef, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { ScrollComponent } from './scroll.component';
+import { debounceTime } from 'rxjs/operators';
+import { MCUIService } from '../../mc-ui.service';
+import { getContainerWidth } from '../../utils/dom-utils';
+import { isEmpty } from '../../utils/utils';
 
 export class ScrollAsyncComponent extends BaseComponent {
-
   private _data: ScrollData;
-
-  private neededDataIndex = -1;
-  private neededPageIndex = 1;
+  private _headerData: GridHeaderData = {
+    columns: null,
+    data: null
+  };
   private page1Indexes = {
     start: -1,
     end: -1
@@ -28,66 +30,75 @@ export class ScrollAsyncComponent extends BaseComponent {
     start: -1,
     end: -1
   };
+  // to prevent duplicated requests
+  private requestedIndexes = new Set();
+  private renderedStartIndexes = {
+    page1: -1,
+    page2: -1
+  };
+
+  sortItem: SortItem = {
+    fieldName: '',
+    direction: SortDirection.ASC
+  };
 
   originHeight: number;
 
-  page1Data;
-  page2Data;
-  rowCount;
+  page1Data: GridBodyData;
+  page2Data: GridBodyData;
+  rowCount: number;
   isLoading = true;
 
   page1IsFirst = false;
   page2IsFirst = false;
   page1IsLast = false;
   page2IsLast = false;
+  pageRowCount = 0;
+  neededPageIndex = -1;
+  page1Index = -1;
+  page2Index = -1;
 
-  @ViewChild('scrollCmp', { static: false }) scrollCmp: ScrollComponent;
+  isPage1Loading = false;
+  isPage2Loading = false;
+
+  // for resizing the window
+  resizedContainerWidth: number;
+
+  @ViewChild(ScrollComponent) scrollCmp: ScrollComponent;
 
   @Input() emptyText = 'No Data';
   @Input() idField = 'id';
-  @Input() rowHeight = 45;
+  @Input() rowHeight = 44;
+  @Input() displayLoader = true;
+  @Input()
+  set headerData(value: GridHeaderData) {
+    if (value) {
+      this._headerData = value;
+      // init sort item
+      this.initSortItem(value.columns);
+    }
+  }
+  get headerData() {
+    return this._headerData;
+  }
   @Input()
   set data(value: ScrollData) {
-    // console.log('update scroll data', value);
+    // console.log('input data', value);
     if (value) {
-      let data: ScrollData;
-      if (Array.isArray(value)) {
-        data = {
-          rows: value
-        };
-      } else {
-        data = value;
+      const oldData = this._data || {};
+      const newData = value;
+      const action: ScrollDataAction = newData.action
+        ? newData.action
+        : newData.start
+        ? ScrollDataAction.APPEND
+        : ScrollDataAction.INIT;
+
+      this.initData(action, newData, oldData);
+      if (this.rendered && action === ScrollDataAction.INIT) {
+        this.scrollCmp.init();
       }
-      if (!data.columns) {
-        data.columns = data.rows[0] ? Object.keys(data.rows[0]).map(key => {
-          return {
-            field: key
-          };
-        }) : null;
-      }
-      data.rowCount = data.rowCount ? data.rowCount : data.rows ? data.rows.length : 0;
-      data.start = data.start ? data.start : 0;
-      data.action = data.action ? data.action : 'initialize';
-
-      this._data = data;
-      this.rowCount = data.rowCount;
-
-      if (data.action === 'initialize') {
-        // init page
-        this.page1Indexes = { start: -1, end: -1 };
-        this.page2Indexes = { start: -1, end: -1 };
-
-        // after rendering, it need to update the scroll state manually whenever the data is updated since the scroll doesn't have data property.
-        if (this.rendered) {
-          this.updateHeight();
-          // update after the rowCount is applied.
-          setTimeout(() => this.scrollCmp.updateState(true));
-        }
-      } else {
-        this.updateData(this.neededPageIndex === 1 ? this.page1Indexes : this.page2Indexes, this.neededPageIndex);
-      }
-
       this.isLoading = false;
+      this.emitActionLoaded();
     }
   }
   get data() {
@@ -95,80 +106,213 @@ export class ScrollAsyncComponent extends BaseComponent {
   }
 
   // there is no data, then it triggers "needData" event.
-  @Output() needData: EventEmitter < any > = new EventEmitter();
+  @Output() needData = new EventEmitter();
 
-  constructor(protected _el: ElementRef, protected _service: MCUIService) {
-    super(_el, _service);
+  constructor(protected er: ElementRef, protected service: MCUIService) {
+    super(er);
+    this.subscriptions = service.windowResize.pipe(debounceTime(500)).subscribe(() => this.onResizeWindow());
   }
 
   afterInitCmp() {
-    // the content height is smaller than container height, adjust container height.
-    // this needs to run before rendering scroll.
-    this.updateHeight();
+    this.scrollCmp.init();
+    this.updateSize();
   }
 
-  updateData(indexes, pageIndex) {
+  initData(action, newData, oldData) {
+    let rowCount: number;
+    let rows: any[];
+
+    const headerData: GridHeaderData = this.headerData;
+    let columns: Column[] = headerData.columns;
+
+    // Update Data
+    switch (action) {
+      case ScrollDataAction.INIT:
+        rows = Array.isArray(newData) ? newData : newData.rows;
+        rowCount = newData.rowCount ? newData.rowCount : rows ? rows.length : null;
+        if (!columns) {
+          columns = rows[0]
+            ? Object.keys(rows[0]).map(key => {
+                return {
+                  field: key
+                };
+              })
+            : null;
+          this.headerData = {
+            data: headerData.data,
+            columns
+          };
+        }
+        // init page
+        this.page1Indexes = { start: -1, end: -1 };
+        this.page2Indexes = { start: -1, end: -1 };
+        this.renderedStartIndexes = { page1: -1, page2: -1 };
+        this.requestedIndexes = new Set();
+        break;
+      case ScrollDataAction.RELOAD:
+      case ScrollDataAction.APPEND:
+        rowCount = newData.rowCount ? newData.rowCount : oldData.rowCount;
+        rows = oldData.rows.concat();
+        const start = newData.start;
+        newData.rows.forEach((d, i) => (rows[start + i] = d));
+        break;
+      case ScrollDataAction.INSERT:
+        // TODO
+        break;
+    }
+
+    this._data = {
+      rowCount,
+      rows
+    };
+    this.rowCount = rowCount;
+
+    // Render Pages. This can be different from the added data since the added data can be async.
+    switch (action) {
+      case ScrollDataAction.INIT:
+        // after rendering, it need to update the scroll state manually whenever the data is updated since the scroll doesn't have data property.
+        if (this.rendered) {
+          this.updateSize();
+        }
+        break;
+      // neededData is async so it needs to be reloaded all pages.
+      case ScrollDataAction.APPEND:
+        // skip the already rendered page
+        if (this.page1Indexes.start !== -1 && this.page1Indexes.start !== this.renderedStartIndexes.page1) {
+          this.updateData(this.page1Indexes, 1);
+        }
+        if (this.page2Indexes.start !== -1 && this.page2Indexes.start !== this.renderedStartIndexes.page2) {
+          this.updateData(this.page2Indexes, 2);
+        }
+        break;
+      case ScrollDataAction.RELOAD:
+        if (this.page1Indexes.start !== -1) {
+          this.updateData(this.page1Indexes, 1);
+        }
+        if (this.page2Indexes.start !== -1) {
+          this.updateData(this.page2Indexes, 2);
+        }
+        break;
+      case ScrollDataAction.INSERT:
+        // TODO
+        break;
+    }
+  }
+
+  initSortItem(columns: Column[]) {
+    if (columns) {
+      const sortCol = columns.find(col => !!col.sortDirection);
+      if (sortCol) {
+        this.sortItem = {
+          fieldName: sortCol.field,
+          direction: sortCol.sortDirection
+        };
+      }
+    }
+  }
+
+  updateData(indexes, pageContainerIndex) {
+    // console.log(indexes, pageContainerIndex);
     const start = indexes.start;
     const end = indexes.end;
-    if (this.rowCount && !this.data.rows[start]) {
-      this.neededPageIndex = pageIndex;
+    if (isEmpty(this.rowCount) || (this.rowCount && !this.data.rows[start])) {
+      // TODO: There is no data for the page, but it can have the old data, so it should display a loading message instead of the old data.
+      if (pageContainerIndex === 1) {
+        this.isPage1Loading = true;
+      } else {
+        this.isPage2Loading = true;
+      }
       // skip the same request.
-      if (this.neededDataIndex !== start) {
+      if (!this.requestedIndexes.has(start)) {
+        // console.log('needData', start);
         this.isLoading = true;
-        this.neededDataIndex = start;
-        this.needData.emit({
-          target: this,
-          index: this.neededDataIndex,
-          action: 'append'
-        }); // when tree, it needs to insert data
+        this.requestedIndexes.add(start);
+        this.emitNeedData(start === 0 ? ScrollDataAction.INIT : ScrollDataAction.APPEND, start);
       }
     } else {
       const data = this.data.rows.slice(start, end + 1);
-      if (pageIndex === 1) {
-        this.page1Data = data;
+      const columns = this.headerData.columns;
+      // console.log(indexes, pageContainerIndex, data);
+      if (pageContainerIndex === 1) {
+        // memo for skipping re-render the same page
+        this.renderedStartIndexes.page1 = start;
+        this.page1Data = {
+          start,
+          columns,
+          data
+        };
+        this.isPage1Loading = false;
       } else {
-        this.page2Data = data;
+        // memo for skipping re-render the same page
+        this.renderedStartIndexes.page2 = start;
+        this.page2Data = {
+          start,
+          columns,
+          data
+        };
+        this.isPage2Loading = false;
       }
     }
   }
 
-  updateHeight() {
-    // when the items height are smaller than container height.
-    const height = this.rowCount === 0 ? this.rowHeight : this.rowHeight * this.rowCount;
-    if (!this.originHeight) {
-      this.originHeight = this.el.clientHeight;
-    }
-    if (this.originHeight > height) {
-      this.el.style.height = height + 'px';
-    } else {
-      this.el.style.height = this.originHeight + 'px';
-    }
+  emitNeedData(action: ScrollDataAction, start: number) {
+    this.needData.emit({
+      target: this,
+      index: start,
+      pageIndex: this.neededPageIndex,
+      pageRowCount: this.pageRowCount,
+      page1Index: this.page1Index,
+      page2Index: this.page2Index,
+      action,
+      sort: this.sortItem
+    }); // when tree, it needs to insert data
+  }
+
+  emitActionLoaded() {
+    this.action.emit({ target: this, action: GridAction.LOADED });
+  }
+
+  updateSize() {
+    this.resizedContainerWidth = getContainerWidth(this.el);
   }
 
   getItems() {
     return this.data.rows;
   }
 
+  onResizeWindow() {
+    this.updateSize();
+  }
+
   onUpdatePage(e: any) {
+    this.pageRowCount = e.pageRowCount;
     if (e.page1StartIndex < 0) {
       this.page1Indexes.start = e.page1StartIndex;
       this.page1Indexes.end = e.page1EndIndex;
-      this.page1Data = [];
+      this.page1Data = {
+        columns: this.headerData.columns,
+        data: []
+      };
     } else {
       if (this.page1Indexes.start !== e.page1StartIndex || this.page1Indexes.end !== e.page1EndIndex) {
         this.page1Indexes.start = e.page1StartIndex;
         this.page1Indexes.end = e.page1EndIndex;
+        this.neededPageIndex = e.page1Index;
         this.updateData(this.page1Indexes, 1);
       }
     }
     if (e.page2StartIndex < 0) {
       this.page2Indexes.start = e.page2StartIndex;
       this.page2Indexes.end = e.page2EndIndex;
-      this.page2Data = [];
+      this.page2Data = {
+        columns: this.headerData.columns,
+        data: []
+      };
     } else {
       if (this.page2Indexes.start !== e.page2StartIndex || this.page2Indexes.end !== e.page2EndIndex) {
         this.page2Indexes.start = e.page2StartIndex;
         this.page2Indexes.end = e.page2EndIndex;
+        this.neededPageIndex = e.page2Index;
         this.updateData(this.page2Indexes, 2);
       }
     }
@@ -176,6 +320,8 @@ export class ScrollAsyncComponent extends BaseComponent {
     this.page2IsLast = e.page2IsLast;
     this.page1IsFirst = e.page1IsFirst;
     this.page2IsFirst = e.page2IsFirst;
+    this.page1Index = e.page1Index;
+    this.page2Index = e.page2Index;
   }
 
   onAction(e) {

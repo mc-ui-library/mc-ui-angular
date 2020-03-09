@@ -13,6 +13,7 @@ import {
 import {
   TemplateRef
 } from '@angular/core';
+import { search } from 'projects/mc-ui/src/lib/utils/data-utils';
 
 @Component({
   selector: 'mc-example',
@@ -46,7 +47,7 @@ export class ExampleComponent extends AppBaseComponent {
     protected service: MCUIService,
     private homeService: HomeService
   ) {
-    super(er, service);
+    super(er);
   }
 
   getCustomGridData() {
@@ -174,7 +175,7 @@ export class ExampleComponent extends AppBaseComponent {
   onDropdownNeedData(e) {
     switch (e.action) {
       case 'filter':
-        this.dropdownData = this.service.util.data.search(this.data, e.keyword, 'name');
+        this.dropdownData = search(this.data, e.keyword, 'name');
         // console.log('dropdown filter', this.dropdownData);
         break;
     }

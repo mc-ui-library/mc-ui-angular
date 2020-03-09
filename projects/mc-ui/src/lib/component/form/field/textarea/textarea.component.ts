@@ -1,10 +1,9 @@
 import {
   Component,
-  
+
   ElementRef,
 } from '@angular/core';
 import { FieldBaseComponent } from '../field-base.component';
-import { MCUIService } from '../../../../mc-ui.service';
 
 @Component({
   selector: 'mc-textarea',
@@ -13,8 +12,8 @@ import { MCUIService } from '../../../../mc-ui.service';
 })
 export class TextareaComponent extends FieldBaseComponent {
 
-  constructor(protected er: ElementRef, protected service: MCUIService) {
-    super(er, service);
+  constructor(protected er: ElementRef) {
+    super(er);
   }
 
   onKeyUp(e) {

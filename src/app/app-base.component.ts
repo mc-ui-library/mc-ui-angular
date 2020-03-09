@@ -8,14 +8,12 @@ import {
 import {
   Subscription
 } from 'rxjs';
-import { MCUIService } from 'projects/mc-ui/src/public-api';
 
 export class AppBaseComponent implements OnInit, OnDestroy, AfterViewInit {
 
   el: HTMLElement;
 
   private _subscriptions = [];
-  private util;
 
   @Input()
   set subscriptions(value: Subscription) {
@@ -27,13 +25,10 @@ export class AppBaseComponent implements OnInit, OnDestroy, AfterViewInit {
   /**
    * Base class for all UI page components
    * @param er many times we needs to access container element
-   * @param service MCUIService
    */
   constructor(
-    protected er: ViewContainerRef,
-    protected service: MCUIService
+    protected er: ViewContainerRef
   ) {
-    this.util = this.service.util;
     this.el = er.element.nativeElement;
   }
 

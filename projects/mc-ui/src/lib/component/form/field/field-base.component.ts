@@ -6,7 +6,6 @@ import {
   EventEmitter
 } from '@angular/core';
 import { BaseComponent } from '../../base.component';
-import { MCUIService } from '../../../mc-ui.service';
 
 export class FieldBaseComponent extends BaseComponent {
 
@@ -44,8 +43,8 @@ export class FieldBaseComponent extends BaseComponent {
 
   @Output() valueChange: EventEmitter < any > = new EventEmitter();
 
-  constructor(protected er: ElementRef, protected service: MCUIService) {
-    super(er, service);
+  constructor(protected er: ElementRef) {
+    super(er);
   }
 
   focus() {}

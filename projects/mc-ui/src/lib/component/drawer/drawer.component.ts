@@ -1,31 +1,20 @@
-import {
-  Component,
-  Input,
-  ElementRef,
-  TemplateRef,
-  ViewChild,
-  Output,
-  EventEmitter
-} from '@angular/core';
-import {
-  BaseComponent
-} from '../base.component';
-import {
-  MCUIService
-} from '../../mc-ui.service';
+import { Component, Input, ElementRef, TemplateRef, ViewChild, Output, EventEmitter } from '@angular/core';
+import { BaseComponent } from '../base.component';
 
+/**
+- Add drawer.component: This is almost the same as the Popup.component, but it is sliding from the top/left/bottom/right with animation effect. The popup and drawer components are dynamic container components for adding them to the body element.
+- mask.component: This is used by drawer.component or some components that needs a mask. When drawer component has a smaller content component than the drawer, the empty part will be the mask component. It can have a opacity valued or transparent background.
+ */
 @Component({
   selector: 'mc-drawer',
   styleUrls: ['drawer.component.scss'],
   templateUrl: 'drawer.component.html'
 })
-
 export class DrawerComponent extends BaseComponent {
-
   private _visible = false;
 
   @Input() from: 'top' | 'left' | 'right' | 'bottom' = 'top';
-  @Input() tpl: TemplateRef < any > = null;
+  @Input() tpl: TemplateRef<any> = null;
   @Input() mask = true;
   @Input()
   set visible(value: boolean) {
@@ -40,12 +29,12 @@ export class DrawerComponent extends BaseComponent {
     return this._visible;
   }
 
-  @Output() hided: EventEmitter < any > = new EventEmitter();
+  @Output() hided: EventEmitter<any> = new EventEmitter();
 
-  @ViewChild('drawerEr', {static: false}) drawerEr: ElementRef;
+  @ViewChild('drawerEr', { static: false }) drawerEr: ElementRef;
 
-  constructor(protected er: ElementRef, protected service: MCUIService) {
-    super(er, service);
+  constructor(protected er: ElementRef) {
+    super(er);
   }
 
   // after rendering, measure the size and hide and show.

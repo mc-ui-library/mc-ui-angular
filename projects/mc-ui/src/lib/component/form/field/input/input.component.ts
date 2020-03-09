@@ -5,9 +5,6 @@ import {
 import {
   FieldBaseComponent
 } from '../field-base.component';
-import {
-  MCUIService
-} from '../../../../mc-ui.service';
 
 @Component({
   selector: 'mc-input',
@@ -20,8 +17,8 @@ export class InputComponent extends FieldBaseComponent {
 
   private inputEl: HTMLInputElement;
 
-  constructor(protected er: ElementRef, protected service: MCUIService) {
-    super(er, service);
+  constructor(protected er: ElementRef) {
+    super(er);
   }
 
   focus(select = true) {

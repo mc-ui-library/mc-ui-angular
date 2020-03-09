@@ -5,9 +5,6 @@ import {
 import {
   AppBaseComponent
 } from '../../index';
-import { Router } from '@angular/router';
-import { MCUIService } from 'projects/mc-ui/src/public-api';
-import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'mc-signin',
@@ -17,12 +14,9 @@ import { AuthService } from '../auth.service';
 export class SigninComponent extends AppBaseComponent {
 
   constructor(
-      protected er: ViewContainerRef,
-      protected service: MCUIService,
-      private authService: AuthService,
-      private router: Router
+      protected er: ViewContainerRef
   ) {
-      super(er, service);
+      super(er);
   }
 
   onCanPlay(e: any) {

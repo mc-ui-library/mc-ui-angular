@@ -1,6 +1,6 @@
 import {
   Component,
-  
+
   ElementRef,
   Input,
   Output,
@@ -9,9 +9,6 @@ import {
 import {
   BaseComponent
 } from '../base.component';
-import {
-  MCUIService
-} from '../../mc-ui.service';
 
 @Component({
   selector: 'mc-message-bar',
@@ -25,8 +22,8 @@ export class MessageBarComponent extends BaseComponent {
 
   @Output() hide: EventEmitter <any> = new EventEmitter();
 
-  constructor(protected er: ElementRef, protected service: MCUIService) {
-    super(er, service);
+  constructor(protected er: ElementRef) {
+    super(er);
   }
 
   onPressCloseButton(e: any) {

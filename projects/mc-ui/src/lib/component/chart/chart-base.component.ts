@@ -1,7 +1,3 @@
-import { BarChartConfig, ChartData } from './../model';
-import {
-  MCUIService
-} from './../../mc-ui.service';
 import {
   ElementRef,
   Input
@@ -18,6 +14,7 @@ export class ChartBaseComponent extends BaseComponent {
   @Input()
   set config(value: any) {
     if (value) {
+      // overwrite the default config if it has custom values
       this.chartConfig = Object.assign(this.chartConfig, value);
       this.render(this.chartConfig);
     }
@@ -26,11 +23,18 @@ export class ChartBaseComponent extends BaseComponent {
     return this.chartConfig;
   }
 
-  constructor(protected er: ElementRef, protected service: MCUIService) {
-    super(er, service);
+  constructor(protected er: ElementRef) {
+    super(er);
+  }
+
+  calcDomain(config) {}
+
+  initConfig(config: any = {}) {
+    this.domain = this.calcDomain(config);
   }
 
   render(config = null) {
+    this.initConfig(config);
   }
 
 }

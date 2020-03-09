@@ -1,6 +1,5 @@
-import {
-  MCUIService
-} from '../../mc-ui.service';
+import { ScrollbarComponent } from './../scrollbar/scrollbar.component';
+import { PerfectScrollbarComponent, PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 import {
   BaseComponent
 } from '../base.component';
@@ -9,17 +8,15 @@ import {
   ElementRef,
   Input,
   Output,
-  EventEmitter
+  EventEmitter,
+  ViewChild
 } from '@angular/core';
+import { isEmpty } from '../../utils/utils';
 
 interface State {
   contentHeight: number;
   page1Top: number;
   page2Top: number;
-  page1StartIndex: number;
-  page1EndIndex: number;
-  page2StartIndex: number;
-  page2EndIndex: number;
 }
 
 @Component({
@@ -34,25 +31,31 @@ export class ScrollComponent extends BaseComponent {
   private oldScrollTop = -1;
   private page1Index = -2;
   private page2Index = -1;
-  private _rowCount = 0;
+  private _rowCount: number; // for calculating the height
+  private initializing = false;
   private ticking = false;
 
+  // State for Template
   state: State;
 
+  // TODO: Someday, we should remove this since its performance is not better than the native scroll for the pagination. It has a delay when testing with Chrome developer tools. We can add a custom scroll bar for the custom style.
+  @ViewChild(ScrollbarComponent) scrollBarCmp: ScrollbarComponent;
+
+  @Input() loadingText = 'loading...';
   @Input() emptyText = 'No Data';
   @Input() page1Tpl: any = null;
   @Input() page2Tpl: any = null;
-  @Input() rowHeight = 45;
+  @Input() rowHeight = 44;
   @Input() isLoading = false;
+  @Input() displayLoader = true;
   @Input()
   set rowCount(value: number) {
-    if (!this.util.isEmpty(value)) {
+    if (!isEmpty(value)) {
       this._rowCount = value;
       // init value
-      this.page1Index = -2;
-      this.page2Index = -1;
-      this.scrollTop = 0;
-      this.oldScrollTop = -1;
+      if (this.rendered) {
+        this.init();
+      }
     }
   }
   get rowCount() {
@@ -61,42 +64,60 @@ export class ScrollComponent extends BaseComponent {
 
   @Output() updatePage: EventEmitter < any > = new EventEmitter();
 
-  constructor(protected _el: ElementRef, protected _service: MCUIService) {
-    super(_el, _service);
+  constructor(protected er: ElementRef) {
+    super(er);
+    this.initState();
   }
 
-  afterRenderCmp() {
-    // update size
-    this.updateState();
+  afterInitCmp() {
+    this.init();
   }
 
   initState() {
     this.state = {
       contentHeight: 0,
       page1Top: 0,
-      page2Top: -1,
-      page1StartIndex: -1,
-      page1EndIndex: -1,
-      page2StartIndex: -1,
-      page2EndIndex: -1
+      page2Top: -1
     };
   }
 
+  init() {
+    this.initializing = true;
+    this.page1Index = -2;
+    this.page2Index = -1;
+    this.scrollTop = 0;
+    this.oldScrollTop = -1;
+    this.scrollBarCmp.scrollToTop();
+    this.initState();
+    this.initializing = false;
+  }
+
   updateState(refresh = false) {
+    const containerHeight = this.el.clientHeight;
+    const rowHeight = this.rowHeight;
+
+    if (containerHeight < rowHeight) {
+      console.warn('ScrollComponent: Container height should be bigger than the row height');
+      return;
+    }
+
     const scrollTop = this.scrollTop;
     const isDown = this.oldScrollTop < scrollTop;
-    const rowHeight = this.rowHeight;
-    const rowCount = this.rowCount;
-    const containerHeight = this.el.clientHeight;
+    let rowCount = this.rowCount;
     let page1Index = this.page1Index;
     let page2Index = this.page2Index;
 
     const pageRowCount = Math.round((containerHeight / rowHeight) * 1.5);
     const pageHeight = pageRowCount * rowHeight;
+
+    // Temp rowCount: When there is no rowCount, but it needs to calc the temp page size etc.
+    if (isEmpty(rowCount)) {
+      rowCount = pageRowCount;
+    }
+
     const contentHeight = rowCount === 0 ? rowHeight : rowHeight * rowCount;
     const pageLastIndex = Math.floor((contentHeight - 1) / pageHeight); // -1 for if it is the same as with the pageHeight, the page can be +1.
     const nextPageIndex = isDown ? Math.ceil(scrollTop / pageHeight) : Math.floor(scrollTop / pageHeight);
-    // console.log(nextPageIndex, pageLastIndex, page1Index, page2Index);
     if (refresh || (nextPageIndex <= pageLastIndex && page1Index !== nextPageIndex && page2Index !== nextPageIndex)) {
       // It may not have two pages at all. keep the full logic for readability.
       if (page1Index === -2) {
@@ -143,11 +164,7 @@ export class ScrollComponent extends BaseComponent {
       const state = {
         contentHeight,
         page1Top,
-        page2Top,
-        page1StartIndex,
-        page1EndIndex,
-        page2StartIndex,
-        page2EndIndex
+        page2Top
       };
       this.state = state;
       this.updatePage.emit({
@@ -159,6 +176,7 @@ export class ScrollComponent extends BaseComponent {
         page1Index,
         page2Index,
         rowCount,
+        pageRowCount,
         pageLastIndex,
         page1IsFirst: page1Index === 0,
         page2IsFirst: page2Index === 0,
@@ -171,22 +189,22 @@ export class ScrollComponent extends BaseComponent {
   }
 
   onScroll(e: any) {
-    const el = e.target;
-    this.scrollTop = el.scrollTop;
+    this.scrollTop = e.target.scrollTop;
     if (!this.ticking) {
+      if (this.initializing) {
+        return;
+      }
       requestAnimationFrame(() => {
-        // for direction: up / down
+        // CONSIDER: we may use debounce for the scrolling performance.
         this.updateState();
         this.ticking = false;
       });
       this.ticking = true;
     }
+  }
+
+  onScrollEnd(e: any) {
     // when the scroll is the end, sometimes it is not updated.
-    const scrollHeight = el.scrollHeight;
-    const height = el.offsetHeight;
-    if (this.scrollTop + height === scrollHeight) {
-      this.updateState();
-      this.ticking = false;
-    }
+    this.updateState();
   }
 }

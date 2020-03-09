@@ -8,14 +8,9 @@ import {
   EventEmitter
 } from '@angular/core';
 import {
-  MCUIService
-} from '../mc-ui.service';
-import {
-  Util
-} from '../util/util';
-import {
   Subscription
 } from 'rxjs';
+import { getThemeClasses, getComponentNameByElement } from '../utils/dom-utils';
 
 /**
  * Base Class for All UI Components
@@ -24,18 +19,33 @@ import {
 export class BaseComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private _subscriptions = [];
+  private _theme: string[];
+  private themeClasses: string[];
 
+  componentName: string;
   rendered = false;
 
-  // read/write rendering related members. the interface should be defineded for type checking.
-  state: any;
-
   el: HTMLElement;
-  util: Util;
 
-  // special members that can be changed during run-time or important member. like data etc.
+  // special members that can be changed during run-time or important member. like data, additionalData etc.
   // theme classes
-  @Input() theme: string | string[];
+  @Input()
+  set theme(value: string | string[]) {
+    if (value) {
+      this._theme = Array.isArray(value) ? value : [value];
+      // theme should be the last class for priority
+      if (this.rendered) {
+        if (this.themeClasses) {
+          // remove previous themes
+          this.el.classList.remove(...this.themeClasses);
+        }
+        this.applyThemeClass();
+      }
+    }
+  }
+  get theme() {
+    return this._theme;
+  }
   @Input()
   set subscriptions(value: Subscription) {
     if (value) {
@@ -43,16 +53,11 @@ export class BaseComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  @Output() action: EventEmitter < any > = new EventEmitter();
+  @Output() action: EventEmitter<any> = new EventEmitter();
 
-  constructor(protected er: ElementRef, protected service: MCUIService) {
+  constructor(protected er: ElementRef) {
     this.el = this.er.nativeElement;
-    this.util = this.service.util;
-    this.initState();
-  }
-
-  initState() {
-    // default state etc
+    this.componentName = getComponentNameByElement(this.el);
   }
 
   ngOnInit() {
@@ -61,13 +66,10 @@ export class BaseComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     this.afterInitCmp();
-    // theme should be the last class for priority
     this.applyThemeClass();
-    setTimeout(() => {
-      this.afterRenderCmp();
-      this.rendered = true;
-      this.action.emit({ target: this, action: 'rendered' });
-    });
+    this.afterRenderCmp();
+    this.rendered = true;
+    this.action.emit({ target: this, action: 'rendered' });
   }
 
   ngOnDestroy() {
@@ -77,28 +79,29 @@ export class BaseComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   applyThemeClass() {
+    this.beforeThemeInit();
     if (this.theme) {
-      const themes = !Array.isArray(this.theme) ? [this.theme] : this.theme;
-      const compName = this.el.tagName.toLowerCase().split('mc-')[1];
-      this.el.classList.add(...themes.map(d => compName + '-' + d));
+      const themes = getThemeClasses(this.componentName, this.theme);
+      this.el.classList.add(...themes);
+      this.themeClasses = themes;
     }
+    this.afterThemeInit();
   }
+
+  beforeThemeInit() { }
+
+  afterThemeInit() { }
 
   initCmp() {
     // empty
   }
 
-  afterInitCmp() {}
+  afterInitCmp() { }
 
-  afterRenderCmp() {
+  afterRenderCmp() { }
 
-  }
-
-  // update a specific state
-  setState(state: any) {
-    const currState = this.util.clone(this.state);
-    Object.keys(state).forEach(key => currState[key] = state[key]);
-    this.state = currState;
+  getBody() {
+    return document.body;
   }
 
   unsubscribeAll() {

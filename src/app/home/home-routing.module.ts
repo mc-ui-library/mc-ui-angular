@@ -15,7 +15,7 @@ const homeRoutes: Routes = [{
   children: [
     {
       path: 'example',
-      loadChildren: './example/example.module#ExampleModule'
+      loadChildren: () => import('./example/example.module').then(m => m.ExampleModule)
     }
   ]
 }];

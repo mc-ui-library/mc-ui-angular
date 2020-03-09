@@ -5,19 +5,8 @@ import {
   Injector,
   ApplicationRef
 } from '@angular/core';
-import {
-  HttpClient
-} from '@angular/common/http';
-import {
-  Util
-} from './util/util';
-
-interface Message {
-  from?: string;
-  to: string;
-  action: string;
-  data: any;
-}
+import { BehaviorSubject, Observable, fromEvent } from 'rxjs';
+import { Message } from './models';
 
 /**
  * App Level shared services e.g) Dynamic Components or EventEmitters for sending message between UI Page Componensts, window resize etc.
@@ -25,20 +14,19 @@ interface Message {
 @Injectable()
 export class MCUIService {
 
-  util: Util;
+  private _message = new BehaviorSubject<Message>({ from: '', to: '', action: '' });
+  message = this._message.asObservable();
+  windowResize: Observable<any>;
+  bodyPress: Observable<any>;
 
-  message: EventEmitter < any > = new EventEmitter();
-  windowResize: EventEmitter < any > = new EventEmitter();
-  bodyPress: EventEmitter < any > = new EventEmitter();
-
-  constructor(private _resolver: ComponentFactoryResolver, private injector: Injector, private appRef: ApplicationRef, private hc: HttpClient) {
-    this.util = new Util(this.hc);
-    this.getBody().addEventListener('click', this.onClickBody.bind(this));
-    window.addEventListener('resize', this.onResizeWindow.bind(this));
+  constructor(private _resolver: ComponentFactoryResolver, private injector: Injector, private appRef: ApplicationRef) {
+    this.bodyPress = fromEvent(this.getBody(), 'click');
+    this.windowResize = fromEvent(window, 'resize');
   }
 
+  // Sending a message between components that can't be accessed by Input/Output
   sendMessage(message: Message) {
-    this.message.emit(message);
+    this._message.next(message);
   }
 
   addComponent(cmpType: any, parentEl = document.body) {
@@ -58,13 +46,5 @@ export class MCUIService {
 
   getBody() {
     return document.body;
-  }
-
-  onClickBody(e: any) {
-    this.bodyPress.emit(e);
-  }
-
-  onResizeWindow(e: any) {
-    this.windowResize.emit(e);
   }
 }

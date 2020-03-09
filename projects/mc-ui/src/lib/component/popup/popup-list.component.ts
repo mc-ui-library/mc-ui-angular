@@ -5,14 +5,13 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import {
-  MCUIService
-} from '../../mc-ui.service';
 import { PopupComponent } from './popup.component';
 import { EventEmitter } from '@angular/core';
 import { ScrollData } from '../model';
 import { ListComponent } from '../list/list.component';
 import { InputComponent } from '../form/field/input/input.component';
+import { debounce } from '../../utils/utils';
+import { MCUIService } from '../../mc-ui.service';
 
 @Component({
   selector: 'mc-popup-list',
@@ -74,7 +73,7 @@ export class PopupListComponent extends PopupComponent {
 
   constructor(protected er: ElementRef, protected service: MCUIService) {
     super(er, service);
-    this.filterDebounce = this.util.debounce(this.filter, 300, this);
+    this.filterDebounce = debounce(this.filter, 300, this);
   }
 
   getInputCmp() {

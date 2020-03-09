@@ -1,7 +1,7 @@
-import { MCUIService } from 'projects/mc-ui/src/public-api';
 import {
   user_mock
 } from 'src/test/api/user_mock';
+import { getRootUrl } from 'projects/mc-ui/src/lib/utils/utils';
 
 const URLS = {
   user: 'api/user/',
@@ -15,8 +15,8 @@ export class Url {
 
   private root = '';
 
-  constructor(private service: MCUIService) {
-    this.root = this.service.util.getRootUrl();
+  constructor() {
+    this.root = getRootUrl();
   }
 
   /**

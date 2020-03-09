@@ -1,29 +1,32 @@
 <table class="grid-header">
   <tr
     class="grid-header--row"
-    *ngFor="let cells of data"
-    [style.height.px]="rowHeight"
+    *ngFor="let cells of state.headerData"
+    [style.height.px]="state.rowHeight"
   >
     <th
-      class="grid-header--row--cell"
+      class="grid-header--row--cell{{cell.class ? ' ' + cell.class : ''}}"
       *ngFor="let cell of cells"
+      [class.is-first-row]="cell.isFirstRow"
       [class.is-last-row]="cell.isLastRow"
-      [attr.data-id]="cell.id"
-      data-action="select-cell"
+      [class.is-first-col]="cell.isFirstCol"
+      [class.is-last-col]="cell.isLastCol"
+      [class.is-sortable]="cell.sort"
+      [attr.data-field]="cell.field"
+      [attr.data-action]="state.gridAction.SELECT_CELL"
       [colSpan]="cell.colspan || 1"
       [rowSpan]="cell.rowspan || 1"
     >
       <div
-        class="grid-header--row--cell--content"
-        [style.lineHeight.px]="rowHeight - 2"
-        [style.height.px]="rowHeight - 2"
+        class="grid-header--row--cell--content{{cell.class ? ' ' + cell.class + '--content' : ''}}"
         [style.width.px]="cell.width"
+        [style.height.px]="state.rowHeight * (cell.rowspan || 1) - 2"
         [title]="cell.name"
       >
         <ng-container
-          *ngTemplateOutlet="tpls[cell.name]; context: { $implicit: cell }"
+          *ngTemplateOutlet="state.tpls[cell.name]; context: { $implicit: cell }"
         ></ng-container
-        >{{ tpls[cell.name] ? "" : cell.name }}
+        >{{ state.tpls[cell.name] ? "" : cell.name }} <mc-icon *ngIf="sortItem.fieldName === cell.field" icon="chevron" theme="grid-header-sort" [class.flip]="sortItem.direction === state.sortDirection.ASC"></mc-icon>
       </div>
     </th>
   </tr>

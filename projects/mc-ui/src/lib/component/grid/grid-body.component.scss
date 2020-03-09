@@ -1,22 +1,66 @@
-@import "./../../css/vars";
+@import "../../css/vars";
 :host {
   display: block;
   position: relative;
   height: 100%;
+
+  // override reset.scss, if we use the normalize.scss, we don't need this.
+  table, tbody, tr, td, th, div {
+    vertical-align: middle;
+  }
+
+  div {
+    position: relative;
+  }
+
   .grid-body {
     border-collapse: collapse;
     border-spacing: 0;
     &--row {
       border-top: 1px solid transparent;
-      border-bottom: 1px solid $c-border;
+      border-bottom: 1px solid transparent;
+
+      &-odd {
+
+      }
+      &-even {
+        background-color: rgba(109, 108, 127, 0.15);
+      }
+
       &--cell {
         padding: 0;
         cursor: pointer;
         &--content {
-          text-overflow: ellipsis;
-          white-space: nowrap;
           overflow: hidden;
-          padding: 0 10px;
+          padding: 0 8px;
+          &--container {
+            display: inline-block;
+            white-space: nowrap;
+          }
+          &.overflow-mask {
+            mask-image: linear-gradient(to right, #fff 75%, transparent 100%);
+          }
+        }
+        &:hover {
+          background: linear-gradient(125deg,rgba(255,255,255,.15),rgba(255,255,255,.05));
+        }
+        &.unselectable {
+          cursor: default;
+          &:hover {
+            background: none;
+          }
+        }
+        &.align-right {
+          .grid-body--row--cell--content {
+            text-align: right;
+            direction: rtl;
+            &.overflow-mask {
+              mask-image: linear-gradient(to left, #fff 75%, transparent 100%);
+            }
+          }
+        }
+        &.selected {
+          background: linear-gradient(125deg,rgba(255,255,255,.15),rgba(255,255,255,.05));
         }
       }
     }
@@ -42,5 +86,11 @@
           }
         }
       }
+  }
+
+  &.is-loading {
+    td {
+      opacity: 0.1;
+    }
   }
 }

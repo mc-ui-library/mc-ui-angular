@@ -8,7 +8,6 @@ import {
 import {
   Router
 } from '@angular/router';
-import { MCUIService } from 'projects/mc-ui/src/public-api';
 import { HomeService } from '../home.service';
 
 @Component({
@@ -22,11 +21,10 @@ export class HomeHeaderComponent extends AppBaseComponent {
 
   constructor(
     protected er: ViewContainerRef,
-    protected service: MCUIService,
     private homeService: HomeService,
     private router: Router,
   ) {
-    super(er, service);
+    super(er);
   }
 
   onListAction(e) {

@@ -1,44 +1,51 @@
 <mc-grid-header
-  [columns]="data.columns"
-  [data]="data.headerData"
+  [theme]="theme"
+  [data]="headerData"
   [rowHeight]="rowHeight"
   [style.width]="bodyWidth"
   [tpls]="headerTpls"
+  (action)="onAction($event)"
 >
 </mc-grid-header>
 <mc-scroll
+  [theme]="theme"
   [page1Tpl]="page1Tpl"
   [page2Tpl]="page2Tpl"
   [rowHeight]="rowHeight"
   [rowCount]="rowCount"
   [isLoading]="isLoading"
   [emptyText]="emptyText"
+  [displayLoader]="displayLoader"
   (updatePage)="onUpdatePage($event)"
   [style.height.px]="bodyHeight"
   [style.width]="bodyWidth"
 >
   <ng-template #page1Tpl>
     <mc-grid-body
+      [theme]="theme"
       [class.is-scroll-page]="true"
       [class.is-last-page]="page1IsLast"
-      [columns]="data.columns"
       [rowHeight]="rowHeight"
       [data]="page1Data"
       [idField]="idField"
       [tpls]="columnTpls"
+      [isLoading]="isPage1Loading"
+      [selectedCell]="selectedCell"
       (action)="onAction($event)"
     >
     </mc-grid-body>
   </ng-template>
   <ng-template #page2Tpl>
     <mc-grid-body
+      [theme]="theme"
       [class.is-scroll-page]="true"
       [class.is-last-page]="page2IsLast"
-      [columns]="data.columns"
       [rowHeight]="rowHeight"
       [data]="page2Data"
       [idField]="idField"
       [tpls]="columnTpls"
+      [isLoading]="isPage2Loading"
+      [selectedCell]="selectedCell"
       (action)="onAction($event)"
     >
     </mc-grid-body>

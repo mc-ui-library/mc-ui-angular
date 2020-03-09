@@ -1,6 +1,3 @@
-import {
-  MCUIService
-} from '../../mc-ui.service';
 import { ScrollAsyncComponent } from '../scroll/scroll-async.component';
 import {
   Component,
@@ -9,6 +6,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ListBasicComponent } from './list-basic.component';
+import { MCUIService } from '../../mc-ui.service';
 
 @Component({
   selector: 'mc-list',

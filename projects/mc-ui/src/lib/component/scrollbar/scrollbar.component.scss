@@ -1,0 +1,53 @@
+
+@import './../../css/vars';
+
+:host {
+  display: block;
+  position: relative;
+  height: 100%;
+
+  perfect-scrollbar {
+    & > .ps {
+      & > .ps__rail-y {
+        &:hover,
+        &:focus,
+        &.ps--clicking {
+          .ps__thumb-y {
+            // background-color: $c-bg-scrollbar-clicking-thumb;
+          }
+        }
+      }
+
+      &.ps--active-y {
+        & > .ps__rail-y {
+          z-index: 100;
+          width: 4px;
+
+          &:hover,
+          &.ps--clicking {
+            width: 8px;
+            // background-color: $c-bg-scrollbar-rail;
+
+            .ps__thumb-y {
+              width: 100%;
+            }
+          }
+        }
+
+        &.ps--scrolling-y {
+          & > .ps__rail-y {
+            // background-color: $c-bg-scrollbar-rail;
+            opacity: 1;
+          }
+        }
+      }
+    }
+
+    .ps__thumb-y {
+      border-radius: 4px;
+      width: 100%;
+      right: 0px;
+      // background-color: $c-bg-scrollbar-thumb;
+    }
+  }
+}

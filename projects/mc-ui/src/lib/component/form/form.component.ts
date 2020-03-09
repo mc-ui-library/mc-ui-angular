@@ -11,9 +11,7 @@ import {
 import {
   BaseComponent
 } from '../base.component';
-import {
-  MCUIService
-} from '../../mc-ui.service';
+import { isEmpty } from '../../utils/utils';
 
 @Component({
   selector: 'mc-form',
@@ -39,8 +37,8 @@ export class FormComponent extends BaseComponent {
 
   @ContentChildren(FieldComponent) contentInputCmps: QueryList < FieldComponent > ;
 
-  constructor(protected er: ElementRef, protected service: MCUIService) {
-    super(er, service);
+  constructor(protected er: ElementRef) {
+    super(er);
   }
 
   afterInitCmp() {
@@ -65,7 +63,6 @@ export class FormComponent extends BaseComponent {
   }
 
   getValues() {
-    const isEmpty = this.util.isEmpty;
     this.values = this.inputCmps.reduce((values, cmp) => {
       values[cmp.name] = isEmpty(cmp.value) ? '' : cmp.value;
       return values;

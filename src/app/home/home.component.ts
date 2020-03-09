@@ -6,7 +6,6 @@ import {
 import {
   AppBaseComponent
 } from '../index';
-import { MCUIService } from 'projects/mc-ui/src/public-api';
 
 @Component({
   selector: 'mc-home',
@@ -17,8 +16,7 @@ export class HomeComponent extends AppBaseComponent {
 
   constructor(
       protected er: ViewContainerRef,
-      protected service: MCUIService,
   ) {
-      super(er, service);
+      super(er);
   }
 }

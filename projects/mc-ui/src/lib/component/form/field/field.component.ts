@@ -2,7 +2,7 @@
 import {
   Component,
   ViewChild,
-  
+
   ElementRef
 } from '@angular/core';
 import {
@@ -12,7 +12,6 @@ import {
   TextareaComponent
 } from './textarea/textarea.component';
 import { FieldBaseComponent } from './field-base.component';
-import { MCUIService } from '../../../mc-ui.service';
 
 @Component({
   selector: 'mc-field',
@@ -21,11 +20,11 @@ import { MCUIService } from '../../../mc-ui.service';
 })
 export class FieldComponent extends FieldBaseComponent {
 
-  @ViewChild(InputComponent, {static: false}) fieldInputCmp: InputComponent;
-  @ViewChild(TextareaComponent, {static: false}) fieldTextareaCmp: TextareaComponent;
+  @ViewChild(InputComponent, { static: false }) fieldInputCmp: InputComponent;
+  @ViewChild(TextareaComponent, { static: false }) fieldTextareaCmp: TextareaComponent;
 
-  constructor(protected er: ElementRef, protected service: MCUIService) {
-    super(er, service);
+  constructor(protected er: ElementRef) {
+    super(er);
   }
 
 }

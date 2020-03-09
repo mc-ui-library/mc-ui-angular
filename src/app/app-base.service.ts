@@ -20,8 +20,7 @@ export class AppBaseService implements OnDestroy {
   protected url: Url;
 
   constructor(protected service: MCUIService) {
-    this.util = this.service.util;
-    this.url = new Url(service);
+    this.url = new Url();
   }
 
   getCons(id) {

@@ -68,8 +68,8 @@ export class DropdownComponent extends FieldBaseComponent {
     this.showPopupList();
   }
 
-  constructor(protected er: ElementRef, protected service: MCUIService) {
-    super(er, service);
+  constructor(protected er: ElementRef, private service: MCUIService) {
+    super(er);
   }
 
   updateSummary(value) {

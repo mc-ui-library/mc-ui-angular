@@ -30,12 +30,15 @@ import { PopupComponent } from './component/popup/popup.component';
 import { PopupListComponent } from './component/popup/popup-list.component';
 import { MCUIService } from './mc-ui.service';
 import { DropdownComponent } from './component/form/field/dropdown/dropdown.component';
+import { ScrollbarComponent } from './component/scrollbar/scrollbar.component';
+import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 
 @NgModule({
   imports: [
     CommonModule,
     RouterModule,
-    HttpClientModule
+    HttpClientModule,
+    PerfectScrollbarModule
   ],
   declarations: [
     FieldComponent,
@@ -58,7 +61,8 @@ import { DropdownComponent } from './component/form/field/dropdown/dropdown.comp
     MaskComponent,
     PopupComponent,
     PopupListComponent,
-    DropdownComponent
+    DropdownComponent,
+    ScrollbarComponent
   ],
   entryComponents: [
     PopupComponent,
@@ -88,7 +92,8 @@ import { DropdownComponent } from './component/form/field/dropdown/dropdown.comp
     MaskComponent,
     PopupComponent,
     PopupListComponent,
-    DropdownComponent
+    DropdownComponent,
+    ScrollbarComponent
   ],
   providers: [MCUIService]
 })

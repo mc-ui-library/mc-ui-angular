@@ -2,10 +2,12 @@
   display: block;
   position: relative;
   height: 100%;
+
+  // basic perfect scroll bar style is from src/styles/perfect-scrollbar.scss
   .scroll {
-    overflow-y: auto;
     height: 100%;
     &--content {
+      position: relative;
       &--page1, &--page2 {
         position: absolute;
         width: 100%;

@@ -6,7 +6,6 @@ import {
 import {
   BaseComponent
 } from '../base.component';
-import { MCUIService } from '../../mc-ui.service';
 import { ScrollData } from '../model';
 
 @Component({
@@ -57,8 +56,8 @@ export class GridBasicComponent extends BaseComponent {
     return this._data;
   }
 
-  constructor(protected _el: ElementRef, protected _service: MCUIService) {
-    super(_el, _service);
+  constructor(protected er: ElementRef) {
+    super(er);
   }
 
   initCmp() {
