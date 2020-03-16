@@ -2,7 +2,7 @@ import { ElementRef, OnInit, OnDestroy, AfterViewInit, Input, Output, EventEmitt
 import { Subscription } from 'rxjs';
 import { getComponentNameByElement, getThemeClasses } from '../utils/dom-utils';
 import { ComponentConfig } from '../models';
-import { applyIf } from '../utils/data-utils';
+import { applyIf, copy } from '../utils/data-utils';
 
 /**
  * Base Class for All UI Presentational Components
@@ -25,7 +25,7 @@ export class BaseComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input()
   set config(value: any) {
     if (value) {
-      this._config = Object.assign(value, this._config);
+      this._config = copy(this._config, value);
       this.setConfig(this._config);
     }
   }

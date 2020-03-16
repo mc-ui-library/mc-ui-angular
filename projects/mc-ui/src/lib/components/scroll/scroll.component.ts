@@ -10,8 +10,8 @@ import {
   EventEmitter,
   ViewChild
 } from '@angular/core';
-import { isEmpty } from './../../utils/utils';
-import { ScrollConfig } from '../../models';
+import { isEmpty, debounce } from './../../utils/utils';
+import { ScrollConfig, ScrollAction, ScrollPage, ScrollActionEvent } from '../../models';
 import { applyIf } from '../../utils/data-utils';
 
 interface State {
@@ -25,12 +25,7 @@ interface State {
   emptyText?: string;
   displayLoader?: boolean;
   isLoading?: boolean;
-}
-
-interface Page {
-  startRowIndex: number;
-  endRowIndex: number;
-  top: number;
+  rowCount?: number;
 }
 
 @Component({
@@ -41,6 +36,13 @@ interface Page {
 
 export class ScrollComponent extends BaseComponent {
 
+  private pages: Array<ScrollPage>;
+  private currentPageIndexes = new Set<number>();
+  private scrollTop = 0;
+  private oldScrollTop = -1;
+  private ticking = false;
+  private debounceUpdateState = debounce(this.updateState, 100, this);
+
   _config: ScrollConfig = {
     loadingText: 'loading...',
     emptyText: 'No Data',
@@ -49,35 +51,21 @@ export class ScrollComponent extends BaseComponent {
     displayLoader: true
   };
 
-  state: State = {};
+  state: State = {
+    contentHeight: 0,
+    page1Top: 0,
+    page2Top: 0,
+    page1Tpl: null,
+    page2Tpl: null,
+    rowHeight: 0,
+    loadingText: '',
+    emptyText: '',
+    displayLoader: false,
+    isLoading: false,
+    rowCount: 0
+  };
 
   @ViewChild(ScrollbarComponent) scrollBarCmp: ScrollbarComponent;
-
-
-
-
-
-
-
-  private scrollTop = 0;
-  private oldScrollTop = -1;
-  private page1Index = -2;
-  private page2Index = -1;
-  private _rowCount: number; // for calculating the height
-  private initializing = false;
-  private ticking = false;
-
-  @Input()
-  set rowCount(value: number) {
-    if (!isEmpty(value)) {
-      this._rowCount = value;
-      // init value
-      this.init();
-    }
-  }
-  get rowCount() {
-    return this._rowCount;
-  }
 
   constructor(protected er: ElementRef) {
     super(er);
@@ -87,9 +75,9 @@ export class ScrollComponent extends BaseComponent {
     const rowCount = config.rowCount;
     if (!isEmpty(rowCount)) {
       const state = applyIf(this.state, config);
-      const rowHeight = config.rowHeight;
       const contentHeight = this.getContentHeight(config);
-      const pages = this.getPages(config);
+      this.state = applyIf(state, { contentHeight });
+      this.pages = this.getPages(config);
     }
   }
 
@@ -103,161 +91,109 @@ export class ScrollComponent extends BaseComponent {
   }
 
   getPages(config: ScrollConfig) {
+    // this is for the dynamic page height. e.g) a row can be a accordion container.
     let remainRowCount = config.rowCount;
     const rowHeight = config.rowHeight;
     const pageRowCount = this.getPageRowCount(config);
-    const pages: Array<Page> = [];
+    const pages: Array<ScrollPage> = [];
     let startRowIndex = -1;
     let endRowIndex = 0;
     let top = 0;
     let currentRowCount;
+    let pageContainerIndex = 0;
+    let index = 0;
     while (remainRowCount > 0) {
-      top += (endRowIndex - (startRowIndex + 1)) * rowHeight;
+      const pageHeight = (endRowIndex - (startRowIndex + 1)) * rowHeight;
+      top += pageHeight;
+      const bottom = top + pageHeight;
       startRowIndex = endRowIndex;
       currentRowCount = pageRowCount > remainRowCount ? remainRowCount : pageRowCount;
       endRowIndex = startRowIndex + currentRowCount - 1;
       pages.push({
         startRowIndex,
         endRowIndex,
-        top
+        top,
+        bottom,
+        pageContainerIndex,
+        index
       });
       remainRowCount -= currentRowCount;
+      pageContainerIndex = pageContainerIndex === 0 ? 1 : 0;
+      index++;
     }
     return pages;
   }
 
-  initState() {
-    this.state = {
-      contentHeight: 0,
-      page1Top: 0,
-      page2Top: -1
-    };
+  hasEnoughSpaceToDisplay() {
+    return this.el.offsetHeight > this.config.rowHeight;
   }
 
-  init() {
-    this.initializing = true;
-    this.page1Index = -2;
-    this.page2Index = -1;
-    this.scrollTop = 0;
-    this.oldScrollTop = -1;
-    this.scrollBarCmp.scrollToTop();
-    this.initState();
-    this.initializing = false;
+  isScrollDown() {
+    return this.oldScrollTop < this.scrollTop;
   }
 
-  updateState(refresh = false) {
-    const containerHeight = this.el.clientHeight;
-    const rowHeight = this.config.rowHeight;
+  getCurrentPageIndexes(): Set<number> {
+    // this can be expensive, so we need to use "debounce" for scrolling.
+    const isScrollDown = this.isScrollDown();
+    const scrollTop = this.scrollTop;
+    const containerHeight = this.el.offsetHeight;
+    const pageIndex = this.pages.findIndex(page => {
+      if (isScrollDown) {
+        return page.top > scrollTop;
+      } else {
+        return page.bottom > scrollTop + containerHeight;
+      }
+    });
+    const nextPageIndex = isScrollDown ? pageIndex + 1 : pageIndex - 1;
+    const pageIndexes = new Set<number>();
+    pageIndexes.add(pageIndex);
+    if (nextPageIndex >= 0 && nextPageIndex < this.pages.length) {
+      pageIndexes.add(nextPageIndex);
+    }
+    return pageIndexes;
+  }
 
-    if (containerHeight < rowHeight) {
-      console.warn('ScrollComponent: Container height should be bigger than the row height');
+  addPageHeight(pageIndex: number, height: number) {
+    // this for the expanded row like the accordion row. This is called from outside.
+    const pagesLength = this.pages.length;
+    this.pages[pageIndex].bottom += height;
+    for (let i = pageIndex + 1; i < pagesLength; i++) {
+      this.pages[i].top += height;
+    }
+    const contentHeight = this.state.contentHeight + height;
+    this.state = applyIf(this.state, { contentHeight });
+  }
+
+  updateState() {
+    if (this.hasEnoughSpaceToDisplay()) {
+      console.error(`ScrollComponent: it doesn't enough space to scroll the content`);
       return;
     }
-
-    const scrollTop = this.scrollTop;
-    const isDown = this.oldScrollTop < scrollTop;
-    let rowCount = this.rowCount;
-    let page1Index = this.page1Index;
-    let page2Index = this.page2Index;
-
-    const pageRowCount = Math.round((containerHeight / rowHeight) * 1.5);
-    const pageHeight = pageRowCount * rowHeight;
-
-    // Temp rowCount: When there is no rowCount, but it needs to calc the temp page size etc.
-    if (isEmpty(rowCount)) {
-      rowCount = pageRowCount;
-    }
-
-    const contentHeight = rowCount === 0 ? rowHeight : rowHeight * rowCount;
-    const pageLastIndex = Math.floor((contentHeight - 1) / pageHeight); // -1 for if it is the same as with the pageHeight, the page can be +1.
-    const nextPageIndex = isDown ? Math.ceil(scrollTop / pageHeight) : Math.floor(scrollTop / pageHeight);
-    if (refresh || (nextPageIndex <= pageLastIndex && page1Index !== nextPageIndex && page2Index !== nextPageIndex)) {
-      // It may not have two pages at all. keep the full logic for readability.
-      if (page1Index === -2) {
-        // init
-        page1Index = 0;
-        page2Index = 1;
-      } else if (page1Index < page2Index) {
-        // asc and down, move page1 to the bottom of page2 and load the next page
-        // asc and up, move page2 to the top of page1 and load the next page into page2
-        page1Index = isDown ? nextPageIndex : nextPageIndex + 1;
-        page2Index = page1Index - 1;
-      } else {
-        // desc and down / up, reverse upper logic.
-        page1Index = isDown ? nextPageIndex - 1 : nextPageIndex;
-        page2Index = page1Index + 1;
-      }
-
-      let page1StartIndex = page1Index * pageRowCount;
-      let page2StartIndex = page2Index * pageRowCount;
-      let page1EndIndex = page1StartIndex + pageRowCount - 1;
-      let page2EndIndex = page2StartIndex + pageRowCount - 1;
-
-      if (page1StartIndex >= rowCount) {
-        page1StartIndex = -1;
-        page1EndIndex = -1;
-        page1Index = -2;
-      } else if (page1EndIndex >= rowCount) {
-        page1EndIndex = rowCount - 1;
-      }
-
-      if (page2StartIndex >= rowCount) {
-        page2StartIndex = -1;
-        page2EndIndex = -1;
-        page2Index = -1;
-      } else if (page2EndIndex >= rowCount) {
-        page2EndIndex = rowCount - 1;
-      }
-
-      const page1Top = page1StartIndex * rowHeight;
-      const page2Top = page2StartIndex * rowHeight;
-      this.page1Index = page1Index;
-      this.page2Index = page2Index;
-      // It may not have two pages.
-      const state = {
-        contentHeight,
-        page1Top,
-        page2Top
-      };
-      this.state = state;
-      this.updatePage.emit({
+    const pageIndexes = this.getCurrentPageIndexes();
+    const newPageIndexes = [...pageIndexes].filter(pageIndex => this.currentPageIndexes.has(pageIndex));
+    if (newPageIndexes.length > 0) {
+      const pages: Array<ScrollPage> = newPageIndexes.map(i => this.pages[i]);
+      // update page
+      const action: ScrollActionEvent = {
         target: this,
-        page1StartIndex,
-        page1EndIndex,
-        page2StartIndex,
-        page2EndIndex,
-        page1Index,
-        page2Index,
-        rowCount,
-        pageRowCount,
-        pageLastIndex,
-        page1IsFirst: page1Index === 0,
-        page2IsFirst: page2Index === 0,
-        page1IsLast: page1Index !== -1 && page1Index === pageLastIndex,
-        page2IsLast: page2Index !== -1 && page2Index === pageLastIndex,
-        refresh
-      });
+        action: ScrollAction.UPDATE_PAGES,
+        pages
+      };
+      this.action.emit(action);
     }
-    this.oldScrollTop = scrollTop;
+    this.currentPageIndexes = pageIndexes;
+    this.oldScrollTop = this.scrollTop;
   }
 
   onScroll(e: MouseEvent) {
     const el = e.target as HTMLElement;
     this.scrollTop = el.scrollTop;
     if (!this.ticking) {
-      if (this.initializing) {
-        return;
-      }
       requestAnimationFrame(() => {
-        this.updateState();
+        this.debounceUpdateState();
         this.ticking = false;
       });
       this.ticking = true;
     }
-  }
-
-  onScrollEnd(e: MouseEvent) {
-    // when the scroll is the end, sometimes it is not updated.
-    this.updateState();
   }
 }

@@ -1,4 +1,4 @@
-<mc-scrollbar class="scroll" (scrollY)="onScroll($event)" (scrollYEnd)="onScrollEnd($event)">
+<mc-scrollbar class="scroll" (scrollY)="onScroll($event)">
   <div class="scroll--content" [style.height.px]="state.contentHeight">
     <div class="scroll--content--page1" [style.top.px]="state.page1Top">
       <ng-container *ngTemplateOutlet="state.page1Tpl"></ng-container>
@@ -8,5 +8,5 @@
     </div>
   </div>
 </mc-scrollbar>
-<div *ngIf="!rowCount" class="scroll--empty" [style.lineHeight.px]="state.rowHeight">{{state.isLoading ? state.loadingText : state.emptyText}}</div>
+<div *ngIf="!state.rowCount" class="scroll--empty" [style.lineHeight.px]="state.rowHeight">{{state.isLoading ? state.loadingText : state.emptyText}}</div>
 <mc-loader *ngIf="state.displayLoader && state.isLoading" [config]="{ themes: ['horizontal']}"></mc-loader>

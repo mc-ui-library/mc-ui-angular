@@ -28,6 +28,10 @@ export enum GridAccordionAction {
   SORT = 'SORT',
 }
 
+export enum ScrollAction {
+  UPDATE_PAGES
+}
+
 export enum Align {
   LEFT = 'LEFT',
   RIGHT = 'RIGHT',
@@ -76,6 +80,15 @@ export interface ListItem {
   theme?: any;
 }
 
+export interface ScrollPage {
+  startRowIndex: number;
+  endRowIndex: number;
+  top: number;
+  bottom: number;
+  pageContainerIndex: number; // 0 or 1
+  index: number;
+}
+
 export interface ComponentEvent {
   target: any; // component instance
   event?: any; // for dom event
@@ -91,6 +104,7 @@ export interface ActionEvent extends ComponentEvent {
 }
 
 export interface GridActionEvent extends ActionEvent {
+  action: GridAction;
   selectedColumns?: Column[];
   cellData?: any;
   cellIndex?: number;
@@ -100,6 +114,11 @@ export interface GridActionEvent extends ActionEvent {
   rowData?: any;
   rowIndex?: number;
   selectedCell?: any;
+}
+
+export interface ScrollActionEvent extends ComponentEvent {
+  action: ScrollAction;
+  pages?: Array<ScrollPage>;
 }
 
 export interface SortItem {

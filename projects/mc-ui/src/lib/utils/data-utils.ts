@@ -15,11 +15,18 @@ export function sortObjectArray(data: any[], sort: SortItem) {
 }
 
 export function applyIf(target: any, source: any) {
-  const targetFromSource = Object.keys(target).reduce((t, key) => {
+  return Object.keys(target).reduce((t, key) => {
     if (!isEmpty(source[key])) {
       t[key] = source[key];
+    } else {
+      t[key] = target[key];
     }
     return t;
   }, {});
-  return Object.assign(targetFromSource, target);
+}
+
+export function copy(target: any, source: any) {
+  target = Object.assign({}, target);
+  Object.keys(source).forEach(key => target[key] = source[key]);
+  return target;
 }

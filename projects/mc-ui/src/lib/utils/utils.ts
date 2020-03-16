@@ -32,3 +32,14 @@ export function findParentDom(dom: any, selector: string, depth = 10) {
   }
   return resultDom;
 }
+
+export function debounce(callback: any, wait: number, context: any = this) {
+  let timeout: any;
+  return (...args: any[]) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      timeout = null;
+      callback.apply(context, args);
+    }, wait);
+  };
+}

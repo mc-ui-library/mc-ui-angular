@@ -25,7 +25,9 @@ export class ScrollbarComponent extends BaseComponent {
     suppressScrollX: true
   };
 
-  state: PerfectScrollbarConfigInterface = {};
+  state: PerfectScrollbarConfigInterface = {
+    suppressScrollX: true
+  };
 
   @ViewChild(PerfectScrollbarComponent) scrollBarCmp: PerfectScrollbarComponent;
 
