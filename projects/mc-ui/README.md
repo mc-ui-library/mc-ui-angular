@@ -1,48 +1,24 @@
 # McUi
 
-MC UI Presentational Components Angular Library
+This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.0.6.
 
-## Version
+## Code scaffolding
 
-- v0.0.1
+Run `ng generate component component-name --project mc-ui` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module --project mc-ui`.
+> Note: Don't forget to add `--project mc-ui` or else it will be added to the default project in your `angular.json` file. 
 
-First Release
+## Build
 
-- v0.1.1
+Run `ng build mc-ui` to build the project. The build artifacts will be stored in the `dist/` directory.
 
-add example url
+## Publishing
 
-https://mc-ui-library.github.io/
+After building your library with `ng build mc-ui`, go to the dist folder `cd dist/mc-ui` and run `npm publish`.
 
-- v0.1.2
+## Running unit tests
 
-add styles for List and Grid Components
-Update Examples
-
-- v0.1.3
-
-add Dropdown Example
-
-- v0.1.4
-
-When the components that are using scroll component has content that is smaller than the container height, it adjusts the container height.
-Add basic list examples.
-
-- v0.1.5
-
-fix minor bugs for list and scroll
-
-- v0.1.6
-
-fix grid cell template bugs
-add custom grid headers and cells example
+Run `ng test mc-ui` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
 ## Further help
 
-go check out the [MC UI](https://github.com/mc-ui-library/mc-ui-angular).
-
-## Example
-
-https://mc-ui-library.github.io/
-
-* build: ng build mc-ui, cd dist/mc-ui npm publish 
+To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).

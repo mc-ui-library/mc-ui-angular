@@ -1,8 +1,0 @@
-@import '../../css/vars';
-
-:host {
-  @include container;
-  padding: 20px;
-  padding-top: 75px; // header
-  background-color: $c-bg;
-}

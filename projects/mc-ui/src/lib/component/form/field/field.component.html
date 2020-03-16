@@ -1,9 +1,0 @@
-<label *ngIf="label" class="field--label" [for]="name">{{label}}</label>
-<div class="field--field" [ngSwitch]="type">
-  <mc-textarea *ngSwitchCase="'textarea'" [readonly]="readonly" [name]="name" [value]="value" [rows]="rows"
-    [theme]="theme" [placeholder]="placeholder" (valueChange)="onValueChange($event)" class="textarea__field">
-  </mc-textarea>
-  <mc-input *ngSwitchDefault [readonly]="readonly" [name]="name" [value]="value" [placeholder]="placeholder"
-    (valueChange)="onValueChange($event)" [theme]="theme"></mc-input>
-</div>
-<div class="field--error"></div>

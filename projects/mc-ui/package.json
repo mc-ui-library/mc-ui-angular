@@ -1,33 +1,9 @@
 {
-  "name": "mc-ui-angular",
-  "version": "0.1.7",
-  "description": "MC UI Angular Presentational Components",
-  "keywords": [
-    "infinite scroll",
-    "grid",
-    "list",
-    "popup",
-    "drawer",
-    "form",
-    "field"
-  ],
-  "homepage": "https://mc-ui-library.github.io/",
-  "author": {
-    "name": "Minchul Chae",
-    "email": "mcchae7@gmail.com"
-  },
-  "bugs": {
-    "url": "https://github.com/mc-ui-library/mc-ui-angular/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/mc-ui-library/mc-ui-angular.git",
-    "directory": "projects/mc-ui/src/lib/"
-  },
-  "license": "MIT",
+  "name": "mc-ui",
+  "version": "0.0.1",
   "peerDependencies": {
-    "@angular/common": "~9.0.5",
-    "@angular/core": "~9.0.5",
-    "d3": "^5.15.0"
+    "@angular/common": "^9.0.6",
+    "@angular/core": "^9.0.6",
+    "tslib": "^1.10.0"
   }
 }

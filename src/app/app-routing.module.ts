@@ -1,25 +1,11 @@
-import {
-  NgModule
-} from '@angular/core';
-import {
-  Routes,
-  RouterModule
-} from '@angular/router';
-import { SigninComponent } from './auth';
+import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
 
-const routes: Routes = [{
-    path: '',
-    redirectTo: '/home',
-    pathMatch: 'full'
-  },
-  {
-    path: 'signin',
-    component: SigninComponent
-  }
-];
+
+const routes: Routes = [];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, { useHash: true })],
+  imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

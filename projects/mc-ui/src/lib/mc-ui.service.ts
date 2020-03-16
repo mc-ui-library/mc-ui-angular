@@ -1,27 +1,29 @@
-import {
-  Injectable,
-  EventEmitter,
-  ComponentFactoryResolver,
-  Injector,
-  ApplicationRef
-} from '@angular/core';
-import { BehaviorSubject, Observable, fromEvent } from 'rxjs';
-import { Message } from './models';
+import { Injectable } from '@angular/core';
 
-/**
- * App Level shared services e.g) Dynamic Components or EventEmitters for sending message between UI Page Componensts, window resize etc.
- */
-@Injectable()
-export class MCUIService {
+@Injectable({
+  providedIn: 'root'
+})
+export class McUiService {
 
   private _message = new BehaviorSubject<Message>({ from: '', to: '', action: '' });
   message = this._message.asObservable();
   windowResize: Observable<any>;
   bodyPress: Observable<any>;
 
+  private data = new Map();
+
   constructor(private _resolver: ComponentFactoryResolver, private injector: Injector, private appRef: ApplicationRef) {
     this.bodyPress = fromEvent(this.getBody(), 'click');
     this.windowResize = fromEvent(window, 'resize');
+  }
+
+  // for global data
+  setData(key: any, value: any) {
+    this.data.set(key, value);
+  }
+
+  getData(key: any) {
+    return this.data.get(key);
   }
 
   // Sending a message between components that can't be accessed by Input/Output
