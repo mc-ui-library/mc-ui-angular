@@ -1,0 +1,65 @@
+@import './../../../../styles/vars';
+$journal-row-a: 0.3;
+:host {
+  display: block;
+  position: relative;
+  height: auto;
+  overflow-x: visible;
+  border: 0;
+  visibility: hidden;
+
+  // override reset.scss, if we use the normalize.scss, we don't need this.
+  table, tbody, tr, td, th, div {
+    vertical-align: middle;
+  }
+
+  div, th {
+    position: relative;
+  }
+
+  // colspan border color issue: https://github.com/mui-org/material-ui/issues/9149
+  // chrome bug, you should not use rgba. you can't use a border color with alpha value. 
+  // convert the color from rgba(0,0,0,0.2) to #455872
+  // don't use the td/th border, it should be 0 always. It has a bug with that.
+  .grid-header {
+    border-collapse: collapse;
+    border-spacing: 0;
+    &--row {
+      border: 0;
+      &--cell {
+        border: 0; // don't use tr/th/td border or size, they have a size bug. all sizing should be made by div.
+        &--content {
+          // content sizing.
+          padding: 0;
+          position: relative;
+          cursor: pointer;
+          .content-outer {
+            height: 100%;
+            .content-inner {
+              height: 100%;
+              h2o-icon {
+                position: absolute;
+                width: 12px;
+                height: 12px;
+                font-size: 12px;
+                right: 4px;
+                bottom: 4px;
+              }
+            }
+          }
+        }
+        &.is-first-row {
+          .grid-header--row--cell--content {
+          }
+        }
+        &.is-sortable {
+        }
+      }
+    }
+    .align-right {
+      .content-inner {
+        text-align: right;
+      }
+    }
+  }
+}

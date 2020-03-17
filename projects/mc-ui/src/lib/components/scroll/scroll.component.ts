@@ -1,18 +1,18 @@
 import { ScrollbarComponent } from './../scrollbar/scrollbar.component';
-import {
-  BaseComponent
-} from '../base.component';
+import { BaseComponent } from '../base.component';
 import {
   Component,
   ElementRef,
-  Input,
-  Output,
-  EventEmitter,
   ViewChild
 } from '@angular/core';
 import { isEmpty, debounce } from './../../utils/utils';
-import { ScrollConfig, ScrollAction, ScrollPage, ScrollActionEvent } from '../../models';
-import { applyIf } from '../../utils/data-utils';
+import {
+  ScrollConfig,
+  ScrollAction,
+  ScrollPage,
+  ScrollActionEvent
+} from '../../models';
+import { applyIf, copy } from '../../utils/data-utils';
 
 interface State {
   contentHeight?: number;
@@ -33,15 +33,13 @@ interface State {
   styleUrls: ['scroll.component.scss'],
   templateUrl: './scroll.component.html'
 })
-
 export class ScrollComponent extends BaseComponent {
-
   private pages: Array<ScrollPage>;
   private currentPageIndexes = new Set<number>();
   private scrollTop = 0;
   private oldScrollTop = -1;
   private ticking = false;
-  private debounceUpdateState = debounce(this.updateState, 100, this);
+  private debounceUpdatePages = debounce(this.updatePages, 100, this);
 
   _config: ScrollConfig = {
     loadingText: 'loading...',
@@ -71,13 +69,20 @@ export class ScrollComponent extends BaseComponent {
     super(er);
   }
 
+  afterRenderCmp() {
+    this.updatePages();
+  }
+
   setState(config: ScrollConfig) {
     const rowCount = config.rowCount;
     if (!isEmpty(rowCount)) {
       const state = applyIf(this.state, config);
       const contentHeight = this.getContentHeight(config);
-      this.state = applyIf(state, { contentHeight });
       this.pages = this.getPages(config);
+      this.state = copy(state, { contentHeight });
+      if (this.rendered) {
+        this.updatePages();
+      }
     }
   }
 
@@ -107,7 +112,8 @@ export class ScrollComponent extends BaseComponent {
       top += pageHeight;
       const bottom = top + pageHeight;
       startRowIndex = endRowIndex;
-      currentRowCount = pageRowCount > remainRowCount ? remainRowCount : pageRowCount;
+      currentRowCount =
+        pageRowCount > remainRowCount ? remainRowCount : pageRowCount;
       endRowIndex = startRowIndex + currentRowCount - 1;
       pages.push({
         startRowIndex,
@@ -164,13 +170,17 @@ export class ScrollComponent extends BaseComponent {
     this.state = applyIf(this.state, { contentHeight });
   }
 
-  updateState() {
+  updatePages() {
     if (this.hasEnoughSpaceToDisplay()) {
-      console.error(`ScrollComponent: it doesn't enough space to scroll the content`);
+      console.error(
+        `ScrollComponent: it doesn't enough space to scroll the content`
+      );
       return;
     }
     const pageIndexes = this.getCurrentPageIndexes();
-    const newPageIndexes = [...pageIndexes].filter(pageIndex => this.currentPageIndexes.has(pageIndex));
+    const newPageIndexes = [...pageIndexes].filter(pageIndex =>
+      this.currentPageIndexes.has(pageIndex)
+    );
     if (newPageIndexes.length > 0) {
       const pages: Array<ScrollPage> = newPageIndexes.map(i => this.pages[i]);
       // update page
@@ -190,7 +200,7 @@ export class ScrollComponent extends BaseComponent {
     this.scrollTop = el.scrollTop;
     if (!this.ticking) {
       requestAnimationFrame(() => {
-        this.debounceUpdateState();
+        this.debounceUpdatePages();
         this.ticking = false;
       });
       this.ticking = true;

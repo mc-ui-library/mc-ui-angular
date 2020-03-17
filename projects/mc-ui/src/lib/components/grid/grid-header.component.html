@@ -1,0 +1,32 @@
+<table class="grid-header">
+  <tr
+    *ngFor="let cells of state.headerData"
+    [class]="getGridRowClassName(cells)"
+    [style.height.px]="state.rowHeight"
+  >
+    <th
+      *ngFor="let cell of cells"
+      [class]="getGridCellClassName(cell)"
+      [attr.data-field]="cell.field"
+      [attr.data-action]="state.gridAction.SELECT_CELL"
+      [colSpan]="cell.colspan || 1"
+      [rowSpan]="cell.rowspan || 1"
+    >
+      <div
+        [class]="getGridCellContentClassName(cell)"
+        [style.width.px]="cell.width"
+        [style.height.px]="state.rowHeight * (cell.rowspan || 1) - 2"
+        [title]="cell.name"
+      >
+        <div class="content-outer">
+          <div class="content-inner">
+            <ng-container
+              *ngTemplateOutlet="state.tpls[cell.name]; context: { $implicit: cell }"
+            ></ng-container
+            >{{ state.tpls[cell.name] ? "" : cell.name }} <h2o-icon *ngIf="sortItem.fieldName === cell.field" icon="chevron" theme="grid-header-sort" [class.flip]="sortItem.direction === state.sortDirection.ASC"></h2o-icon>
+          </div>
+        </div>
+      </div>
+    </th>
+  </tr>
+</table>

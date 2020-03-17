@@ -15,6 +15,7 @@ export function sortObjectArray(data: any[], sort: SortItem) {
 }
 
 export function applyIf(target: any, source: any) {
+  // if source has target keys, then apply them to target
   return Object.keys(target).reduce((t, key) => {
     if (!isEmpty(source[key])) {
       t[key] = source[key];
@@ -26,6 +27,7 @@ export function applyIf(target: any, source: any) {
 }
 
 export function copy(target: any, source: any) {
+  // copy source to target
   target = Object.assign({}, target);
   Object.keys(source).forEach(key => target[key] = source[key]);
   return target;

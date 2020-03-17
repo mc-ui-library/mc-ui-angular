@@ -1,31 +1,35 @@
 // ************* common component enums **************
 export enum ListAction {
-  UNSELECTED_ITEM = 'UNSELECTED_ITEM',
-  SELECTED_ITEM = 'SELECTED_ITEM'
+  UNSELECTED_ITEM,
+  SELECTED_ITEM
 }
 
 export enum ScrollDataAction {
-  INIT = 'INIT',
-  APPEND = 'APPEND',
-  RELOAD = 'RELOAD',
-  INSERT = 'INSERT',
-  SORT = 'SORT'
+  INIT,
+  APPEND,
+  RELOAD,
+  INSERT,
+  SORT
+}
+
+export enum ComponentAction {
+  RENDERED
 }
 
 export enum GridAction {
-  SELECT_CELL = 'SELECT_CELL',
-  SORT = 'SORT',
-  MOUSEOVER_CELL = 'MOUSEOVER_CELL',
-  UPDATE_WIDTH = 'UPDATE_WIDTH',
-  LOADED = 'LOADED',
-  SELECT_COLUMN = 'SELECT_COLUMN'
+  SELECT_CELL,
+  SORT,
+  MOUSEOVER_CELL,
+  UPDATE_WIDTH,
+  LOADED,
+  SELECT_COLUMN
 }
 
 export enum GridAccordionAction {
-  UNSELECT_ROW = 'UNSELECT_ROW',
-  SELECT_ROW = 'SELECT_ROW',
-  SELECT_CELL = 'SELECT_CELL',
-  SORT = 'SORT',
+  UNSELECT_ROW,
+  SELECT_ROW,
+  SELECT_CELL,
+  SORT
 }
 
 export enum ScrollAction {
@@ -33,16 +37,16 @@ export enum ScrollAction {
 }
 
 export enum Align {
-  LEFT = 'LEFT',
-  RIGHT = 'RIGHT',
-  CENTER = 'CENTER',
-  TOP = 'TOP',
-  BOTTOM = 'BOTTOM'
+  LEFT,
+  RIGHT,
+  CENTER,
+  TOP,
+  BOTTOM
 }
 
 export enum SortDirection {
-  DESC = 'DESC',
-  ASC = 'ASC'
+  DESC,
+  ASC
 }
 
 // ************* common component interface **************
@@ -95,6 +99,11 @@ export interface ComponentEvent {
   data?: any;
 }
 
+export interface ComponentActionEvent extends ComponentEvent {
+  action: ComponentAction;
+}
+
+// TODO: Change this actionEvent name to ListAtionEvent or etc.
 export interface ActionEvent extends ComponentEvent {
   action: any; // action type
   selectedItem?: any;

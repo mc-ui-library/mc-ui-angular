@@ -1,21 +1,24 @@
-import { ElementRef, OnInit, OnDestroy, AfterViewInit, Input, Output, EventEmitter } from '@angular/core';
+import {
+  ElementRef,
+  OnInit,
+  OnDestroy,
+  AfterViewInit,
+  Input,
+  Output,
+  EventEmitter
+} from '@angular/core';
 import { Subscription } from 'rxjs';
 import { getComponentNameByElement, getThemeClasses } from '../utils/dom-utils';
-import { ComponentConfig } from '../models';
+import { ComponentConfig, ComponentAction, ComponentActionEvent } from '../models';
 import { applyIf, copy } from '../utils/data-utils';
 
-/**
- * Base Class for All UI Presentational Components
- */
-// state for rendering
 export class BaseComponent implements OnInit, OnDestroy, AfterViewInit {
-
   private _subscriptions: Array<Subscription> = [];
   private appliedThemeClasses: string[];
 
   // default config
   _config: ComponentConfig = {};
-  // state for update template
+  // default state for updating template (rendering)
   state: any = {};
 
   componentName: string;
@@ -49,7 +52,11 @@ export class BaseComponent implements OnInit, OnDestroy, AfterViewInit {
     this.applyThemes(this.config.themes);
     this.afterRenderCmp();
     this.rendered = true;
-    this.action.emit({ target: this, action: 'rendered' });
+    const action: ComponentActionEvent = {
+      target: this,
+      action: ComponentAction.RENDERED
+    };
+    this.action.emit(action);
   }
 
   ngOnDestroy() {
@@ -96,9 +103,7 @@ export class BaseComponent implements OnInit, OnDestroy, AfterViewInit {
 
   afterThemeInit() {}
 
-  initCmp() {
-    // empty
-  }
+  initCmp() {}
 
   afterInitCmp() {}
 

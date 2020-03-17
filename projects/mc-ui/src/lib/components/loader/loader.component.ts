@@ -6,6 +6,7 @@ import {
   BaseComponent
 } from '../base.component';
 import { ComponentConfig } from '../../models';
+import { copy } from '../../utils/data-utils';
 
 interface State {
   theme?: string;
@@ -32,6 +33,6 @@ export class LoaderComponent extends BaseComponent {
   setState(config: ComponentConfig) {
     super.setState(config);
     const theme = config.themes[0];
-    this.state = Object.assign({ theme }, this.state);
+    this.state = copy(this.state, { theme });
   }
 }

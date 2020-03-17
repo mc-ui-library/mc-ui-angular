@@ -1,0 +1,55 @@
+<h2o-grid-header
+  [theme]="theme"
+  [data]="headerData"
+  [rowHeight]="rowHeight"
+  [style.width]="bodyWidth"
+  [tpls]="headerTpls"
+  (action)="onAction($event)"
+>
+</h2o-grid-header>
+<h2o-scroll
+  [theme]="theme"
+  [page1Tpl]="page1Tpl"
+  [page2Tpl]="page2Tpl"
+  [rowHeight]="rowHeight"
+  [rowCount]="rowCount"
+  [isLoading]="isLoading"
+  [emptyText]="emptyText"
+  [displayLoader]="displayLoader"
+  (updatePage)="onUpdatePage($event)"
+  [style.height.px]="bodyHeight"
+  [style.width]="bodyWidth"
+>
+  <ng-template #page1Tpl>
+    <h2o-grid-body
+      [theme]="theme"
+      [class.is-scroll-page]="true"
+      [class.is-last-page]="page1IsLast"
+      [rowHeight]="rowHeight"
+      [data]="page1Data"
+      [idField]="idField"
+      [tpls]="columnTpls"
+      [isLoading]="isPage1Loading"
+      [selectedCell]="selectedCell"
+      [selectCellByMouseOver]="selectCellByMouseOver"
+      (action)="onAction($event)"
+    >
+    </h2o-grid-body>
+  </ng-template>
+  <ng-template #page2Tpl>
+    <h2o-grid-body
+      [theme]="theme"
+      [class.is-scroll-page]="true"
+      [class.is-last-page]="page2IsLast"
+      [rowHeight]="rowHeight"
+      [data]="page2Data"
+      [idField]="idField"
+      [tpls]="columnTpls"
+      [isLoading]="isPage2Loading"
+      [selectedCell]="selectedCell"
+      [selectCellByMouseOver]="selectCellByMouseOver"
+      (action)="onAction($event)"
+    >
+    </h2o-grid-body>
+  </ng-template>
+</h2o-scroll>
