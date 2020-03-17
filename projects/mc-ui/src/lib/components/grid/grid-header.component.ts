@@ -4,7 +4,7 @@ import { Component, ElementRef, Input, HostListener } from '@angular/core';
 import { findParentDom } from '../../utils/utils';
 
 @Component({
-  selector: 'h2o-grid-header',
+  selector: 'mc-grid-header',
   styleUrls: ['grid-header.component.scss'],
   templateUrl: './grid-header.component.html'
 })

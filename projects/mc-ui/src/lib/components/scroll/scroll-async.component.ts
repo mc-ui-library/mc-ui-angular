@@ -9,15 +9,26 @@ import {
   Column,
   GridNeedDataEvent
 } from './../../models';
-import { SharedService } from './../../shared.service';
 import { BaseComponent } from '../base.component';
-import { ElementRef, Input, Output, EventEmitter, ViewChild, ChangeDetectorRef } from '@angular/core';
+import {
+  ElementRef,
+  Input,
+  Output,
+  EventEmitter,
+  ViewChild,
+  ChangeDetectorRef
+} from '@angular/core';
 import { ScrollComponent } from './scroll.component';
 import { debounceTime } from 'rxjs/operators';
 import { isEmpty } from '../../utils/utils';
 import { getContainerWidth } from '../../utils/dom-utils';
+import { McUiService } from '../../mc-ui.service';
 
 export class ScrollAsyncComponent extends BaseComponent {
+
+
+
+
   private _data: ScrollData;
   private _headerData: GridHeaderData = {
     columns: null,
@@ -106,9 +117,15 @@ export class ScrollAsyncComponent extends BaseComponent {
   // there is no data, then it triggers "needData" event.
   @Output() needData = new EventEmitter();
 
-  constructor(protected er: ElementRef, protected service: SharedService, protected cd: ChangeDetectorRef) {
+  constructor(
+    protected er: ElementRef,
+    protected service: McUiService,
+    protected cd: ChangeDetectorRef
+  ) {
     super(er);
-    this.subscriptions = service.windowResize.pipe(debounceTime(500)).subscribe(() => this.onResizeWindow());
+    this.subscriptions = service.windowResize
+      .pipe(debounceTime(500))
+      .subscribe(() => this.onResizeWindow());
   }
 
   afterInitCmp() {
@@ -126,7 +143,11 @@ export class ScrollAsyncComponent extends BaseComponent {
     switch (action) {
       case ScrollDataAction.INIT:
         rows = Array.isArray(newData) ? newData : newData.rows;
-        rowCount = newData.rowCount ? newData.rowCount : rows ? rows.length : null;
+        rowCount = newData.rowCount
+          ? newData.rowCount
+          : rows
+          ? rows.length
+          : null;
         if (!columns) {
           columns = rows[0]
             ? Object.keys(rows[0]).map(key => {
@@ -137,7 +158,7 @@ export class ScrollAsyncComponent extends BaseComponent {
             : null;
           this.headerData = {
             data: headerData.data,
-            columns: columns
+            columns
           };
         }
         // init page
@@ -160,8 +181,8 @@ export class ScrollAsyncComponent extends BaseComponent {
     }
 
     this._data = {
-      rowCount: rowCount,
-      rows: rows
+      rowCount,
+      rows
     };
     this.rowCount = rowCount;
 
@@ -176,10 +197,16 @@ export class ScrollAsyncComponent extends BaseComponent {
       // neededData is async so it needs to be reloaded all pages.
       case ScrollDataAction.APPEND:
         // skip the already rendered page
-        if (this.page1Indexes.start !== -1 && this.page1Indexes.start !== this.renderedStartIndexes.page1) {
+        if (
+          this.page1Indexes.start !== -1 &&
+          this.page1Indexes.start !== this.renderedStartIndexes.page1
+        ) {
           this.updateData(this.page1Indexes, 1);
         }
-        if (this.page2Indexes.start !== -1 && this.page2Indexes.start !== this.renderedStartIndexes.page2) {
+        if (
+          this.page2Indexes.start !== -1 &&
+          this.page2Indexes.start !== this.renderedStartIndexes.page2
+        ) {
           this.updateData(this.page2Indexes, 2);
         }
         break;
@@ -225,7 +252,10 @@ export class ScrollAsyncComponent extends BaseComponent {
         // console.log('needData', start);
         this.isLoading = true;
         this.requestedIndexes.add(start);
-        this.emitNeedData(start === 0 ? ScrollDataAction.INIT : ScrollDataAction.APPEND, start);
+        this.emitNeedData(
+          start === 0 ? ScrollDataAction.INIT : ScrollDataAction.APPEND,
+          start
+        );
       }
     } else {
       const data = this.data.rows.slice(start, end + 1);
@@ -263,9 +293,9 @@ export class ScrollAsyncComponent extends BaseComponent {
       pageRowCount: this.pageRowCount,
       page1Index: this.page1Index,
       page2Index: this.page2Index,
-      action: action,
+      action,
       sort: this.sortItem
-    }
+    };
     this.needData.emit(needDataEvent); // when tree, it needs to insert data
   }
 
@@ -295,7 +325,10 @@ export class ScrollAsyncComponent extends BaseComponent {
         data: []
       };
     } else {
-      if (this.page1Indexes.start !== e.page1StartIndex || this.page1Indexes.end !== e.page1EndIndex) {
+      if (
+        this.page1Indexes.start !== e.page1StartIndex ||
+        this.page1Indexes.end !== e.page1EndIndex
+      ) {
         this.page1Indexes.start = e.page1StartIndex;
         this.page1Indexes.end = e.page1EndIndex;
         this.neededPageIndex = e.page1Index;
@@ -310,7 +343,10 @@ export class ScrollAsyncComponent extends BaseComponent {
         data: []
       };
     } else {
-      if (this.page2Indexes.start !== e.page2StartIndex || this.page2Indexes.end !== e.page2EndIndex) {
+      if (
+        this.page2Indexes.start !== e.page2StartIndex ||
+        this.page2Indexes.end !== e.page2EndIndex
+      ) {
         this.page2Indexes.start = e.page2StartIndex;
         this.page2Indexes.end = e.page2EndIndex;
         this.neededPageIndex = e.page2Index;

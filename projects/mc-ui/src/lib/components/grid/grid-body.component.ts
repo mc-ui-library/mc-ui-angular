@@ -4,7 +4,7 @@ import { Component, ElementRef, Input, HostListener, HostBinding } from '@angula
 import { findParentDom } from '../../utils/utils';
 
 @Component({
-  selector: 'h2o-grid-body',
+  selector: 'mc-grid-body',
   styleUrls: ['grid-body.component.scss'],
   templateUrl: './grid-body.component.html'
 })

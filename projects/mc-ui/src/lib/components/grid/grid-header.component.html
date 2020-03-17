@@ -23,7 +23,7 @@
             <ng-container
               *ngTemplateOutlet="state.tpls[cell.name]; context: { $implicit: cell }"
             ></ng-container
-            >{{ state.tpls[cell.name] ? "" : cell.name }} <h2o-icon *ngIf="sortItem.fieldName === cell.field" icon="chevron" theme="grid-header-sort" [class.flip]="sortItem.direction === state.sortDirection.ASC"></h2o-icon>
+            >{{ state.tpls[cell.name] ? "" : cell.name }} <mc-icon *ngIf="sortItem.fieldName === cell.field" icon="chevron" theme="grid-header-sort" [class.flip]="sortItem.direction === state.sortDirection.ASC"></mc-icon>
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { SharedService } from './../../shared.service';
+import { McUiService } from './../../mc-ui.service';
 import { ScrollAsyncComponent } from '../scroll/scroll-async.component';
 import { Component, Input, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { GridAction, ScrollDataAction, GridCellInfo } from './../../models';
@@ -6,11 +6,16 @@ import { isEmpty } from '../../utils/utils';
 import { getAutoColumnWidth } from '../../utils/grid-utils';
 
 @Component({
-  selector: 'h2o-grid',
+  selector: 'mc-grid',
   styleUrls: ['grid.component.scss'],
   templateUrl: './grid.component.html'
 })
 export class GridComponent extends ScrollAsyncComponent {
+
+
+
+
+
   private defaultColumnWidth = 100;
   private lastContainerWidth: number;
 
@@ -23,7 +28,7 @@ export class GridComponent extends ScrollAsyncComponent {
   @Input() selectedCell: GridCellInfo;
   @Input() selectCellByMouseOver = false;
 
-  constructor(protected er: ElementRef, protected service: SharedService, protected cd: ChangeDetectorRef) {
+  constructor(protected er: ElementRef, protected service: McUiService, protected cd: ChangeDetectorRef) {
     super(er, service, cd);
   }
 
@@ -43,7 +48,7 @@ export class GridComponent extends ScrollAsyncComponent {
     this.updateColumnWidth();
     setTimeout(() => {
       this.el.style.height = '100%';
-      const headerEl = this.el.querySelector('h2o-grid-header');
+      const headerEl = this.el.querySelector('mc-grid-header');
       const headerHeight = headerEl.clientHeight;
       const bodyHeight = this.el.clientHeight - headerHeight;
       this.bodyHeight = bodyHeight - 2;

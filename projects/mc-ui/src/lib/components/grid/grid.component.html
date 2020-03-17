@@ -1,4 +1,4 @@
-<h2o-grid-header
+<mc-grid-header
   [theme]="theme"
   [data]="headerData"
   [rowHeight]="rowHeight"
@@ -6,8 +6,8 @@
   [tpls]="headerTpls"
   (action)="onAction($event)"
 >
-</h2o-grid-header>
-<h2o-scroll
+</mc-grid-header>
+<mc-scroll
   [theme]="theme"
   [page1Tpl]="page1Tpl"
   [page2Tpl]="page2Tpl"
@@ -21,7 +21,7 @@
   [style.width]="bodyWidth"
 >
   <ng-template #page1Tpl>
-    <h2o-grid-body
+    <mc-grid-body
       [theme]="theme"
       [class.is-scroll-page]="true"
       [class.is-last-page]="page1IsLast"
@@ -34,10 +34,10 @@
       [selectCellByMouseOver]="selectCellByMouseOver"
       (action)="onAction($event)"
     >
-    </h2o-grid-body>
+    </mc-grid-body>
   </ng-template>
   <ng-template #page2Tpl>
-    <h2o-grid-body
+    <mc-grid-body
       [theme]="theme"
       [class.is-scroll-page]="true"
       [class.is-last-page]="page2IsLast"
@@ -50,6 +50,6 @@
       [selectCellByMouseOver]="selectCellByMouseOver"
       (action)="onAction($event)"
     >
-    </h2o-grid-body>
+    </mc-grid-body>
   </ng-template>
-</h2o-scroll>
+</mc-scroll>
