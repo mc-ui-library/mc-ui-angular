@@ -1,0 +1,56 @@
+@import './../../../../styles/vars';
+
+:host {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
+  position: relative;
+  cursor: pointer;
+
+  &:before {
+    // **** for icon svg file ****
+    content: ' ';
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    background-position: center center;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+
+    // **** for icons font file ****
+    /* use !important to prevent issues with browser extensions that change fonts */
+    font-family: 'icons' !important;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+  
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1;
+
+    cursor: pointer;
+  }
+
+  // example, icons are usually project resources, so they should be defined in the styles/components.themes.scss file.
+  // &.icon {
+  //   &-arrow-down {
+  //     &:before {
+  //       background-image: url('./../assets/images/icon-arrow-down.svg');
+  //     }
+  //   }
+  // }
+
+  // font icon maybe need a different styles.
+
+  // ******* effect ********
+
+  &.flip {
+    transform: scaleY(-1);
+  }
+}

@@ -1,7 +1,22 @@
-import { SortDirection, SortItem, GridAction, GridBodyData, Column, GridHeaderData } from './../../models';
+import {
+  SortDirection,
+  SortItem,
+  GridAction,
+  Column,
+  GridHeaderCell,
+  GridHeaderConfig,
+  GridHeaderActionEvent
+} from '../../mc-ui.models';
 import { BaseComponent } from '../base.component';
 import { Component, ElementRef, Input, HostListener } from '@angular/core';
 import { findParentDom } from '../../utils/utils';
+
+interface State {
+  data: Array<Array<GridHeaderCell>>;
+  rowHeight: number;
+  tpls: any;
+  sortItem: SortItem;
+}
 
 @Component({
   selector: 'mc-grid-header',
@@ -9,96 +24,52 @@ import { findParentDom } from '../../utils/utils';
   templateUrl: './grid-header.component.html'
 })
 export class GridHeaderComponent extends BaseComponent {
-  private _data: GridHeaderData;
-  private columns: Column[];
   private nextSortDirection = {
     ASC: SortDirection.DESC,
     DESC: SortDirection.ASC
   };
-  private atLeastOneSelectedItemRequired = false;
-
-  // THINK: this may not help multiple change detection since all the values are assigned at once actually even using separate properties.
-  state = {
-    gridAction: GridAction,
-    sortDirection: SortDirection,
-    tpls: {},
-    headerData: [],
-    rowHeight: 30
-  };
-
-  sortItem: SortItem = {
+  private sortItem: SortItem = {
     fieldName: '',
     direction: SortDirection.ASC
   };
 
-  // checking the selected item ids
-  selectedItemsMap = new Map<string, Column>();
-  fieldColumnMap = new Map<string, Column>()
+  GridAction = GridAction;
+  SortDirection = SortDirection;
 
-  @Input() private rowHeight = 30;
-  @Input() private tpls = {};
-  /**
-   * For headers,
-   * [
-   *  [ { name: 'xxx', colspan: 2, rowspan: 1 }, ... ],
-   *  [ { name: 'xxx', colspan: 1, rowspan: 1 }, ... ]
-   * ]
-   */
-  @Input()
-  set data(value: GridHeaderData) {
-    if (value) {
-      this._data = value;
-      this.columns = value.columns;
-      this.setSelectedItems(this.columns);
-      this.atLeastOneSelectedItemRequired = !!value.atLeastOneSelectedItemRequired;
-      this.columns.forEach(column => this.fieldColumnMap.set(column.field, column));
-      if (value.rowHeight) {
-        this.rowHeight = value.rowHeight;
-      }
-      this.state = {
-        gridAction: GridAction,
-        sortDirection: SortDirection,
-        rowHeight: this.rowHeight,
-        tpls: this.tpls,
-        headerData: this.updateColumnWidth(value.data)
-      };
-      // for hiding the header before calculating the columns' width.
-      setTimeout(() => (this.el.style.visibility = 'visible'));
-    }
-  }
-  get data() {
-    return this._data;
-  }
+  // checking the selected item ids
+  selectedColumnsMap = new Map<string, Column>();
+  fieldColumnMap = new Map<string, Column>();
+
+  _config: GridHeaderConfig = {
+    rowHeight: 30,
+    tpls: {},
+    data: null,
+    columns: [],
+    atLeastOneSelectedColumnRequired: false,
+    selectedColumns: []
+  };
+
+  // THINK: this may not help multiple change detection since all the values are assigned at once actually even using separate properties.
+  state: State = {
+    data: [],
+    rowHeight: 30,
+    tpls: {},
+    sortItem: this.sortItem
+  };
 
   @HostListener('click', ['$event'])
-  onPress(e: any) {
+  onPress(e: MouseEvent) {
     const el = findParentDom(e.target, '.grid-header--row--cell');
     if (el) {
       const dataset = el.dataset;
       switch (dataset.action) {
         case GridAction.SELECT_CELL:
-          const field = dataset.field;
-          const column = this.fieldColumnMap.get(field)
+          const column = this.fieldColumnMap.get(dataset.field);
           if (el.classList.contains('is-sortable')) {
-            let dir = SortDirection.ASC;
-            if (this.sortItem.fieldName === field) {
-              dir = this.nextSortDirection[this.sortItem.direction];
-            }
-            this.sortItem = {
-              fieldName: field,
-              direction: dir
-            };
-            this.action.emit({ event: e, el, action: GridAction.SORT, column, target: this, sort: this.sortItem });
+            this.onSort(el, column, e);
           }
-          if(!el.classList.contains('unselectable')) {
-            if (this.selectedItemsMap.has(field)) {
-              if (this.unselectItem(field)) {
-                this.action.emit({ event: e, el, action: GridAction.SELECT_COLUMN, column, selectedColumns: this.getSelectedItems(), target: this });
-              }
-            } else {
-              this.selectItem(field, column);
-              this.action.emit({ event: e, el, action: GridAction.SELECT_COLUMN, column, selectedColumns: this.getSelectedItems(), target: this });
-            }
+          if (!el.classList.contains('unselectable')) {
+            this.onSelect(column, el, e);
           }
           break;
       }
@@ -109,113 +80,127 @@ export class GridHeaderComponent extends BaseComponent {
     super(er);
   }
 
-  setSelectedItems(columns: Column[]) {
-    const selectedColumns = columns.filter(column => column.selected);
-    const selectedItemsMap = new Map();
-    selectedColumns.forEach(d => selectedItemsMap.set(d.field, d));
-    this.selectedItemsMap = selectedItemsMap;
+  applyConfig(config: GridHeaderConfig) {
+    if (config.selectedColumns) {
+      const selectedColumnsMap = new Map();
+      config.selectedColumns.forEach(d => selectedColumnsMap.set(d.field, d));
+      this.selectedColumnsMap = selectedColumnsMap;
+    }
+    config.columns.forEach(column => this.fieldColumnMap.set(column.field, column));
+    if (!config.data) {
+      config.data = this.getBasicHeaderData(config);
+    } else {
+      config.data = this.getHeaderData(config);
+    }
   }
 
-  getSelectedItems() {
-    const items = [];
-    this.selectedItemsMap.forEach(value => items.push(value));
-    return items;
+  applyState(config: GridHeaderConfig) {
+    this.showHeader();
+  }
+
+  showHeader() {
+    // for hiding the header before calculating the columns' width.
+    setTimeout(() => (this.el.style.visibility = 'visible'));
+  }
+
+  getSelectedColumns() {
+    const columns = [];
+    this.selectedColumnsMap.forEach(value => columns.push(value));
+    return columns;
   }
 
   isSelected(item: any) {
-    return this.selectedItemsMap.has('' + item.field);
+    return this.selectedColumnsMap.has('' + item.field);
   }
 
-  selectItem(id: string, item) {
-    this.selectedItemsMap.set(id, item);
+  selectColumn(id: string, item) {
+    this.selectedColumnsMap.set(id, item);
   }
 
-  unselectItem(id: string) {
-    if (this.atLeastOneSelectedItemRequired && this.selectedItemsMap.size === 1) {
+  unselectColumn(id: string) {
+    if (this._config.atLeastOneSelectedColumnRequired && this.selectedColumnsMap.size === 1) {
       return false;
     }
-    this.selectedItemsMap.delete(id);
+    this.selectedColumnsMap.delete(id);
     return true;
   }
 
-  updateColumnWidth(headerData) {
-    const lastColIndex = this.columns.length - 1;
-    if (!headerData) {
-      // generate header data
-      headerData = [
-        this.columns.map((column, i) => {
-          if (column.sortDirection) {
-            this.sortItem = {
-              direction: column.sortDirection,
-              fieldName: column.field
-            };
-          }
-          return Object.assign({
+  getBasicHeaderData(config: GridHeaderConfig) {
+    const lastColIndex = config.columns.length - 1;
+    return [
+      config.columns.map((column, i) => {
+        if (column.sortDirection) {
+          this.sortItem = {
+            direction: column.sortDirection,
+            fieldName: column.field
+          };
+        }
+        return Object.assign(
+          {
             name: column.name || column.field,
             isLastRow: true,
             isFirstRow: true,
             isFirstCol: i === 0,
             isLastCol: i === lastColIndex
-          }, column);
-        })
-      ];
-    } else {
-      const rows = [];
-      // calc col width
-      const lastIndex = headerData.length - 1;
-      headerData.forEach((row, r) => {
-        rows[r] = rows[r] || [];
-        let c = 0;
-        row.forEach(cell => {
-          while (rows[r][c] === -1) {
-            c++;
+          },
+          column
+        );
+      })
+    ];
+  }
+
+  getHeaderData(config: GridHeaderConfig) {
+    const headerData = config.data.concat();
+    const columns = config.columns;
+    const lastColIndex = columns.length - 1;
+    const rows = [];
+    // calc col width
+    const lastIndex = headerData.length - 1;
+    headerData.forEach((row, r) => {
+      rows[r] = rows[r] || [];
+      let c = 0;
+      row.forEach(cell => {
+        while (rows[r][c] === -1) {
+          c++;
+        }
+        const column = columns[c];
+        cell = Object.assign(cell, column);
+        const colspan = cell.colspan || 1;
+        const rowspan = cell.rowspan || 1;
+        if (r === lastIndex || r + rowspan - 1 === lastIndex) {
+          cell.isLastRow = true;
+        }
+        let width = 0;
+        for (let i = 0; i < colspan; i++) {
+          width += columns[c + i].width;
+        }
+        cell.width = width;
+        // flag the empty cells
+        for (let i = 1; i < rowspan; i++) {
+          for (let j = 0; j < colspan; j++) {
+            rows[r + i] = rows[r + i] || [];
+            rows[r + i][c + j] = -1;
           }
-          const column = this.columns[c];
-          cell = Object.assign(cell, column);
-          const colspan = cell.colspan || 1;
-          const rowspan = cell.rowspan || 1;
-          if (r === lastIndex || r + rowspan - 1 === lastIndex) {
-            cell.isLastRow = true;
+        }
+        cell.sort = null;
+        cell.field = null;
+        if (cell.isLastRow) {
+          cell.sort = column.sort;
+          cell.field = column.field;
+          // if it has the existing sort field, keeps it
+          if (column.sortDirection && !this.sortItem.fieldName) {
+            this.sortItem = {
+              direction: column.sortDirection,
+              fieldName: column.field
+            };
           }
-          let width = 0;
-          for (let i = 0; i < colspan; i++) {
-            width += this.columns[c + i].width;
-          }
-          cell.width = width;
-          // flag the empty cells
-          for (let i = 1; i < rowspan; i++) {
-            for (let j = 0; j < colspan; j++) {
-              rows[r + i] = rows[r + i] || [];
-              rows[r + i][c + j] = -1;
-            }
-          }
-          if (cell.isLastRow) {
-            cell.sort = column.sort;
-            cell.field = column.field;
-            // if it has the existing sort field, keeps it
-            if (column.sortDirection && !this.sortItem.fieldName) {
-              this.sortItem = {
-                direction: column.sortDirection,
-                fieldName: column.field
-              };
-            }
-          } else {
-            cell.sort = null;
-            cell.field = null;
-          }
-          if (r === 0) {
-            cell.isFirstRow = true;
-          }
-          if (c === 0) {
-            cell.isFirstCol = true;
-          }
-          if (c === lastColIndex) {
-            cell.isLastCol = true;
-          }
-          c += colspan;
-        });
+        }
+        cell.isFirstRow = r === 0;
+        cell.isFirstCol = c === 0;
+        cell.isLastCol = c === lastColIndex;
+        c += colspan;
       });
-    }
+    });
     return headerData;
   }
 
@@ -244,7 +229,7 @@ export class GridHeaderComponent extends BaseComponent {
     if (cell.selectableHeader === false) {
       cls.push('unselectable');
     }
-    if (this.selectedItemsMap.get(cell.field)) {
+    if (this.selectedColumnsMap.get(cell.field)) {
       cls.push('selected');
     }
     if (cell.align) {
@@ -267,5 +252,53 @@ export class GridHeaderComponent extends BaseComponent {
       });
     }
     return cls.join(' ');
+  }
+
+  onSort(el: HTMLElement, column: Column, event: MouseEvent = null) {
+    let dir = SortDirection.ASC;
+    if (this.sortItem.fieldName === column.field) {
+      dir = this.nextSortDirection[this.sortItem.direction];
+    }
+    this.sortItem = {
+      fieldName: column.field,
+      direction: dir
+    };
+    const actionEvent: GridHeaderActionEvent = {
+      event,
+      el,
+      action: GridAction.SORT,
+      column,
+      target: this,
+      sort: this.sortItem
+    };
+    this.action.emit(actionEvent);
+  }
+
+  onSelect(column: Column, el: HTMLElement, event: MouseEvent) {
+    const field = column.field;
+    if (this.selectedColumnsMap.has(field)) {
+      if (this.unselectColumn(field)) {
+        const actionEvent: GridHeaderActionEvent = {
+          event,
+          el,
+          action: GridAction.SELECT_COLUMN,
+          column,
+          selectedColumns: this.getSelectedColumns(),
+          target: this
+        };
+        this.action.emit(actionEvent);
+      }
+    } else {
+      this.selectColumn(field, column);
+      const actionEvent: GridHeaderActionEvent = {
+        event,
+        el,
+        action: GridAction.SELECT_COLUMN,
+        column,
+        selectedColumns: this.getSelectedColumns(),
+        target: this
+      };
+      this.action.emit(actionEvent);
+    }
   }
 }

@@ -1,0 +1,6 @@
+<div class="list-item--body">
+  <ng-container
+    *ngTemplateOutlet="state.tpl; context: { $implicit: state.data }"
+  ></ng-container
+  >{{ state.tpl ? '' : state.data[state.nameField] }}
+</div>

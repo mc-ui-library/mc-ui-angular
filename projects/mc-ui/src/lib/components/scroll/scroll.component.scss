@@ -8,10 +8,9 @@
     height: 100%;
     &--content {
       position: relative;
-      &--page1, &--page2 {
-        position: absolute;
-        width: 100%;
-        left: 0;
+      .page {
+        position: relative;
+        transition: transform 0.3s, height ease-in-out 0.3s; 
       }
     }
     &--empty {

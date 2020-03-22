@@ -1,0 +1,6 @@
+<mc-list-item
+  *ngFor="let item of state.data"
+  [config]="getListItemConfig(item)"
+  (action)="onListItemAction($event)"
+>
+</mc-list-item>

@@ -1,12 +1,23 @@
 <mc-scrollbar class="scroll" (scrollY)="onScroll($event)">
-  <div class="scroll--content" [style.height.px]="state.contentHeight">
-    <div class="scroll--content--page1" [style.top.px]="state.page1Top">
-      <ng-container *ngTemplateOutlet="state.page1Tpl"></ng-container>
-    </div>
-    <div class="scroll--content--page2" [style.top.px]="state.page2Top">
-      <ng-container *ngTemplateOutlet="state.page2Tpl"></ng-container>
+  <div class="scroll--content">
+    <div
+      *ngFor="let page of state.pages; index as i"
+      class="page"
+      [style.height.px]="page.height + page.extraHeight"
+      [attr.data-index]="i"
+    >
+      <ng-container *ngTemplateOutlet="state.tpl"></ng-container>
     </div>
   </div>
 </mc-scrollbar>
-<div *ngIf="!state.rowCount" class="scroll--empty" [style.lineHeight.px]="state.rowHeight">{{state.isLoading ? state.loadingText : state.emptyText}}</div>
-<mc-loader *ngIf="state.displayLoader && state.isLoading" [config]="{ themes: ['horizontal']}"></mc-loader>
+<div
+  *ngIf="!state.rowCount"
+  class="scroll--empty"
+  [style.lineHeight.px]="state.rowHeight"
+>
+  {{state.isLoading ? state.loadingText : state.emptyText}}
+</div>
+<mc-loader
+  *ngIf="state.displayLoader && state.isLoading"
+  [config]="{ themes: ['horizontal']}"
+></mc-loader>

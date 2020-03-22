@@ -1,0 +1,147 @@
+@import './../../../../styles/vars';
+
+:host {
+  top: 0;
+  left: 0;
+  position: absolute;
+  display: inline-block;
+  background: $c-bg-panel-3;
+
+  .close-button {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    z-index: 10;
+  }
+
+  &.has-border {
+    border: 1px solid $c-border-2;
+    border-radius: 4px;
+  }
+
+  &.has-close-button {
+    .close-button {
+      display: block;
+    }
+  }
+
+  &.center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  &.popup {
+    &-basic {
+      padding: 25px 15px 15px;
+      border: solid 1px $c-border-2;
+      @include linearGradient(135deg, $c-bg-panel-3 0%, $c-bg-panel-3 60%);
+      border-radius: 4px;
+    }
+
+    &-indicator {
+      &:before {
+        content: '';
+        width: 17px;
+        height: 4px;
+        position: absolute;
+        background: $c-bg-panel-3;
+        z-index: 2;
+      }
+
+      &:after {
+        content: '';
+        width: 16px;
+        height: 12px;
+        position: absolute;
+        background: $c-bg-panel-3;
+        z-index: 1;
+      }
+
+      // the indicator location is top-right
+      &-top-right {
+        &:before {
+          background: $c-bg-panel-3;
+          border-top: solid 1px $c-border-2;
+          border-right: solid 1px $c-border-2;
+          transform: rotate(-35deg);
+          top: -6px;
+          right: -2px;
+          border-radius: 0 4px 0 0;
+        }
+
+        &:after {
+          @include linearGradient(325deg, $c-bg-panel-3 0%, $c-bg-panel-3 50%, transparent 51%, transparent 100%);
+          border-right: solid 1px $c-border-2;
+          border-radius: 0 4px 0 0;
+          top: -9px;
+          right: -1px;
+        }
+      }
+
+      &-top-left {
+        &:before {
+          background: $c-bg-panel-3;
+          border-top: solid 1px $c-border-2;
+          border-left: solid 1px $c-border-2;
+          transform: rotate(35deg);
+          top: -6px;
+          left: -2px;
+          border-radius: 4px 0 0 0;
+        }
+
+        &:after {
+          @include linearGradient(35deg, $c-bg-panel-3 0%, $c-bg-panel-3 50%, transparent 51%, transparent 100%);
+          border-left: solid 1px $c-border-2;
+          border-radius: 4px 0 0 0;
+          top: -9px;
+          left: -1px;
+        }
+      }
+
+      &-bottom-right {
+        &:before {
+          transform: scale(-1, 1) rotate(-35deg);
+          right: -2px;
+          bottom: -6px;
+          border-bottom: solid 1px $c-border-2;
+          border-left: solid 1px $c-border-2;
+          background: $c-bg-panel-3;
+          border-radius: 0 0 0 4px;
+        }
+
+        &:after {
+          transform: scale(-1, 1);
+          right: -1px;
+          bottom: -9px;
+          @include linearGradient(135deg, $c-bg-panel-3 0%, $c-bg-panel-3 50%, transparent 51%, transparent 100%);
+          border-left: solid 1px $c-border-2;
+          border-radius: 0 0 0 4px;
+        }
+      }
+
+      &-bottom-left {
+        &:before {
+          bottom: -6px;
+          left: -2px;
+          transform: rotate(-35deg);
+          border-bottom: solid 1px $c-border-2;
+          border-left: solid 1px $c-border-2;
+          background: $c-bg-panel-3;
+          border-radius: 0 0 0 4px;
+        }
+
+        &:after {
+          bottom: -9px;
+          left: -1px;
+          @include linearGradient(135deg, $c-bg-panel-3 0%, $c-bg-panel-3 50%, transparent 51%, transparent 100%);
+          border-left: solid 1px $c-border-2;
+          border-radius: 0 0 0 4px;
+        }
+      }
+    }
+  }
+}

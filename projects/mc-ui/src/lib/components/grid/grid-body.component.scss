@@ -1,95 +1,92 @@
 @import './../../../../styles/vars';
+
 :host {
   display: block;
   position: relative;
   height: 100%;
 
   // override reset.scss, if we use the normalize.scss, we don't need this.
-  table, tbody, tr, td, th, div {
-    vertical-align: middle;
-  }
-
   div {
+    vertical-align: middle;
     position: relative;
   }
 
-  .grid-body {
-    border-collapse: collapse;
-    border-spacing: 0;
-    &--row {
-      border-top: 1px solid transparent;
-      border-bottom: 1px solid transparent;
+  .row {
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid transparent;
 
-      &-odd {
+    &-odd {}
 
-      }
-      &-even {
-        background-color: rgba(109, 108, 127, 0.15); 
-      }
-
-      &--cell {
+    &-even {
+      background-color: rgba(109, 108, 127, 0.15);
+    }
+    .cells {
+      .cell {
         padding: 0;
         cursor: pointer;
-        &--content {
-          overflow: hidden;
-          padding: 0 8px;
-          &--container {
-            display: inline-block;
-            white-space: nowrap;
-          }
-          &.overflow-mask {
-            mask-image: linear-gradient(to right, #fff 75%, transparent 100%);
-          }
+        overflow: hidden;
+        padding: 0 8px;
+        display: inline-block;
+        white-space: nowrap;
+
+        &.overflow-mask {
+          mask-image: linear-gradient(to right, #fff 75%, transparent 100%);
         }
+
         &:hover {
-          background: linear-gradient(125deg,rgba(255,255,255,.15),rgba(255,255,255,.05));
+          background: linear-gradient(125deg, rgba(255, 255, 255, .15), rgba(255, 255, 255, .05));
         }
+
         &.unselectable {
           cursor: default;
+
           &:hover {
             background: none;
           }
         }
+
         &.align-right {
-          .grid-body--row--cell--content {
-            text-align: right;
-            &.overflow-mask {
-              mask-image: linear-gradient(to left, #fff 75%, transparent 100%);
-            }
+          text-align: right;
+
+          &.overflow-mask {
+            mask-image: linear-gradient(to left, #fff 75%, transparent 100%);
           }
         }
+
         &.selected {
-          background: linear-gradient(125deg,rgba(255,255,255,.15),rgba(255,255,255,.05));
+          background: linear-gradient(125deg, rgba(255, 255, 255, .15), rgba(255, 255, 255, .05));
         }
+      }
+    }
+    &--content {
+      height: 0px;
+      transition: transform 0.3s, height ease-in-out 0.3s; 
+      overflow: hidden;
+      &--container {
+        overflow: auto;
       }
     }
   }
 
   &.is-scroll-page {
     &.is-last-page {
-      .grid-body {
-        &--row {
-          &:last-child {
-            border-bottom-color: transparent;
-          }
+      .row {
+        &:last-child {
+          border-bottom-color: transparent;
         }
       }
     }
   }
 
   &.is-basic {
-    .grid-body {
-        &--row {
-          &:last-child {
-            border-bottom: 0;
-          }
-        }
+    .row {
+      &:last-child {
+        border-bottom: 0;
       }
+    }
   }
 
   &.is-loading {
-    td {
-      opacity: 0.1;
-    }
+    opacity: 0.1;
   }
 }

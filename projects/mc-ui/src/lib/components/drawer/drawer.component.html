@@ -1,0 +1,7 @@
+<mc-mask
+  [config]="{ visible: true, transparent: !state.mask }"
+  (click)="onClickMask()"
+></mc-mask>
+<div #drawerEr class="drawer">
+  <ng-container *ngTemplateOutlet="state.tpl"></ng-container>
+</div>

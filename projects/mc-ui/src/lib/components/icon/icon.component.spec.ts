@@ -1,21 +1,21 @@
-import { LoaderComponent } from './loader.component';
+import { IconComponent } from './icon.component';
 import { ComponentFixture, async, TestBed, tick, fakeAsync } from '@angular/core/testing';
-describe('LoaderComponent', () => {
-  let component: LoaderComponent;
-  let fixture: ComponentFixture<LoaderComponent>;
+describe('IconComponent', () => {
+  let component: IconComponent;
+  let fixture: ComponentFixture<IconComponent>;
   let el: HTMLElement;
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [],
-      declarations: [LoaderComponent],
+      declarations: [IconComponent],
       providers: []
     }).compileComponents();
-    fixture = TestBed.createComponent(LoaderComponent);
+    fixture = TestBed.createComponent(IconComponent);
     component = fixture.componentInstance;
     el = fixture.debugElement.nativeElement;
 
     // load data
-    component.theme = 'horizontal';
+    component.icon = 'chevron';
 
     fixture.detectChanges();
   }));
@@ -24,7 +24,7 @@ describe('LoaderComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should have the "horizontal" theme', () => {
-    expect(el.className.indexOf('-horizontal') > -1).toBeTruthy();
+  it('should have the "chevron" icon', () => {
+    expect(el.classList.contains('icon-chevron')).toBeTruthy();
   });
 });

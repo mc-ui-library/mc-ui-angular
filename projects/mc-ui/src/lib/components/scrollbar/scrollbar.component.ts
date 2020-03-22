@@ -1,15 +1,7 @@
-import {
-  Component,
-  Output,
-  EventEmitter,
-  ViewChild,
-  ElementRef
-} from '@angular/core';
-import {
-  BaseComponent
-} from './../base.component';
+import { Component, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
+import { BaseComponent } from './../base.component';
 import { PerfectScrollbarConfigInterface, PerfectScrollbarComponent } from 'ngx-perfect-scrollbar';
-import { ScrollbarConfig } from '../../models';
+import { ScrollbarConfig } from '../../mc-ui.models';
 
 // Wrapping Third party components for providing encapsulated API and styles etc.
 // They can be replaced with a new good third party components in the future, but we can still use the exsiting APIs.
@@ -18,9 +10,7 @@ import { ScrollbarConfig } from '../../models';
   styleUrls: ['scrollbar.component.scss'],
   templateUrl: './scrollbar.component.html'
 })
-
 export class ScrollbarComponent extends BaseComponent {
-
   _config: ScrollbarConfig = {
     suppressScrollX: true
   };
@@ -31,8 +21,8 @@ export class ScrollbarComponent extends BaseComponent {
 
   @ViewChild(PerfectScrollbarComponent) scrollBarCmp: PerfectScrollbarComponent;
 
-  @Output() scrollY: EventEmitter < any > = new EventEmitter();
-  @Output() scrollYEnd: EventEmitter < any > = new EventEmitter();
+  @Output() scrollY: EventEmitter<any> = new EventEmitter();
+  @Output() scrollYEnd: EventEmitter<any> = new EventEmitter();
 
   constructor(protected er: ElementRef) {
     super(er);
@@ -48,6 +38,10 @@ export class ScrollbarComponent extends BaseComponent {
 
   scrollToElement(query: string, offset: number = null) {
     this.scrollBarCmp.directiveRef.scrollToElement(query, offset);
+  }
+
+  scrollToY(y: number) {
+    this.scrollBarCmp.directiveRef.scrollToY(y);
   }
 
   onScrollY(e: any) {

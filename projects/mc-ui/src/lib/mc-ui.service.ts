@@ -1,10 +1,12 @@
-import { Injectable } from '@angular/core';
+import { Injectable, ComponentFactoryResolver, Injector, ApplicationRef } from '@angular/core';
+import { Message } from './mc-ui.models';
+import { Observable, BehaviorSubject, fromEvent } from 'rxjs/index';
 
-@Injectable({
-  providedIn: 'root'
-})
+/**
+ * App Level shared services e.g) Dynamic Components or EventEmitters for sending message between UI Page Componensts, window resize etc.
+ */
+@Injectable()
 export class McUiService {
-
   private _message = new BehaviorSubject<Message>({ from: '', to: '', action: '' });
   message = this._message.asObservable();
   windowResize: Observable<any>;
@@ -13,7 +15,7 @@ export class McUiService {
   private data = new Map();
 
   constructor(private _resolver: ComponentFactoryResolver, private injector: Injector, private appRef: ApplicationRef) {
-    this.bodyPress = fromEvent(this.getBody(), 'click');
+    this.bodyPress = fromEvent(document.body, 'click');
     this.windowResize = fromEvent(window, 'resize');
   }
 
@@ -44,9 +46,5 @@ export class McUiService {
     this.appRef.detachView(cmp.hostView);
     cmp.destroy();
     cmp = null;
-  }
-
-  getBody() {
-    return document.body;
   }
 }

@@ -1,5 +1,16 @@
 export function isEmpty(val: any) {
-  return val === null || val === '' || val === undefined || isNaN(val);
+  return val === null || val === '' || val === undefined;
+}
+
+export function debounce(callback: Function, wait: number, context: any = this) {
+  let timeout;
+  return (...args: any[]) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(function() {
+      timeout = null;
+      callback.apply(context, args);
+    }, wait);
+  };
 }
 
 export function findParentDom(dom: any, selector: string, depth = 10) {
@@ -31,15 +42,4 @@ export function findParentDom(dom: any, selector: string, depth = 10) {
     dom = dom.parentNode;
   }
   return resultDom;
-}
-
-export function debounce(callback: any, wait: number, context: any = this) {
-  let timeout: any;
-  return (...args: any[]) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => {
-      timeout = null;
-      callback.apply(context, args);
-    }, wait);
-  };
 }

@@ -1,6 +1,12 @@
-import { Column } from './../models';
+import { GridRowMeta } from '../mc-ui.models';
+import { Column } from '../mc-ui.models';
 
-export function getAutoColumnWidth(columns: Column[], containerWidth: number, columnWidthIsRatio = false, minWidth = 0) {
+export function getAutoColumnWidth(
+  columns: Column[],
+  containerWidth: number,
+  columnWidthIsRatio = false,
+  minWidth = 0
+) {
   const hasColWidth = columns && columns[0].width;
   if (columnWidthIsRatio) {
     if (hasColWidth) {
@@ -17,7 +23,9 @@ export function getAutoColumnWidth(columns: Column[], containerWidth: number, co
       let adjustTotalWidth = 0;
       columns = columns.map(column => {
         // Use Math.floor since the cell width has x.xx, the web browser doesn't display correctly. so, we need integer. If there is a gap, we need to spread it to the columns.
-        column.width = column.fixedWidth ? column.width : Math.floor((column.width / totalWidth) * adjustContainerWidth);
+        column.width = column.fixedWidth
+          ? column.width
+          : Math.floor((column.width / totalWidth) * adjustContainerWidth);
         adjustTotalWidth += column.width;
         return column;
       });
@@ -48,5 +56,5 @@ export function getEvenColumnWidth(columns: Column[], containerWidth: number, mi
   return columns.map(column => {
     column.width = colWidth;
     return column;
-  })
+  });
 }

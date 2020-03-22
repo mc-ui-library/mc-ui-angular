@@ -1,6 +1,6 @@
 <table class="grid-header">
   <tr
-    *ngFor="let cells of state.headerData"
+    *ngFor="let cells of state.data"
     [class]="getGridRowClassName(cells)"
     [style.height.px]="state.rowHeight"
   >
@@ -8,7 +8,7 @@
       *ngFor="let cell of cells"
       [class]="getGridCellClassName(cell)"
       [attr.data-field]="cell.field"
-      [attr.data-action]="state.gridAction.SELECT_CELL"
+      [attr.data-action]="GridAction.SELECT_CELL"
       [colSpan]="cell.colspan || 1"
       [rowSpan]="cell.rowspan || 1"
     >
@@ -23,7 +23,12 @@
             <ng-container
               *ngTemplateOutlet="state.tpls[cell.name]; context: { $implicit: cell }"
             ></ng-container
-            >{{ state.tpls[cell.name] ? "" : cell.name }} <mc-icon *ngIf="sortItem.fieldName === cell.field" icon="chevron" theme="grid-header-sort" [class.flip]="sortItem.direction === state.sortDirection.ASC"></mc-icon>
+            >{{ state.tpls[cell.name] ? "" : cell.name }}
+            <mc-icon
+              *ngIf="state.sortItem.fieldName === cell.field"
+              [config]="{ icon: 'chevron', themes: ['grid-header-sort'] }"
+              [class.flip]="state.sortItem.direction === SortDirection.ASC"
+            ></mc-icon>
           </div>
         </div>
       </div>

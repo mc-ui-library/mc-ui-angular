@@ -1,28 +1,47 @@
-<table class="grid-body">
-  <tr *ngFor="let row of state.bodyData; index as r" [class]="getGridRowClassName(r, row)" [style.height.px]="state.rowHeight">
-    <td
+<div
+  *ngFor="let row of state.data; index as r"
+  [class]="getGridRowClassName(r, row)"
+  [style.height.px]="state.rowHeight"
+>
+  <div
+    class="cells"
+    [attr.data-id]="row[state.idField]"
+    [attr.data-action]="GridAction.SELECT_ROW"
+    [attr.data-rowDataIndex]="r"
+    [attr.data-rowIndex]="r + state.startRowIndex"
+  >
+    <div
       *ngFor="let column of state.columns; index as c"
       [class]="getGridCellClassName(r, c, column)"
+      [style.lineHeight.px]="state.rowHeight - 2"
+      [style.height.px]="state.rowHeight - 2"
+      [style.width.px]="column.width"
+      [title]="getTitle(column.field, row)"
       [attr.data-field]="column.field"
       [attr.data-id]="row[state.idField]"
-      [attr.data-rowIndex]="r + state.start"
+      [attr.data-rowIndex]="r + state.startRowIndex"
       [attr.data-cellIndex]="c"
-      [attr.data-action]="column.selectable === false ? '' : state.gridAction.SELECT_CELL"
+      [attr.data-action]="column.selectable === false ? '' : GridAction.SELECT_CELL"
     >
-      <div
-        class="grid-body--row--cell--content"
-        [class.overflow-mask]="!column.noOverflowMask"
-        [style.lineHeight.px]="state.rowHeight - 2"
-        [style.height.px]="state.rowHeight - 2"
-        [style.width.px]="column.width"
-        [title]="getTitle(column.field, row)"
+      <ng-container
+        *ngTemplateOutlet="state.tpls[column.field]; context: getTplContext(row, column, r, c)"
       >
-        <div class="grid-body--row--cell--content--container">
-          <ng-container *ngTemplateOutlet="state.tpls[column.field]; context: getTplContext(row, column, r, c)">
-          </ng-container
-          >{{ state.tpls[column.field] ? '' : row[column.field] }}
-        </div>
-      </div>
-    </td>
-  </tr>
-</table>
+      </ng-container
+      >{{ state.tpls[column.field] ? '' : row[column.field] }}
+    </div>
+  </div>
+  <div
+    *ngIf="state.hasAccordionRow"
+    class="row--content"
+    [style.height.px]="isSelectedRow(row[state.idField]) ? getAccordionContentHeight(row) : 0"
+  >
+    <div
+      class="row--content--container"
+      [style.height.px]="getAccordionContentHeight(row)"
+    >
+      <ng-container
+        *ngTemplateOutlet="state.accordionContentTpl; context: { $implicit: row }"
+      ></ng-container>
+    </div>
+  </div>
+</div>
