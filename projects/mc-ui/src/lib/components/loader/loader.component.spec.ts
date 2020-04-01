@@ -15,7 +15,7 @@ describe('LoaderComponent', () => {
     el = fixture.debugElement.nativeElement;
 
     // load data
-    component.theme = 'horizontal';
+    // component.themes = ['horizontal'];
 
     fixture.detectChanges();
   }));
@@ -25,6 +25,6 @@ describe('LoaderComponent', () => {
   });
 
   it('should have the "horizontal" theme', () => {
-    expect(el.className.indexOf('-horizontal') > -1).toBeTruthy();
+    expect(el.className.includes('-horizontal')).toBeTruthy();
   });
 });

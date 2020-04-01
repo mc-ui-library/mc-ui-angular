@@ -1,12 +1,13 @@
 <mc-grid-header
-  [config]="state.headerConfig"
+  [config]="state?.headerConfig"
+  [columns]="state?.columns"
   (action)="onHeaderAction($event)"
 >
 </mc-grid-header>
 <mc-scroll
-  [config]="state.scrollConfig"
-  [style.height.px]="state.bodyHeight"
-  [style.width]="state.bodyWidth"
+  [config]="state?.scrollConfig"
+  [style.height.px]="state?.bodyHeight"
+  [style.width]="state?.bodyWidth"
   (action)="onScrollAction($event)"
 >
 </mc-scroll>

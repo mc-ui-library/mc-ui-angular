@@ -1,11 +1,19 @@
-import { ComponentActionEvent, ComponentAction } from '../../mc-ui.models';
-import { McUiService } from './../../mc-ui.service';
+import { Icon, ComponentTheme, PopupStartFrom } from './../../shared.models';
+import { ComponentActionEvent, ComponentAction } from '../../shared.models';
+import { SharedService } from './../../shared.service';
 import { BaseComponent } from './../base.component';
 import { Component, ElementRef, HostBinding, TemplateRef } from '@angular/core';
-import { PopupConfig } from '../../mc-ui.models';
+import { PopupConfig } from '../../shared.models';
 
 interface State {
   tpl: TemplateRef<any>;
+}
+
+interface PopupCoords {
+  top: number;
+  left: number;
+  indicatorIsLeft: boolean;
+  indicatorIsTop: boolean;
 }
 
 @Component({
@@ -19,12 +27,14 @@ export class PopupComponent extends BaseComponent {
   private checkTargetElLocationIntervalId: number;
   private indicatorHeight = 10;
 
-  lastTargetElCoord: ClientRect;
-  indicatorLocation: string | 'tl' | 'tr' | 'bl' | 'br' = 'bl'; // 'tl' | 'tr' | 'bl' | 'br' = 'bl'
+  private lastTargetElCoord: ClientRect;
 
-  _config: PopupConfig = {
+  Icon = Icon;
+  Theme = ComponentTheme;
+
+  defaultConfig: PopupConfig = {
     checkTargetLocation: true,
-    startFrom: 'center',
+    startFrom: PopupStartFrom.BOTTOM,
     offsetX: 0,
     offsetY: 0,
     tpl: null,
@@ -35,32 +45,31 @@ export class PopupComponent extends BaseComponent {
     hasCloseButton: true
   };
 
-  state: State = {
+  _config: PopupConfig;
+
+  defaultState: State = {
     tpl: null
   };
+
+  state: State;
 
   @HostBinding('class.center') private center = false;
   @HostBinding('class.has-border') private hasBorder = true;
   @HostBinding('class.has-close-button') private hasCloseButton = true;
   @HostBinding('class.popup-indicator') private hasIndicator = true;
 
-  constructor(protected er: ElementRef, private service: McUiService) {
+  constructor(protected er: ElementRef, private service: SharedService) {
     super(er);
     this.subscriptions = service.bodyPress.subscribe(this.onPressBody.bind(this));
   }
 
-  applyConfig(config: PopupConfig) {
+  applyState(config: PopupConfig) {
     this.center = config.center;
     this.hasBorder = config.hasBorder;
     this.hasCloseButton = config.hasCloseButton;
     this.hasIndicator = config.hasIndicator;
-    this.applyTargetEl(config);
-  }
-
-  applyTargetEl(config: PopupConfig) {
     if (config.targetEl) {
       this.lastTargetElCoord = config.targetEl.getBoundingClientRect();
-      this.show();
     }
   }
 
@@ -90,46 +99,63 @@ export class PopupComponent extends BaseComponent {
       if (!this.el) {
         return;
       }
-      const targetSize = this.lastTargetElCoord;
-      // when the popup overflow the window size, we need to move into the window.
-      const indicatorHeight = config.hasIndicator ? this.indicatorHeight : 0;
-      const popupSize = this.el.getBoundingClientRect();
-      const windowSize = this.getWindowSize();
 
-      // indicator location
-      const isLeft =
-        targetSize.left +
-          (config.startFrom === 'center' ? targetSize.width / 2 : 0) +
-          popupSize.width +
-          config.offsetX <=
-        windowSize.width;
-      const isTop =
-        targetSize.top + targetSize.height + popupSize.height + config.offsetY + indicatorHeight <= windowSize.height;
-      const left = isLeft
-        ? targetSize.left + (config.startFrom === 'center' ? targetSize.width / 2 : 0) + config.offsetX
-        : targetSize.left -
-          popupSize.width +
-          (config.startFrom === 'center' ? targetSize.width / 2 : targetSize.width) -
-          config.offsetX;
-      const top = isTop
-        ? targetSize.top + (config.startFrom === 'overlap' ? 0 : targetSize.height) + config.offsetY + indicatorHeight
-        : targetSize.top -
-          popupSize.height -
-          config.offsetY -
-          indicatorHeight +
-          (config.startFrom === 'overlap' ? targetSize.height : 0);
-      this.indicatorLocation = (isTop ? 't' : 'b') + (isLeft ? 'l' : 'r');
-      this.el.style.left = left + 'px';
-      this.el.style.top = top + 'px';
+      const coords = this.getCoords(config);
+      this.el.style.left = coords.left + 'px';
+      this.el.style.top = coords.top + 'px';
       // remove the prev indicator and add the new indicator
       let classNames = this.el.className.split(' ');
       classNames = classNames.filter(d => !d.includes('popup-indicator-'));
-      classNames.push('popup-indicator-' + (isTop ? 'top' : 'bottom') + '-' + (isLeft ? 'left' : 'right'));
+      classNames.push(
+        'popup-indicator-' +
+          (coords.indicatorIsTop ? 'top' : 'bottom') +
+          '-' +
+          (coords.indicatorIsLeft ? 'left' : 'right')
+      );
       this.el.className = classNames.join(' ');
       if (!resizeOnly) {
         this.el.style.visibility = '';
       }
     });
+  }
+
+  getCoords(config: PopupConfig): PopupCoords {
+    const targetSize = this.lastTargetElCoord;
+    // when the popup overflow the window size, we need to move into the window.
+    const indicatorHeight = config.hasIndicator ? this.indicatorHeight : 0;
+    const popupSize = this.el.getBoundingClientRect();
+    const windowSize = this.getWindowSize();
+
+    const indicatorIsLeft =
+      targetSize.left + targetSize.width / 2 + popupSize.width + config.offsetX <= windowSize.width;
+
+    const left = indicatorIsLeft
+      ? targetSize.left + targetSize.width / 2 + config.offsetX
+      : targetSize.left - popupSize.width + targetSize.width / 2 - config.offsetX;
+
+    let indicatorIsTop = true;
+    let top = 0;
+
+    switch (config.startFrom) {
+      case PopupStartFrom.BOTTOM:
+        indicatorIsTop =
+          targetSize.top + targetSize.height + popupSize.height + config.offsetY + indicatorHeight <= windowSize.height;
+        break;
+      case PopupStartFrom.TOP:
+        indicatorIsTop = targetSize.top - popupSize.height + config.offsetY - indicatorHeight <= 0;
+        break;
+    }
+
+    top = indicatorIsTop
+      ? targetSize.top + targetSize.height + config.offsetY + indicatorHeight
+      : targetSize.top - popupSize.height - config.offsetY - indicatorHeight;
+
+    return {
+      top,
+      left,
+      indicatorIsTop,
+      indicatorIsLeft
+    };
   }
 
   resize() {

@@ -1,6 +1,7 @@
-import { ListAction, ListItem, ListItemConfig, ListItemActionEvent } from '../../mc-ui.models';
+import { ListAction, ListItem, ListItemConfig, ListItemActionEvent } from '../../shared.models';
 import { Component, Input, HostBinding, HostListener, TemplateRef } from '@angular/core';
 import { BaseComponent } from '../base.component';
+import { isEmpty } from '../../utils/utils';
 
 interface State {
   tpl: TemplateRef<any>;
@@ -14,32 +15,35 @@ interface State {
   templateUrl: 'list-item.component.html'
 })
 export class ListItemComponent extends BaseComponent {
-  _config: ListItemConfig = {
+  defaultConfig: ListItemConfig = {
     tpl: null,
     data: {},
     idField: 'id',
     nameField: 'name',
     toggleSelect: false,
     height: 0,
-    selected: false,
     horizontal: false
   };
 
-  state: State = {
+  _config: ListItemConfig;
+
+  defaultState: State = {
     tpl: null,
     data: {},
     nameField: 'name'
   };
 
+  state: State;
+
   @HostBinding('style.height') private height = '';
   @HostBinding('style.lineHeight') private lineHeight = '';
-  @HostBinding('class.selected') private selected = false;
+  @HostBinding('class.selected') @Input() selected = false;
   @HostBinding('class.horizontal') private horizontal = false;
 
   @HostListener('click', ['$event'])
   onPress(e: MouseEvent) {
     // selected state is made by config.
-    const selected = this._config.toggleSelect ? !this._config.selected : true;
+    const selected = this._config.toggleSelect ? !this.selected : true;
     const actionEvent: ListItemActionEvent = {
       target: this,
       action: selected ? ListAction.SELECT_ITEM : ListAction.UNSELECT_ITEM,
@@ -50,12 +54,14 @@ export class ListItemComponent extends BaseComponent {
     this.action.emit(actionEvent);
   }
 
-  applyConfig(config: ListItemConfig) {
+  applyState(config: ListItemConfig) {
     if (config.height) {
       this.height = config.height + 'px';
       this.lineHeight = config.height + 'px';
     }
     this.horizontal = config.horizontal;
-    this.selected = config.selected;
+    if (!isEmpty(config.selected)) {
+      this.selected = config.selected;
+    }
   }
 }

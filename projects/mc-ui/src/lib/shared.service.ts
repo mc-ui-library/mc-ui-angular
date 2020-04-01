@@ -1,12 +1,12 @@
-import { Injectable, ComponentFactoryResolver, Injector, ApplicationRef } from '@angular/core';
-import { Message } from './mc-ui.models';
+import { Injectable, ComponentFactoryResolver, Injector, ApplicationRef, ComponentRef } from '@angular/core';
+import { Message } from './shared.models';
 import { Observable, BehaviorSubject, fromEvent } from 'rxjs/index';
 
 /**
  * App Level shared services e.g) Dynamic Components or EventEmitters for sending message between UI Page Componensts, window resize etc.
  */
 @Injectable()
-export class McUiService {
+export class SharedService {
   private _message = new BehaviorSubject<Message>({ from: '', to: '', action: '' });
   message = this._message.asObservable();
   windowResize: Observable<any>;
@@ -15,7 +15,7 @@ export class McUiService {
   private data = new Map();
 
   constructor(private _resolver: ComponentFactoryResolver, private injector: Injector, private appRef: ApplicationRef) {
-    this.bodyPress = fromEvent(document.body, 'click');
+    this.bodyPress = fromEvent(this.getBody(), 'click');
     this.windowResize = fromEvent(window, 'resize');
   }
 
@@ -36,7 +36,7 @@ export class McUiService {
   addComponent(cmpType: any, parentEl = document.body) {
     // https://malcoded.com/posts/angular-dynamic-components/
     const factory = this._resolver.resolveComponentFactory(cmpType);
-    const cmp: any = factory.create(this.injector);
+    const cmp: ComponentRef<any> = factory.create(this.injector);
     this.appRef.attachView(cmp.hostView);
     parentEl.appendChild(cmp.location.nativeElement);
     return cmp;
@@ -46,5 +46,9 @@ export class McUiService {
     this.appRef.detachView(cmp.hostView);
     cmp.destroy();
     cmp = null;
+  }
+
+  getBody() {
+    return document.body;
   }
 }

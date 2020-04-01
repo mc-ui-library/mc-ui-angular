@@ -1,8 +1,12 @@
-import { GridRowMeta, GridFieldMeta } from '../../mc-ui.models';
-import { GridAction, GridCellInfo, Column, GridBodyConfig, GridBodyActionEvent } from '../../mc-ui.models';
+import { GridRowMeta, GridFieldMeta, GridRowDataMeta, Icon, ComponentTheme } from './../../shared.models';
+import { GridAction, GridCellInfo, Column, GridBodyConfig, GridBodyActionEvent } from '../../shared.models';
 import { BaseComponent } from '../base.component';
-import { Component, ElementRef, HostListener, HostBinding, TemplateRef } from '@angular/core';
-import { findParentDom } from '../../utils/utils';
+import { Component, ElementRef, HostListener, TemplateRef, Input, ChangeDetectorRef } from '@angular/core';
+import { findParentDom } from '../../utils/dom-utils';
+
+/**
+ * Row or Cell selection is managed by grid component since selected cell and selected rows are just readonly properties
+ */
 
 interface State {
   data: Array<any>;
@@ -14,7 +18,7 @@ interface State {
   hasAccordionRow: boolean;
   selectedCell: GridCellInfo;
   accordionContentTpl: TemplateRef<any>;
-  selectedRowsMap: Map<string, any>;
+  selectedRowsMap: Map<string, GridRowDataMeta>;
 }
 
 @Component({
@@ -23,9 +27,15 @@ interface State {
   templateUrl: './grid-body.component.html'
 })
 export class GridBodyComponent extends BaseComponent {
+  private selectedRowsOfGridBody: Array<any> = [];
+
+  Theme = ComponentTheme;
+  Icon = Icon;
+
+  rowBordersWidth = 2;
   GridAction = GridAction;
 
-  state: State = {
+  defaultState: State = {
     data: [],
     rowHeight: 30,
     columns: [],
@@ -35,10 +45,12 @@ export class GridBodyComponent extends BaseComponent {
     hasAccordionRow: false,
     selectedCell: null,
     accordionContentTpl: null,
-    selectedRowsMap: null
+    selectedRowsMap: new Map<string, any>()
   };
 
-  _config: GridBodyConfig = {
+  state: State;
+
+  defaultConfig: GridBodyConfig = {
     rowHeight: 30,
     idField: 'id',
     tpls: {},
@@ -46,56 +58,86 @@ export class GridBodyComponent extends BaseComponent {
     data: [],
     columns: [],
     startRowIndex: 0,
-    isLoading: false,
+    selectableCell: false,
     selectedCell: null,
     // accordion
     hasAccordionRow: false,
     accordionContentTpl: null,
     accordionContentHeight: 300,
-    selectedRowsMap: null,
+    selectedRows: null,
     multiSelectRow: false,
     pageIndex: null
   };
 
-  @HostBinding('class.is-loading') private isLoading = false;
-  @HostBinding('class.has-accordion-row') private hasAccordionRow = false;
+  _config: GridBodyConfig;
+
+  @Input()
+  set selectedCell(selectedCell: GridCellInfo) {
+    this.setState({ selectedCell });
+  }
+
+  @Input()
+  set selectedRows(selectedRows: Array<any>) {
+    this.selectedRowsOfGridBody = [];
+    const selectedRowsMap = selectedRows.reduce(
+      (map, row) => map.set(this.getStringRowID(row), row),
+      new Map<string, any>()
+    );
+    this.setState({ selectedRowsMap });
+  }
 
   @HostListener('click', ['$event'])
   onPress(e: MouseEvent) {
-    const el = findParentDom(e.target, '.cell');
-    if (el) {
-      this.onSelectCell(e, el);
-      this.onSelectRow(e, el.parentElement);
-    }
-  }
-
-  @HostListener('mouseover', ['$event'])
-  onMouseover(e: MouseEvent) {
-    if (this._config.selectCellByMouseOver) {
-      const el = findParentDom(e.target, '.cell');
-      if (el) {
-        this.onSelectCell(e, el, GridAction.MOUSEOVER_CELL);
+    // TODO: when there is no theme, this is not working. it may need to be added a unique theme id.
+    // When a grid contains a grid as a accordion content, it has same ".cell", we need to check this cell is in this grid or not.
+    const theme = this._config.themes.length ? this._config.themes[0] : '';
+    if (this._config.selectableCell) {
+      const cellClass = theme ? '.' + theme + '-cell' : '.cell';
+      const cellEl = findParentDom(e.target, cellClass);
+      if (cellEl) {
+        this.onSelectCell(e, cellEl);
       }
     }
+    const rowClass = theme ? '.' + theme + '-row' : '.row';
+    const rowEl = findParentDom(e.target, rowClass);
+    if (rowEl) {
+      this.onSelectRow(e, rowEl.children[0] as HTMLElement); // .cells
+    }
   }
 
-  constructor(protected er: ElementRef) {
+  constructor(protected er: ElementRef, private cd: ChangeDetectorRef) {
     super(er);
   }
 
-  applyConfig(config: GridBodyConfig) {
-    this.isLoading = config.isLoading;
-    this.hasAccordionRow = config.hasAccordionRow;
+  afterInitCmp() {
+    this.bindEvents();
+  }
+
+  bindEvents() {
+    // separate mouseover event for the performance of change detection
+    if (this._config.selectCellByMouseOver) {
+      this.el.addEventListener('mouseover', this.onMouseover.bind(this));
+    }
   }
 
   applyState(config: GridBodyConfig) {
-    this.isLoading = false;
+    this.selectedRows = config.selectedRows;
+    // TODO: state is not updated....
+    this.cd.detectChanges();
+  }
+
+  getAccordionContentHeight(row: any) {
+    const meta: GridRowMeta = row && row.__meta__ ? row.__meta__ : {};
+    return meta.accordionContentHeight || this._config.accordionContentHeight;
+  }
+
+  getStringRowID(row: any) {
+    return '' + row[this._config.idField];
   }
 
   getGridRowClassName(rowIndex: number, row: any) {
     const config = this._config;
     const startRowIndex = config.startRowIndex;
-    const selectedCell = this._config.selectedCell;
     const rowMeta: GridRowMeta = row.__meta__;
     const cls = ['row'];
     if (rowIndex + startRowIndex === 0) {
@@ -105,10 +147,13 @@ export class GridBodyComponent extends BaseComponent {
     if (rowMeta && rowMeta.class) {
       cls.push(rowMeta.class);
     }
-    if (selectedCell && selectedCell.row === rowIndex + startRowIndex) {
+    if (this.isSelectedRow(this.getStringRowID(row))) {
+      this.selectedRowsOfGridBody.push(row);
       cls.push('selected');
     }
-    cls.push(...config.themes.map(t => t + '-row'));
+    if (config.themes && config.themes.length) {
+      cls.push(...config.themes.map(t => t + '-row'));
+    }
     return cls.join(' ');
   }
 
@@ -137,13 +182,16 @@ export class GridBodyComponent extends BaseComponent {
     if (column.class) {
       cls.push(column.class);
     }
-    cls.push(...config.themes.map(t => t + '-cell'));
+    if (config.themes && config.themes.length) {
+      cls.push(...config.themes.map(t => t + '-cell'));
+    }
     return cls.join(' ');
   }
 
   getTplContext(row: any, column: Column, rowIndex: number, colIndex: number) {
     const config = this._config;
-    const fieldMeta: GridFieldMeta = row.__meta__ ? row.__meta__.fieldMeta[column.field] : null;
+    const fieldMeta: GridFieldMeta =
+      row.__meta__ && row.__meta__.fieldMeta ? row.__meta__.fieldMeta[column.field] : null;
     return {
       $implicit: row,
       column: column,
@@ -157,37 +205,17 @@ export class GridBodyComponent extends BaseComponent {
   }
 
   getTitle(field, row) {
-    const fieldMeta: GridFieldMeta = row.__meta__ ? row.__meta__.fieldMeta[field] : {};
+    const fieldMeta: GridFieldMeta = row.__meta__ && row.__meta__.fieldMeta ? row.__meta__.fieldMeta[field] : {};
     const title = fieldMeta.title || row[field];
     return typeof title === 'string' ? title : '';
   }
 
-  getAccordionContentHeight(row: any) {
-    const meta: GridRowMeta = row.__meta__ || {};
-    return meta.accordionContentHeight || this._config.accordionContentHeight;
+  isSelectedRow(id: any) {
+    return this.state.selectedRowsMap && this.state.selectedRowsMap.has('' + id);
   }
 
-  selectRow(id: string, rowData: any) {
-    let selectedRowsMap = this.state.selectedRowsMap;
-    if (!this._config.multiSelectRow) {
-      selectedRowsMap = new Map<string, any>();
-      selectedRowsMap.set(id, rowData);
-    }
-    selectedRowsMap.set(id, rowData);
-    this.setState({ selectedRowsMap });
-  }
-
-  unselectRow(id: string) {
-    const config = this._config;
-    if (config.multiSelectRow) {
-      const selectedRowsMap = this.state.selectedRowsMap;
-      selectedRowsMap.delete(id);
-      this.setState({ selectedRowsMap });
-    }
-  }
-
-  isSelectedRow(id: string) {
-    return this.state.selectedRowsMap.has(id);
+  getSelectedRowsOfGridBody() {
+    return this.selectedRowsOfGridBody;
   }
 
   onSelectRow(event: MouseEvent, el: HTMLElement) {
@@ -196,23 +224,18 @@ export class GridBodyComponent extends BaseComponent {
       case GridAction.SELECT_ROW:
         const selectedRowsMap = this.state.selectedRowsMap;
         const id = dataset.id;
-        const rowIndex = +dataset.rowIndex;
-        const rowDataIndex = +dataset.rowDataIndex;
+        const rowIndex = +dataset.row_index;
+        const rowDataIndex = +dataset.row_data_index;
         const rowData = this.state.data[rowDataIndex];
         let action = GridAction.SELECT_ROW;
         let accordionContentEl: HTMLElement;
-        let accordionContentHeight = 0;
         if (this.state.hasAccordionRow) {
           accordionContentEl = findParentDom(el, '.row').querySelector('.row--content--container');
-          accordionContentHeight = this.getAccordionContentHeight(rowData);
         }
         if (selectedRowsMap.has(id)) {
-          this.unselectRow(id);
           action = GridAction.UNSELECT_ROW;
-        } else {
-          this.selectRow(id, rowData);
         }
-        const actionEvent: GridBodyActionEvent = {
+        this.action.emit({
           target: this,
           event,
           rowEl: el,
@@ -220,12 +243,9 @@ export class GridBodyComponent extends BaseComponent {
           id,
           rowIndex,
           rowData,
-          selectedRowsMap,
           accordionContentEl,
-          accordionContentHeight,
           pageIndex: this._config.pageIndex
-        };
-        this.action.emit(actionEvent);
+        });
         break;
     }
   }
@@ -236,8 +256,8 @@ export class GridBodyComponent extends BaseComponent {
     const config = this._config;
     switch (dataset.action) {
       case GridAction.SELECT_CELL:
-        const rowIndex = +dataset.rowindex;
-        const cellIndex = +dataset.cellindex;
+        const rowIndex = +dataset.row_index;
+        const cellIndex = +dataset.cell_index;
         const field = dataset.field;
         const rowData = config.data[rowIndex - config.startRowIndex];
         const cellData = rowData ? rowData[field] : null;
@@ -263,9 +283,15 @@ export class GridBodyComponent extends BaseComponent {
           selectedCell,
           pageIndex: this._config.pageIndex
         };
-        this.setState({ selectedCell });
         this.action.emit(actionEvent);
         break;
+    }
+  }
+
+  onMouseover(e: MouseEvent) {
+    const el = findParentDom(e.target, '.cell');
+    if (el) {
+      this.onSelectCell(e, el, GridAction.MOUSEOVER_CELL);
     }
   }
 }

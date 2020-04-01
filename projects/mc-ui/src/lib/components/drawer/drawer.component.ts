@@ -1,7 +1,7 @@
-import { ComponentAction, ComponentActionEvent } from '../../mc-ui.models';
+import { ComponentAction, ComponentActionEvent } from '../../shared.models';
 import { Component, Input, ElementRef, TemplateRef, ViewChild, Output, EventEmitter } from '@angular/core';
 import { BaseComponent } from '../base.component';
-import { DrawerConfig } from '../../mc-ui.models';
+import { DrawerConfig } from '../../shared.models';
 
 interface State {
   mask: boolean;
@@ -18,16 +18,20 @@ interface State {
   templateUrl: 'drawer.component.html'
 })
 export class DrawerComponent extends BaseComponent {
-  _config: DrawerConfig = {
+  defaultConfig: DrawerConfig = {
     from: 'top',
     tpl: null,
     mask: true
   };
 
-  state: State = {
+  _config: DrawerConfig;
+
+  defaultState: State = {
     mask: true,
     tpl: null
   };
+
+  state: State;
 
   @ViewChild('drawerEr') drawerEr: ElementRef;
 

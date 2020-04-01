@@ -1,4 +1,4 @@
-import { SortItem, SortDirection } from '../mc-ui.models';
+import { SortItem, SortDirection } from '../shared.models';
 import { isEmpty } from './utils';
 
 export function sortObjectArray(data: any[], sort: SortItem) {
@@ -16,6 +16,7 @@ export function sortObjectArray(data: any[], sort: SortItem) {
 
 export function setStateIf(target: any, source: any) {
   // if source has target keys, then apply them to target
+  source = Object.assign({}, source);
   return Object.keys(target).reduce((t, key) => {
     if (!isEmpty(source[key])) {
       t[key] = source[key];
@@ -28,23 +29,9 @@ export function setStateIf(target: any, source: any) {
 
 export function setState(target: any, source: any) {
   // copy source to target
-  const copy = Object.assign({}, target);
+  source = Object.assign({}, source);
   Object.keys(source).forEach(key => {
-    copy[key] = source[key];
+    target[key] = source[key];
   });
-  return copy;
-}
-
-export function isEqualState(a: any, b: any) {
-  // compare 1 level only
-  const aKeys = Object.keys(a);
-  const bKeys = Object.keys(b);
-  if (aKeys.length !== bKeys.length) {
-    return false;
-  }
-  // assumption: the property value is object, the property order is equal
-  if (aKeys.find(key => JSON.stringify(a[key]) !== JSON.stringify(b[key]))) {
-    return false;
-  }
-  return true;
+  return target;
 }

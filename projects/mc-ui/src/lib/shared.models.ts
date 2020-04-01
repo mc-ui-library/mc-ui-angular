@@ -15,6 +15,11 @@ export enum ScrollDataAction {
   SORT = 'SORT'
 }
 
+export enum ScrollbarAction {
+  SCROLL_Y = 'SCROLL_Y',
+  SCROLL_Y_END = 'SCROLL_Y_END'
+}
+
 export enum ComponentAction {
   RENDERED = 'RENDERED',
   HID = 'HID'
@@ -29,7 +34,8 @@ export enum GridAction {
   SELECT_COLUMN = 'SELECT_COLUMN',
   GET_DATA = 'GET_DATA',
   SELECT_ROW = 'SELECT_ROW',
-  UNSELECT_ROW = 'UNSELECT_ROW'
+  UNSELECT_ROW = 'UNSELECT_ROW',
+  REMOVE_PAGE = 'REMOVE_PAGE'
 }
 
 export enum GridAccordionAction {
@@ -41,7 +47,7 @@ export enum GridAccordionAction {
 
 export enum ScrollAction {
   UPDATE_PAGES = 'UPDATE_PAGES',
-  RELOAD_PAGES = 'RELOAD_PAGES'
+  GET_ROW_COUNT = 'GET_ROW_COUNT'
 }
 
 export enum Align {
@@ -57,6 +63,55 @@ export enum SortDirection {
   ASC = 'ASC'
 }
 
+export enum Icon {
+  menu = 'menu',
+  logo = 'logo',
+  user = 'user',
+  list = 'list',
+  downloadGreen = 'download-green',
+  download = 'download',
+  arrowLeft = 'arrow-left',
+  close = 'close',
+  arrowDown = 'arrow-down',
+  chevron = 'chevron'
+}
+
+export enum ComponentTheme {
+  gridBodyAccordion = 'grid-body-accordion,',
+  gridHeaderSort = 'grid-header-sort',
+  horizontal = 'horizontal',
+  popup = 'popup'
+}
+
+export enum PopupStartFrom {
+  TOP,
+  BOTTOM
+}
+
+export enum ChartTypes {
+  VERTICAL_BAR = 'vertical-bar',
+  LINE = 'line',
+  BAR_LINE = 'bar-line'
+}
+
+export enum VizScaleType {
+  LINEAR = 'linear',
+  BAND = 'band'
+}
+
+export enum Location {
+  LEFT = 'LEFT',
+  RIGHT = 'RIGHT',
+  CENTER = 'CENTER',
+  TOP = 'TOP',
+  BOTTOM = 'BOTTOM'
+}
+
+export enum VisualizerType {
+  grid,
+  bar,
+  line
+}
 // ************* shared component interface **************
 
 // **** component config ****
@@ -72,7 +127,6 @@ export interface ScrollConfig extends ComponentConfig {
   loadingText?: string;
   emptyText?: string;
   rowHeight?: number;
-  isLoading?: boolean;
   displayLoader?: boolean;
   rowCount?: number;
   minPageRowCount?: number;
@@ -80,7 +134,7 @@ export interface ScrollConfig extends ComponentConfig {
 
 export interface PopupConfig extends ComponentConfig {
   checkTargetLocation?: boolean;
-  startFrom?: 'center' | 'start' | 'overlap';
+  startFrom?: PopupStartFrom;
   offsetX?: number;
   offsetY?: number;
   tpl?: TemplateRef<any>;
@@ -115,12 +169,12 @@ export interface ListItemConfig extends ComponentConfig {
   nameField: string;
   toggleSelect: boolean;
   height: number;
-  selected: boolean;
+  selected?: boolean;
   horizontal: boolean;
 }
 
 export interface LegendListConfig extends ComponentConfig {
-  data: Array<ListItem>;
+  data?: Array<ListItem>;
 }
 
 export interface IconConfig extends ComponentConfig {
@@ -137,7 +191,7 @@ export interface GridConfig extends ComponentConfig {
   columns?: Array<Column>;
   columnTpls?: any;
   startRowIndex?: number;
-  isLoading?: boolean;
+  selectableCell?: boolean;
   selectedCell?: GridCellInfo;
   columnWidthIsRatio?: boolean;
   selectCellByMouseOver?: boolean;
@@ -160,17 +214,18 @@ export interface GridConfig extends ComponentConfig {
   hasAccordionRow?: boolean;
   accordionContentTpl?: TemplateRef<any>;
   accordionContentHeight?: number;
-  selectedRowsMap?: Map<string, any>;
+  selectedRows?: Array<any>;
   multiSelectRow?: boolean;
+  adjustHeight?: boolean;
 }
 
 export interface GridHeaderConfig extends ComponentConfig {
   rowHeight?: number;
   tpls?: any;
   data?: Array<Array<GridHeaderCell>>;
-  columns?: Array<Column>;
   atLeastOneSelectedColumnRequired?: boolean;
   selectedColumns?: Array<Column>;
+  sortItem?: SortItem;
 }
 
 export interface GridBodyConfig extends ComponentConfig {
@@ -181,14 +236,41 @@ export interface GridBodyConfig extends ComponentConfig {
   data?: Array<any>;
   columns?: Array<Column>;
   startRowIndex?: number;
-  isLoading?: boolean;
+  selectableCell?: boolean;
   selectedCell?: GridCellInfo;
   hasAccordionRow?: boolean;
   accordionContentTpl?: TemplateRef<any>;
   accordionContentHeight?: number;
-  selectedRowsMap?: Map<string, any>;
+  selectedRows?: Array<any>;
   multiSelectRow?: boolean;
   pageIndex?: number;
+}
+
+export interface VisualizerConfig extends ComponentConfig {
+  type: VisualizerType;
+  config: any; // type's config
+  data: any;
+}
+
+export interface ChartConfig {
+  type?: ChartTypes;
+  labels?: string[];
+  series?: string[];
+  data?: ChartData[];
+  beautifyMinRatio?: number;
+  beautibymaxRatio?: number;
+  padding?: number;
+  paddingInner?: number;
+  paddingOuter?: number;
+  ticks?: number;
+  min?: number; // fixed min
+  max?: number; // fixed max
+  hasXAxis?: boolean;
+}
+
+export interface BarLineChartConfig extends ChartConfig {
+  barConfig: ChartConfig;
+  lineConfig: ChartConfig;
 }
 
 // **** component action event ****
@@ -204,13 +286,18 @@ export interface ComponentActionEvent extends ComponentEvent {
   action: ComponentAction;
 }
 
+export interface ScrollbarActionEvent extends ComponentEvent {
+  action: ScrollbarAction;
+}
+
 export interface ScrollActionEvent extends ComponentEvent {
   action: ScrollAction;
-  currentPagesMap?: Map<number, ScrollPage>;
-  addingPagesMap?: Map<number, ScrollPage>;
-  removingPagesMap?: Map<number, ScrollPage>;
-  pageElements: Array<HTMLElement>;
-  pageRowCount: number;
+  currentPageIndexes?: Array<number>;
+  addingPageIndexes?: Array<number>;
+  removingPageIndexes?: Array<number>;
+  pageElements?: Array<HTMLElement>;
+  pageRowCount?: number;
+  pages?: Array<ScrollPage>;
 }
 
 export interface ListItemActionEvent extends ComponentEvent {
@@ -237,9 +324,7 @@ export interface GridBodyActionEvent extends ComponentEvent {
   rowData?: any;
   cellData?: any;
   selectedCell?: GridCellInfo;
-  accordionContentHeight?: number;
   accordionContentEl?: HTMLElement;
-  selectedRowsMap?: Map<string, any>;
   pageIndex?: number;
 }
 
@@ -267,8 +352,8 @@ export interface GridActionEvent extends ComponentEvent {
   neededEndRowIndex?: number;
   accordionContentEl?: HTMLElement;
   selectedRows?: Array<any>;
-  selectedRowsMap?: Map<string, any>;
   pageRowCount?: number;
+  pageIndex?: number;
 }
 
 // **** data type ****
@@ -306,17 +391,14 @@ export interface ScrollPage {
   index: number;
   height: number;
   extraHeight: number;
+  top: number;
 }
 
-export interface ExtraHeightRow {
+export interface GridRowDataMeta {
+  id: string;
   pageIndex: number;
   rowIndex: number;
-  extraHeight: number;
-}
-
-export interface ExtraHeightPage {
-  pageIndex: number;
-  extraHeightRowsMap: Map<number, ExtraHeightRow>;
+  rowData: any;
 }
 
 export interface SortItem {
@@ -383,4 +465,48 @@ export interface Box {
   height?: number;
   left?: number;
   top?: number;
+}
+
+export interface ExtraHeightPage {
+  pageIndex: number;
+  extraHeight: number;
+}
+
+export interface VizSize {
+  width: number;
+  height: number;
+  // container - margin size for easy using.
+  chart?: {
+    width?: number,
+    height?: number
+  };
+  margin?: {
+    left?: number,
+    right?: number,
+    bottom?: number,
+    top?: number
+  };
+}
+
+/**
+ * Visualizer Data Structure
+ * [
+ *  { label: 'xx', values: [ { series: 'xxx', value: xx, meta: {...} }, ... ]},
+ *  ...
+ * ]
+ */
+
+export interface VizItem {
+  series?: string;
+  value: any;
+  meta?: any;
+}
+export interface VizData {
+  label: string;
+  values: Array<VizItem>;
+}
+
+export interface VizItemDomain {
+  min: number;
+  max: number;
 }

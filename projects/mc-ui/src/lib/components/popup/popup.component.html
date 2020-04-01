@@ -1,7 +1,7 @@
 <div class="close-button">
   <mc-icon
-    [config]="{ icon: 'close', themes: ['popup'] }"
+    [config]="{ icon: Icon.close, themes: [Theme.popup] }"
     (click)="onClickCloseButton()"
   ></mc-icon>
 </div>
-<ng-container *ngTemplateOutlet="state.tpl"></ng-container>
+<ng-container *ngTemplateOutlet="state?.tpl"></ng-container>

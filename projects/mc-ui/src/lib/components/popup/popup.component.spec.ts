@@ -1,5 +1,5 @@
-import { PopupConfig } from '../../mc-ui.models';
-import { McUiService } from './../../mc-ui.service';
+import { PopupConfig } from '../../shared.models';
+import { SharedService } from './../../shared.service';
 import { ComponentFixture, async, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { PopupComponent } from './popup.component';
 describe('PopupComponent', () => {
@@ -10,7 +10,7 @@ describe('PopupComponent', () => {
     TestBed.configureTestingModule({
       imports: [],
       declarations: [PopupComponent],
-      providers: [McUiService]
+      providers: [SharedService]
     }).compileComponents();
     fixture = TestBed.createComponent(PopupComponent);
     component = fixture.componentInstance;

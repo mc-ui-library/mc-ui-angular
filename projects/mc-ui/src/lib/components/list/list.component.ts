@@ -1,13 +1,6 @@
-import {
-  ListAction,
-  ListItem,
-  ListItemConfig,
-  ListConfig,
-  ListItemActionEvent,
-  ListActionEvent
-} from '../../mc-ui.models';
+import { ListAction, ListItem, ListConfig, ListItemActionEvent, ListActionEvent } from '../../shared.models';
 import { BaseComponent } from '../base.component';
-import { Component, HostBinding } from '@angular/core';
+import { Component, HostBinding, Input, TemplateRef } from '@angular/core';
 
 interface State {
   data: Array<ListItem>;
@@ -20,24 +13,53 @@ interface State {
   templateUrl: './list.component.html'
 })
 export class ListComponent extends BaseComponent {
-  private selectedItems: any[];
+  private _selectedItems: Array<ListItem> = [];
+  private _data: Array<ListItem> = [];
 
-  state: State = {
+  defaultState: State = {
     data: [],
-    selectedItemsMap: null
+    selectedItemsMap: new Map<string, any>()
   };
 
-  _config: ListConfig = {
+  state: State;
+
+  defaultConfig: ListConfig = {
     rowHeight: 0,
     multiSelect: false,
     toggleSelect: false,
-    selectedItems: [],
-    data: [],
     itemTpl: null,
     idField: 'id',
     nameField: 'name',
     horizontal: false
   };
+
+  _config: ListConfig;
+
+  @Input()
+  set selectedItems(selectedItems: Array<ListItem>) {
+    if (selectedItems) {
+      const idField = this._config.idField;
+      const selectedItemsMap = new Map();
+      this.hasSelectedItem = selectedItems.length > 0;
+      selectedItems.forEach(d => selectedItemsMap.set('' + d[idField], d));
+      this.setState({ selectedItemsMap });
+      this._selectedItems = selectedItems;
+    }
+  }
+  get selectedItems() {
+    return this._selectedItems;
+  }
+
+  @Input()
+  set data(data: Array<ListItem>) {
+    if (data) {
+      this.setState({ data });
+      this._data = data;
+    }
+  }
+  get data() {
+    return this._data;
+  }
 
   @HostBinding('class.horizontal') private horizontal = false;
   @HostBinding('class.has-selected-item') private hasSelectedItem = false;
@@ -49,56 +71,37 @@ export class ListComponent extends BaseComponent {
     }
   }
 
-  applyConfig(config: ListConfig) {
-    this.selectedItems = config.selectedItems;
-    this.horizontal = config.horizontal;
-  }
-
   applyState(config: ListConfig) {
-    this.applySelectedItems(config);
+    this.horizontal = config.horizontal;
+    this.selectedItems = config.selectedItems;
   }
 
-  applySelectedItems(config: ListConfig) {
-    const idField = config.idField;
-    const selectedItemsMap = new Map();
-    this.hasSelectedItem = this.selectedItems.length > 0;
-    this.selectedItems.forEach(d => selectedItemsMap.set('' + d[idField], d));
-    this.setState({ selectedItemsMap });
+  getStringId(data: ListItem) {
+    return '' + data[this._config.idField];
   }
 
-  getListItemConfig(data: ListItem): ListItemConfig {
-    const config = this._config;
-    const selected = this.state.selectedItemsMap.has('' + data[config.idField]);
-    const themes = [...config.themes, data.theme];
-    const height = config.rowHeight;
-    return {
-      data,
-      selected,
-      themes,
-      height,
-      idField: config.idField,
-      nameField: config.nameField,
-      horizontal: config.horizontal,
-      toggleSelect: config.toggleSelect,
-      tpl: config.itemTpl
-    };
+  getItemThemes(data: ListItem) {
+    const themes = [...this._config.themes];
+    if (data.theme) {
+      themes.push(data.theme);
+    }
+    return themes;
   }
 
   getSelectedItems() {
-    const items = [];
+    const items: Array<ListItem> = [];
     this.state.selectedItemsMap.forEach(value => items.push(value));
     return items;
   }
 
   selectItem(item) {
     const config = this._config;
-    let selectedItems = this.selectedItems;
+    let selectedItems = this.selectedItems.concat();
     if (!config.multiSelect) {
       selectedItems = [];
     }
     selectedItems.push(item);
     this.selectedItems = selectedItems;
-    this.applySelectedItems(config);
   }
 
   unselectItem(item) {
@@ -106,7 +109,6 @@ export class ListComponent extends BaseComponent {
     if (config.multiSelect || config.toggleSelect) {
       const idField = config.idField;
       this.selectedItems = this.selectedItems.filter(d => d[idField] !== item[idField]);
-      this.applySelectedItems(config);
     }
   }
 

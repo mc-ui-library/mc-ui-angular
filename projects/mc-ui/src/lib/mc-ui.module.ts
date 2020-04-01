@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { McUiService } from './mc-ui.service';
+import { SharedService } from './shared.service';
 import {
   ListComponent,
   IconComponent,
@@ -53,7 +53,7 @@ import { HttpClientModule } from '@angular/common/http';
     PopupComponent
   ],
   providers: [
-    McUiService
+    SharedService
   ]
 })
 export class SharedModule {}

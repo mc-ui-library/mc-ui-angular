@@ -17,15 +17,18 @@ export function getThemeClasses(compName: string, themes: string | string[]) {
 }
 
 export function getContainerWidth(conEl: HTMLElement) {
+  const stylePosition = conEl.style.position;
+  conEl.style.position = 'relative';
   const children = Array.from(conEl.children);
   children.forEach((el: HTMLElement) => (el.style.display = 'none'));
   const width = conEl.clientWidth;
+  conEl.style.position = stylePosition;
   children.forEach((el: HTMLElement) => (el.style.display = ''));
   return width;
 }
 
 // selector: class name(.class-name) or tag name (mc-componentname)
-export function findParentDom(dom: any, selector: string, depth = 10) {
+export function findParentDom(dom: any, selector: string, stopClassName = '', depth = 10) {
   let cls = '';
   let resultDom: HTMLElement;
   if (!dom || !dom.nodeName) {
@@ -36,7 +39,12 @@ export function findParentDom(dom: any, selector: string, depth = 10) {
   }
 
   while (depth--) {
-    if (!dom || !dom.classList || dom.nodeName === 'BODY') {
+    if (
+      !dom ||
+      !dom.classList ||
+      dom.nodeName === 'BODY' ||
+      (stopClassName ? dom.classList.contains(stopClassName) : false)
+    ) {
       resultDom = null;
       break;
     }

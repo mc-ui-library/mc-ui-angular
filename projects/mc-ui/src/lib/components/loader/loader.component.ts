@@ -1,7 +1,7 @@
+import { ComponentTheme } from './../../shared.models';
 import { Component, ElementRef } from '@angular/core';
 import { BaseComponent } from '../base.component';
-import { ComponentConfig } from '../../mc-ui.models';
-import { setState } from '../../utils/data-utils';
+import { ComponentConfig } from '../../shared.models';
 
 interface State {
   theme?: string;
@@ -13,18 +13,19 @@ interface State {
   templateUrl: 'loader.component.html'
 })
 export class LoaderComponent extends BaseComponent {
-  _config: ComponentConfig = {
-    themes: ['horizontal']
+  defaultConfig: ComponentConfig = {
+    themes: [ComponentTheme.horizontal]
   };
 
-  state: State = {};
+  _config: ComponentConfig;
+
+  state: State;
 
   constructor(protected er: ElementRef) {
     super(er);
   }
 
   applyState(config: ComponentConfig) {
-    const theme = config.themes[0];
-    this.state = setState(this.state, { theme });
+    this.setState({ theme: config.themes[0] });
   }
 }

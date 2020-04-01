@@ -1,6 +1,16 @@
 <mc-list-item
-  *ngFor="let item of state.data"
-  [config]="getListItemConfig(item)"
+  *ngFor="let item of state?.data"
+  [config]="{
+      data: item,
+      themes: getItemThemes(item),
+      height: _config.rowHeight,
+      idField: _config.idField,
+      nameField: _config.nameField,
+      horizontal: _config.horizontal,
+      toggleSelect: _config.toggleSelect,
+      tpl: _config.itemTpl
+    }"
+  [selected]="state?.selectedItemsMap.has(this.getStringId(item))"
   (action)="onListItemAction($event)"
 >
 </mc-list-item>

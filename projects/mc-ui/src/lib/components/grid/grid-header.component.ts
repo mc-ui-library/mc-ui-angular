@@ -1,3 +1,4 @@
+import { Icon, ComponentTheme } from './../../shared.models';
 import {
   SortDirection,
   SortItem,
@@ -6,16 +7,17 @@ import {
   GridHeaderCell,
   GridHeaderConfig,
   GridHeaderActionEvent
-} from '../../mc-ui.models';
+} from '../../shared.models';
 import { BaseComponent } from '../base.component';
 import { Component, ElementRef, Input, HostListener } from '@angular/core';
-import { findParentDom } from '../../utils/utils';
+import { findParentDom } from '../../utils/dom-utils';
 
 interface State {
   data: Array<Array<GridHeaderCell>>;
   rowHeight: number;
   tpls: any;
   sortItem: SortItem;
+  selectedColumnsMap: Map<string, Column>;
 }
 
 @Component({
@@ -24,38 +26,47 @@ interface State {
   templateUrl: './grid-header.component.html'
 })
 export class GridHeaderComponent extends BaseComponent {
+  private _columns: Array<Column>;
+
   private nextSortDirection = {
     ASC: SortDirection.DESC,
     DESC: SortDirection.ASC
   };
-  private sortItem: SortItem = {
-    fieldName: '',
-    direction: SortDirection.ASC
-  };
+
+  Theme = ComponentTheme;
+  Icon = Icon;
 
   GridAction = GridAction;
   SortDirection = SortDirection;
 
-  // checking the selected item ids
-  selectedColumnsMap = new Map<string, Column>();
   fieldColumnMap = new Map<string, Column>();
 
-  _config: GridHeaderConfig = {
+  defaultConfig: GridHeaderConfig = {
     rowHeight: 30,
     tpls: {},
     data: null,
-    columns: [],
     atLeastOneSelectedColumnRequired: false,
-    selectedColumns: []
+    selectedColumns: [],
+    sortItem: {
+      fieldName: '',
+      direction: SortDirection.ASC
+    }
   };
 
-  // THINK: this may not help multiple change detection since all the values are assigned at once actually even using separate properties.
-  state: State = {
+  _config: GridHeaderConfig;
+
+  defaultState: State = {
     data: [],
     rowHeight: 30,
     tpls: {},
-    sortItem: this.sortItem
+    sortItem: {
+      fieldName: '',
+      direction: SortDirection.ASC
+    },
+    selectedColumnsMap: new Map<string, Column>()
   };
+
+  state: State;
 
   @HostListener('click', ['$event'])
   onPress(e: MouseEvent) {
@@ -76,25 +87,32 @@ export class GridHeaderComponent extends BaseComponent {
     }
   }
 
+  @Input()
+  set columns(columns: Array<Column>) {
+    if (columns) {
+      this._columns = columns;
+      columns.forEach(column => this.fieldColumnMap.set(column.field, column));
+      if (!this._config.data) {
+        this.setState({ data: this.getBasicHeaderData() });
+      } else {
+        this.setState({ data: this.getHeaderData(this._config.data) });
+      }
+    }
+  }
+  get columns() {
+    return this._columns;
+  }
+
   constructor(protected er: ElementRef) {
     super(er);
   }
 
-  applyConfig(config: GridHeaderConfig) {
+  applyState(config: GridHeaderConfig) {
     if (config.selectedColumns) {
       const selectedColumnsMap = new Map();
       config.selectedColumns.forEach(d => selectedColumnsMap.set(d.field, d));
-      this.selectedColumnsMap = selectedColumnsMap;
+      this.setState({ selectedColumnsMap });
     }
-    config.columns.forEach(column => this.fieldColumnMap.set(column.field, column));
-    if (!config.data) {
-      config.data = this.getBasicHeaderData(config);
-    } else {
-      config.data = this.getHeaderData(config);
-    }
-  }
-
-  applyState(config: GridHeaderConfig) {
     this.showHeader();
   }
 
@@ -105,32 +123,28 @@ export class GridHeaderComponent extends BaseComponent {
 
   getSelectedColumns() {
     const columns = [];
-    this.selectedColumnsMap.forEach(value => columns.push(value));
+    this.state.selectedColumnsMap.forEach(value => columns.push(value));
     return columns;
   }
 
-  isSelected(item: any) {
-    return this.selectedColumnsMap.has('' + item.field);
-  }
-
   selectColumn(id: string, item) {
-    this.selectedColumnsMap.set(id, item);
+    this.state.selectedColumnsMap.set(id, item);
   }
 
   unselectColumn(id: string) {
-    if (this._config.atLeastOneSelectedColumnRequired && this.selectedColumnsMap.size === 1) {
+    if (this._config.atLeastOneSelectedColumnRequired && this.state.selectedColumnsMap.size === 1) {
       return false;
     }
-    this.selectedColumnsMap.delete(id);
+    this.state.selectedColumnsMap.delete(id);
     return true;
   }
 
-  getBasicHeaderData(config: GridHeaderConfig) {
-    const lastColIndex = config.columns.length - 1;
+  getBasicHeaderData() {
+    const lastColIndex = this.columns.length - 1;
     return [
-      config.columns.map((column, i) => {
+      this.columns.map((column, i) => {
         if (column.sortDirection) {
-          this.sortItem = {
+          this.state.sortItem = {
             direction: column.sortDirection,
             fieldName: column.field
           };
@@ -149,14 +163,14 @@ export class GridHeaderComponent extends BaseComponent {
     ];
   }
 
-  getHeaderData(config: GridHeaderConfig) {
-    const headerData = config.data.concat();
-    const columns = config.columns;
+  getHeaderData(data: Array<Array<GridHeaderCell>>) {
+    const headerData = data.concat();
+    const columns = this.columns;
     const lastColIndex = columns.length - 1;
     const rows = [];
     // calc col width
     const lastIndex = headerData.length - 1;
-    headerData.forEach((row, r) => {
+    headerData.forEach((row: any[], r: number) => {
       rows[r] = rows[r] || [];
       let c = 0;
       row.forEach(cell => {
@@ -188,11 +202,13 @@ export class GridHeaderComponent extends BaseComponent {
           cell.sort = column.sort;
           cell.field = column.field;
           // if it has the existing sort field, keeps it
-          if (column.sortDirection && !this.sortItem.fieldName) {
-            this.sortItem = {
-              direction: column.sortDirection,
-              fieldName: column.field
-            };
+          if (column.sortDirection) {
+            this.setState({
+              sortItem: {
+                direction: column.sortDirection,
+                fieldName: column.field
+              }
+            });
           }
         }
         cell.isFirstRow = r === 0;
@@ -226,11 +242,8 @@ export class GridHeaderComponent extends BaseComponent {
     if (cell.sort) {
       cls.push('is-sortable');
     }
-    if (cell.selectableHeader === false) {
+    if (cell.selectableHeader !== true) {
       cls.push('unselectable');
-    }
-    if (this.selectedColumnsMap.get(cell.field)) {
-      cls.push('selected');
     }
     if (cell.align) {
       cls.push('align-' + cell.align.toLowerCase());
@@ -256,27 +269,28 @@ export class GridHeaderComponent extends BaseComponent {
 
   onSort(el: HTMLElement, column: Column, event: MouseEvent = null) {
     let dir = SortDirection.ASC;
-    if (this.sortItem.fieldName === column.field) {
-      dir = this.nextSortDirection[this.sortItem.direction];
+    if (this.state.sortItem.fieldName === column.field) {
+      dir = this.nextSortDirection[this.state.sortItem.direction];
     }
-    this.sortItem = {
+    const sortItem = {
       fieldName: column.field,
       direction: dir
     };
+    this.setState({ sortItem });
     const actionEvent: GridHeaderActionEvent = {
       event,
       el,
       action: GridAction.SORT,
       column,
       target: this,
-      sort: this.sortItem
+      sort: this.state.sortItem
     };
     this.action.emit(actionEvent);
   }
 
   onSelect(column: Column, el: HTMLElement, event: MouseEvent) {
     const field = column.field;
-    if (this.selectedColumnsMap.has(field)) {
+    if (this.state.selectedColumnsMap.has(field)) {
       if (this.unselectColumn(field)) {
         const actionEvent: GridHeaderActionEvent = {
           event,

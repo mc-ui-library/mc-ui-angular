@@ -1,12 +1,13 @@
 <table class="grid-header">
   <tr
-    *ngFor="let cells of state.data"
+    *ngFor="let cells of state?.data"
     [class]="getGridRowClassName(cells)"
-    [style.height.px]="state.rowHeight"
+    [style.height.px]="state?.rowHeight"
   >
     <th
       *ngFor="let cell of cells"
       [class]="getGridCellClassName(cell)"
+      [class.selected]="state.selectedColumnsMap.has(cell.field)"
       [attr.data-field]="cell.field"
       [attr.data-action]="GridAction.SELECT_CELL"
       [colSpan]="cell.colspan || 1"
@@ -16,6 +17,7 @@
         [class]="getGridCellContentClassName(cell)"
         [style.width.px]="cell.width"
         [style.height.px]="state.rowHeight * (cell.rowspan || 1) - 2"
+        [style.lineHeight.px]="state.rowHeight * (cell.rowspan || 1) - 2"
         [title]="cell.name"
       >
         <div class="content-outer">
@@ -26,7 +28,7 @@
             >{{ state.tpls[cell.name] ? "" : cell.name }}
             <mc-icon
               *ngIf="state.sortItem.fieldName === cell.field"
-              [config]="{ icon: 'chevron', themes: ['grid-header-sort'] }"
+              [config]="{ icon: Icon.chevron, themes: [Theme.gridHeaderSort] }"
               [class.flip]="state.sortItem.direction === SortDirection.ASC"
             ></mc-icon>
           </div>

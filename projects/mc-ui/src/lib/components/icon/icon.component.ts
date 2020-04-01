@@ -1,6 +1,6 @@
-import { Component, ElementRef, Input } from '@angular/core';
+import { Component, ElementRef } from '@angular/core';
 import { BaseComponent } from '../base.component';
-import { IconConfig } from '../../mc-ui.models';
+import { IconConfig } from '../../shared.models';
 
 @Component({
   selector: 'mc-icon',
@@ -8,9 +8,11 @@ import { IconConfig } from '../../mc-ui.models';
   templateUrl: './icon.component.html'
 })
 export class IconComponent extends BaseComponent {
-  _config: IconConfig = {
+  defaultConfig: IconConfig = {
     icon: ''
   };
+
+  _config: IconConfig;
 
   constructor(protected er: ElementRef) {
     super(er);

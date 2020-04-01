@@ -1,5 +1,5 @@
-import { GridRowMeta } from '../mc-ui.models';
-import { Column } from '../mc-ui.models';
+import { GridRowMeta } from './../shared.models';
+import { Column } from '../shared.models';
 
 export function getAutoColumnWidth(
   columns: Column[],

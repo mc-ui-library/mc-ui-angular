@@ -1,33 +1,38 @@
 <div
-  *ngFor="let row of state.data; index as r"
+  *ngFor="let row of state?.data; index as r"
   [class]="getGridRowClassName(r, row)"
-  [style.height.px]="state.rowHeight"
 >
   <div
     class="cells"
     [attr.data-id]="row[state.idField]"
     [attr.data-action]="GridAction.SELECT_ROW"
-    [attr.data-rowDataIndex]="r"
-    [attr.data-rowIndex]="r + state.startRowIndex"
+    [attr.data-row_data_index]="r"
+    [attr.data-row_index]="r + state.startRowIndex"
+    [style.height.px]="state.rowHeight - rowBordersWidth"
+    [style.lineHeight.px]="state.rowHeight - rowBordersWidth"
   >
     <div
       *ngFor="let column of state.columns; index as c"
       [class]="getGridCellClassName(r, c, column)"
-      [style.lineHeight.px]="state.rowHeight - 2"
-      [style.height.px]="state.rowHeight - 2"
       [style.width.px]="column.width"
       [title]="getTitle(column.field, row)"
       [attr.data-field]="column.field"
       [attr.data-id]="row[state.idField]"
-      [attr.data-rowIndex]="r + state.startRowIndex"
-      [attr.data-cellIndex]="c"
+      [attr.data-row_index]="r + state.startRowIndex"
+      [attr.data-cell_index]="c"
       [attr.data-action]="column.selectable === false ? '' : GridAction.SELECT_CELL"
     >
       <ng-container
         *ngTemplateOutlet="state.tpls[column.field]; context: getTplContext(row, column, r, c)"
       >
       </ng-container
-      >{{ state.tpls[column.field] ? '' : row[column.field] }}
+      >{{ state.tpls[column.field] ? '' : row[column.field] || '&nbsp;' }}
+    </div>
+    <div *ngIf="state.hasAccordionRow" class="cell-accordion">
+      <mc-icon
+        [config]="{ icon: Icon.chevron, themes: [Theme.gridBodyAccordion] }"
+        [class.flip]="isSelectedRow(row[state.idField])"
+      ></mc-icon>
     </div>
   </div>
   <div

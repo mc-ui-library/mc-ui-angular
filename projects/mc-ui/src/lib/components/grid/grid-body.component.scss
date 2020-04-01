@@ -22,10 +22,8 @@
     }
     .cells {
       .cell {
-        padding: 0;
         cursor: pointer;
         overflow: hidden;
-        padding: 0 8px;
         display: inline-block;
         white-space: nowrap;
 
@@ -34,7 +32,7 @@
         }
 
         &:hover {
-          background: linear-gradient(125deg, rgba(255, 255, 255, .15), rgba(255, 255, 255, .05));
+          // you can assign specific css to component.themes.scss. like background: linear-gradient(125deg, rgba(255, 255, 255, .15), rgba(255, 255, 255, .05));
         }
 
         &.unselectable {
@@ -54,13 +52,21 @@
         }
 
         &.selected {
-          background: linear-gradient(125deg, rgba(255, 255, 255, .15), rgba(255, 255, 255, .05));
+          // need to be defined by component.themes.scss like background: linear-gradient(125deg, rgba(255, 255, 255, .15), rgba(255, 255, 255, .05));
+        }
+      }
+      .cell-accordion {
+        position: absolute;
+        right: 6px;
+        top: 0;
+        mc-icon {
+          height: 10px;
         }
       }
     }
     &--content {
       height: 0px;
-      transition: transform 0.3s, height ease-in-out 0.3s; 
+      transition: transform 0.3s, height ease-in-out 0.3s;
       overflow: hidden;
       &--container {
         overflow: auto;
@@ -74,14 +80,6 @@
         &:last-child {
           border-bottom-color: transparent;
         }
-      }
-    }
-  }
-
-  &.is-basic {
-    .row {
-      &:last-child {
-        border-bottom: 0;
       }
     }
   }
