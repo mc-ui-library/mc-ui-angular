@@ -1,11 +1,9 @@
-@import './../../../../styles/vars';
-
 :host {
   top: 0;
   left: 0;
   position: absolute;
   display: inline-block;
-  background: $c-bg-panel-3;
+  // background: $c-bg-panel-3;
 
   .close-button {
     display: none;
@@ -17,7 +15,7 @@
   }
 
   &.has-border {
-    border: 1px solid $c-border-2;
+    border: 1px solid;
     border-radius: 4px;
   }
 
@@ -30,8 +28,8 @@
   &.popup {
     &-basic {
       padding: 25px 15px 15px;
-      border: solid 1px $c-border-2;
-      @include linearGradient(135deg, $c-bg-panel-3 0%, $c-bg-panel-3 60%);
+      border: solid 1px;
+      // @include linearGradient(135deg, $c-bg-panel-3 0%, $c-bg-panel-3 60%);
       border-radius: 4px;
     }
 
@@ -41,7 +39,7 @@
         width: 17px;
         height: 4px;
         position: absolute;
-        background: $c-bg-panel-3;
+        // background: $c-bg-panel-3;
         z-index: 2;
       }
 
@@ -50,16 +48,16 @@
         width: 16px;
         height: 12px;
         position: absolute;
-        background: $c-bg-panel-3;
+        // background: $c-bg-panel-3;
         z-index: 1;
       }
 
       // the indicator location is top-right
       &-top-right {
         &:before {
-          background: $c-bg-panel-3;
-          border-top: solid 1px $c-border-2;
-          border-right: solid 1px $c-border-2;
+          // background: $c-bg-panel-3;
+          border-top: solid 1px;
+          border-right: solid 1px;
           transform: rotate(-35deg);
           top: -6px;
           right: -2px;
@@ -67,8 +65,8 @@
         }
 
         &:after {
-          @include linearGradient(325deg, $c-bg-panel-3 0%, $c-bg-panel-3 50%, transparent 51%, transparent 100%);
-          border-right: solid 1px $c-border-2;
+          // @include linearGradient(325deg, $c-bg-panel-3 0%, $c-bg-panel-3 50%, transparent 51%, transparent 100%);
+          border-right: solid 1px;
           border-radius: 0 4px 0 0;
           top: -9px;
           right: -1px;
@@ -77,9 +75,9 @@
 
       &-top-left {
         &:before {
-          background: $c-bg-panel-3;
-          border-top: solid 1px $c-border-2;
-          border-left: solid 1px $c-border-2;
+          // background: $c-bg-panel-3;
+          border-top: solid 1px;
+          border-left: solid 1px;
           transform: rotate(35deg);
           top: -6px;
           left: -2px;
@@ -87,8 +85,8 @@
         }
 
         &:after {
-          @include linearGradient(35deg, $c-bg-panel-3 0%, $c-bg-panel-3 50%, transparent 51%, transparent 100%);
-          border-left: solid 1px $c-border-2;
+          // @include linearGradient(35deg, $c-bg-panel-3 0%, $c-bg-panel-3 50%, transparent 51%, transparent 100%);
+          border-left: solid 1px; // $c-border-2;
           border-radius: 4px 0 0 0;
           top: -9px;
           left: -1px;
@@ -100,9 +98,9 @@
           transform: scale(-1, 1) rotate(-35deg);
           right: -2px;
           bottom: -6px;
-          border-bottom: solid 1px $c-border-2;
-          border-left: solid 1px $c-border-2;
-          background: $c-bg-panel-3;
+          border-bottom: solid 1px; // $c-border-2;
+          border-left: solid 1px; // $c-border-2;
+          // background: $c-bg-panel-3;
           border-radius: 0 0 0 4px;
         }
 
@@ -110,8 +108,8 @@
           transform: scale(-1, 1);
           right: -1px;
           bottom: -9px;
-          @include linearGradient(135deg, $c-bg-panel-3 0%, $c-bg-panel-3 50%, transparent 51%, transparent 100%);
-          border-left: solid 1px $c-border-2;
+          // @include linearGradient(135deg, $c-bg-panel-3 0%, $c-bg-panel-3 50%, transparent 51%, transparent 100%);
+          border-left: solid 1px; // $c-border-2;
           border-radius: 0 0 0 4px;
         }
       }
@@ -121,17 +119,17 @@
           bottom: -6px;
           left: -2px;
           transform: rotate(-35deg);
-          border-bottom: solid 1px $c-border-2;
-          border-left: solid 1px $c-border-2;
-          background: $c-bg-panel-3;
+          border-bottom: solid 1px; // $c-border-2;
+          border-left: solid 1px; // $c-border-2;
+          // background: $c-bg-panel-3;
           border-radius: 0 0 0 4px;
         }
 
         &:after {
           bottom: -9px;
           left: -1px;
-          @include linearGradient(135deg, $c-bg-panel-3 0%, $c-bg-panel-3 50%, transparent 51%, transparent 100%);
-          border-left: solid 1px $c-border-2;
+          // @include linearGradient(135deg, $c-bg-panel-3 0%, $c-bg-panel-3 50%, transparent 51%, transparent 100%);
+          border-left: solid 1px; // $c-border-2;
           border-radius: 0 0 0 4px;
         }
       }

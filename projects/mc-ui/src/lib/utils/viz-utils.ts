@@ -7,6 +7,7 @@ import {
   Column
 } from '../shared.models';
 import * as d3 from 'd3';
+import { isEmpty } from './utils';
 
 export function getMinMax(data: VizData[]) {
   return data.reduce(
@@ -162,9 +163,8 @@ export function convertVizToGridData(
   data: Array<VizData>,
   seriesColumnName = ''
 ) {
-  const items = [];
+  const rows = [];
   const columns: Array<Column> = [];
-  const isEmpty = this.util.isEmpty;
   if (seriesColumnName) {
     columns.push({
       name: seriesColumnName,
@@ -178,77 +178,18 @@ export function convertVizToGridData(
     });
     dataItem.values.forEach((val, j) => {
       // rows
-      if (!items[j]) {
-        items[j] = {
+      if (!rows[j]) {
+        rows[j] = {
           series: val.series
         };
       }
-      items[j][dataItem.label] = isEmpty(val.value) ? '' : val.value;
+      rows[j][dataItem.label] = isEmpty(val.value) ? '' : val.value;
     });
   });
-  return normalizeVizGridData(items, columns);
-}
-
-export function normalizeVizGridData(
-  items: any[],
-  columns: any[],
-  idField: string = 'id',
-  tplCellFunc: any = null
-) {
-  const rows: any[] = [];
-  const isEmpty = this.util.isEmpty;
-  let row: any = {};
-  let rowIdx = 0;
-  // add column names
-  row = {
-    id: rowIdx,
-    dataId: 'column_header_row'
+  return {
+    columns,
+    rows
   };
-  rowIdx = 0;
-  row.cells = columns.map((col, i) => {
-    return {
-      id: `${i}|${rowIdx}`,
-      idx: i,
-      value: col.displayName,
-      icon: col.icon || '',
-      cls: 'cell__header cell__column-header',
-      extraCls: col.extraCls ? col.extraCls : '',
-      hide: col.hide,
-      dataType: col.dataType || 'string',
-      fieldName: col.fieldName,
-      render: col.render,
-      editor: col.editor,
-      width: col.width,
-      align: col.align
-    };
-  });
-  rows.push(row);
-  // add items
-  rowIdx++;
-  items.forEach((item, i) => {
-    row = {
-      id: rowIdx,
-      dataId: item[idField],
-      item
-    };
-    row.cells = columns.map((col, j) => {
-      if (tplCellFunc) {
-        return tplCellFunc(rowIdx, j, col, item);
-      } else {
-        const val = item[col.fieldName];
-        return {
-          id: `${j}|${rowIdx}`,
-          idx: j,
-          value: isEmpty(val) ? '' : val,
-          cls: 'cell__data',
-          fieldName: col.fieldName
-        };
-      }
-    });
-    rows.push(row);
-    rowIdx++;
-  });
-  return rows;
 }
 
 // function renderRect(data, svg, scaleX, scaleY, color, height, hasNegativeValue = false, minX = 0, scaleX1: any = {}, scaleY1: any = {}, colorBySize = false, vertical = true, stacked = false, halfShift = false, maxBarWidth = 100) {

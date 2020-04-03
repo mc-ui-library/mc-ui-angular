@@ -50,6 +50,11 @@ export enum ScrollAction {
   GET_ROW_COUNT = 'GET_ROW_COUNT'
 }
 
+export enum InputAction {
+  CHANGE = 'CHANGE',
+  KEY_UP = 'KEY_UP'
+}
+
 export enum Align {
   LEFT = 'LEFT',
   RIGHT = 'RIGHT',
@@ -111,6 +116,22 @@ export enum VisualizerType {
   grid,
   bar,
   line
+}
+
+export enum InputType {
+  text = 'text',
+  number = 'number',
+  search = 'search',
+  email = 'email',
+  tel = 'tel',
+  url = 'url',
+  range = 'range',
+  datetimeLocal = 'datetime-local',
+  month = 'month',
+  time = 'time',
+  week = 'week',
+  date = 'date',
+  color = 'color'
 }
 // ************* shared component interface **************
 
@@ -249,14 +270,14 @@ export interface GridBodyConfig extends ComponentConfig {
 export interface VisualizerConfig extends ComponentConfig {
   type: VisualizerType;
   config: any; // type's config
-  data: any;
+  data: Array<VizData>;
 }
 
 export interface ChartConfig {
   type?: ChartTypes;
   labels?: string[];
   series?: string[];
-  data?: ChartData[];
+  data?: VizData[];
   beautifyMinRatio?: number;
   beautibymaxRatio?: number;
   padding?: number;
@@ -271,6 +292,13 @@ export interface ChartConfig {
 export interface BarLineChartConfig extends ChartConfig {
   barConfig: ChartConfig;
   lineConfig: ChartConfig;
+}
+
+export interface TextConfig extends ComponentConfig {
+  type: InputType;
+  name: string;
+  value: string;
+  placeholder: string;
 }
 
 // **** component action event ****
@@ -354,6 +382,13 @@ export interface GridActionEvent extends ComponentEvent {
   selectedRows?: Array<any>;
   pageRowCount?: number;
   pageIndex?: number;
+}
+
+export interface InputActionEvent extends ComponentEvent {
+  action: InputAction;
+  oldValue?: string;
+  value: string;
+  name: string;
 }
 
 // **** data type ****

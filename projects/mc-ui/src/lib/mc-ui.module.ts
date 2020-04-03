@@ -14,7 +14,9 @@ import {
   GridBodyComponent,
   GridHeaderComponent,
   ScrollComponent,
-  LoaderComponent
+  LoaderComponent,
+  VisualizerComponent,
+  TextComponent
 } from './components';
 import {
   PerfectScrollbarModule
@@ -36,7 +38,9 @@ import { HttpClientModule } from '@angular/common/http';
     GridHeaderComponent,
     ScrollComponent,
     LoaderComponent,
-    PopupComponent
+    PopupComponent,
+    VisualizerComponent,
+    TextComponent
   ],
   exports: [
     ListComponent,
@@ -50,10 +54,12 @@ import { HttpClientModule } from '@angular/common/http';
     GridHeaderComponent,
     ScrollComponent,
     LoaderComponent,
-    PopupComponent
+    PopupComponent,
+    VisualizerComponent,
+    TextComponent
   ],
   providers: [
     SharedService
   ]
 })
-export class SharedModule {}
+export class McUiModule {}

@@ -1,4 +1,3 @@
-@import './../../../../styles/vars';
 :host {
   position: absolute;
   left: 0;
@@ -17,7 +16,7 @@
       height: 4px;
       overflow: hidden;
       div {
-        @include horizontalLoader($c-cyan);
+        // @include horizontalLoader($c-cyan);
       }
     }
   }

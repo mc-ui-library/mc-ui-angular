@@ -1,8 +1,10 @@
-import { VisualizerConfig, VisualizerType, GridConfig } from '../../shared.models';
-import { Component, ViewChild, ElementRef, Input, ComponentRef } from '@angular/core';
+import { VisualizerConfig, VisualizerType, GridConfig, GridActionEvent, GridAction } from '../../shared.models';
+import { Component, ElementRef, Input, ComponentRef } from '@angular/core';
 import { BaseComponent } from '../base.component';
 import { SharedService } from '../../shared.service';
 import { GridComponent } from '../grid/grid.component';
+import { convertVizToGridData } from '../../utils/viz-utils';
+import { Subscription } from 'rxjs';
 
 interface State {
 }
@@ -15,6 +17,7 @@ interface State {
 export class VisualizerComponent extends BaseComponent {
 
   private cr: ComponentRef<any>;
+  private compSubs: Array<Subscription> = [];
 
   defaultConfig: VisualizerConfig = {
     type: VisualizerType.grid,
@@ -28,8 +31,6 @@ export class VisualizerComponent extends BaseComponent {
   };
 
   state: State;
-
-  @ViewChild('contentEr') contentEr: ElementRef;
 
   @Input()
   set data(data: any) {
@@ -60,18 +61,37 @@ export class VisualizerComponent extends BaseComponent {
   }
 
   rednerGrid(config: VisualizerConfig) {
-    this.cr = this.sharedService.addComponent(GridComponent, this.contentEr.nativeElement);
-    const instance = this.cr.instance;
-    const cfg: GridConfig = {
-      themes: config.themes.concat()
-    };
+    this.removeContent();
+    const gridCmp: ComponentRef<GridComponent> = this.sharedService.addComponent(GridComponent, this.el);
+    const instance = gridCmp.instance;
+    const data = convertVizToGridData(config.data);
+    const rows = data.rows;
+    const rowCount = data.rows.length;
+    const columns = data.columns;
+    const cfg: GridConfig = Object.assign({
+      themes: config.themes.concat(),
+      columns
+    }, config.config);
     instance.config = cfg;
+    this.compSubs.push(instance.action.subscribe((e: GridActionEvent) => {
+      switch (e.action) {
+        case GridAction.GET_DATA:
+          setTimeout(() => instance.data = { rows, rowCount });
+          break;
+      }
+    }));
+    this.cr = gridCmp;
   }
 
   removeContent() {
     if (this.cr) {
+      this.compSubs.forEach(s => s.unsubscribe());
       this.sharedService.removeComponent(this.cr);
       this.cr = null;
     }
+  }
+
+  destroyCmp() {
+    this.removeContent();
   }
 }

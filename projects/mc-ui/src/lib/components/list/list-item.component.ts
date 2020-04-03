@@ -48,7 +48,7 @@ export class ListItemComponent extends BaseComponent {
       target: this,
       action: selected ? ListAction.SELECT_ITEM : ListAction.UNSELECT_ITEM,
       event: e,
-      selected: selected,
+      selected,
       data: this.state.data
     };
     this.action.emit(actionEvent);

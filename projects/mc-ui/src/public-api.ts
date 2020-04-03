@@ -17,3 +17,5 @@ export * from './lib/components/grid/grid-body.component';
 export * from './lib/components/grid/grid-header.component';
 export * from './lib/components/scroll/scroll.component';
 export * from './lib/components/loader/loader.component';
+export * from './lib/components/visualizer/visualizer.component';
+export * from './lib/components/form/fields/text/text.component';

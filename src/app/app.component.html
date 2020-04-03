@@ -1,0 +1,6 @@
+<mc-text [config]="{
+  name: 'company'
+}" (action)="onTextAction($event)"></mc-text>
+<mc-visualizer [style.height.px]="300" [config]="{
+  themes: ['companies']
+}" [data]="data"></mc-visualizer>

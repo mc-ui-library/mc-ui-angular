@@ -1,17 +1,16 @@
-export enum IntrinioAPI {
-  key = 'OmFmZWU5YWVkMzc1MTQwYTAxZTE2ZmNiZjkyNzU4OTcy',
-  authentications = 'ApiKeyAuth',
+export interface Company {
+  '1. symbol': string;
+  '2. name': string;
+  '3. type': string;
+  '4. region': string;
+  '5. marketOpen': string;
+  '6. marketClose': string;
+  '7. timezone': string;
+  '8. currency': string;
+  '9. matchScore': string;
 }
 
-export interface CompanyApiOption {
-  'latestFilingDate'?: Date; // Date | Return companies whose latest 10-Q or 10-K was filed on or after this date
-  'sic'?: string; // String | Return companies with the given Standard Industrial Classification code
-  'template'?: string; // String | Return companies with the given financial statement template
-  'sector'?: string; // String | Return companies in the given industry sector
-  'industryCategory'?: string; // String | Return companies in the given industry category
-  'industryGroup'?: string; // String | Return companies in the given industry group
-  'hasFundamentals': boolean; // Boolean | Return only companies that have fundamentals when true
-  'hasStockPrices': boolean; // Boolean | Return only companies that have stock prices when true
-  'pageSize': 100; // Number | The number of results to return
-  'nextPage'?: string; // String | Gets the next page of data from a previous API call
+
+export interface CompanyBestMatches {
+  bestMatches: Array<Company>;
 }
