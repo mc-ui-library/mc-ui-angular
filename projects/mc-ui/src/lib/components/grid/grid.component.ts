@@ -107,7 +107,7 @@ export class GridComponent extends BaseComponent {
     displayLoader: true,
     data: null,
     // header
-    headerRowHeight: 30,
+    headerRowHeight: 0,
     headerTpls: {},
     headerData: null,
     atLeastOneSelectedColumnRequired: false,
@@ -215,8 +215,13 @@ export class GridComponent extends BaseComponent {
     this.setHeaderConfig(this._config);
     this.setScrollConfig(this._config);
     this.sortItem = this.getSortItem(config.columns);
-    this.data = config.data;
+    // this.data = config.data;
     this.initSize(this._config);
+  }
+
+  afterRenderCmp() {
+    // after scroll component is rendered we can bind a data
+    setTimeout(() => this.data = this._config.data);
   }
 
   initColumns(config: GridConfig) {

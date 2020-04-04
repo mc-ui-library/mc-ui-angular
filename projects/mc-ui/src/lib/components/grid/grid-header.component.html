@@ -16,7 +16,7 @@
       <div
         [class]="getGridCellContentClassName(cell)"
         [style.width.px]="cell.width"
-        [style.height.px]="state.rowHeight * (cell.rowspan || 1) - 2"
+        [style.height.px]="state.rowHeight * (cell.rowspan || 1)"
         [style.lineHeight.px]="state.rowHeight * (cell.rowspan || 1) - 2"
         [title]="cell.name"
       >

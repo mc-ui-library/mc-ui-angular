@@ -32,7 +32,7 @@ export class TextComponent extends BaseComponent {
     type: InputType.text,
     name: 'text',
     value: '',
-    placeholder: 'text'
+    placeholder: ''
   };
 
   _config: TextConfig;
@@ -63,6 +63,16 @@ export class TextComponent extends BaseComponent {
     this.subscriptions = fromEvent(el, 'keyup')
       .pipe(debounceTime(300))
       .subscribe((e: KeyboardEvent) => this.onKeyUp(e));
+    if (this._config.value) {
+      this.action.emit({
+        target: this,
+        action: InputAction.CHANGE,
+        name: this._config.name,
+        el: this.inputEr.nativeElement,
+        value: this._config.value,
+        oldValue: ''
+      });
+    }
   }
 
   onKeyUp(e: KeyboardEvent) {

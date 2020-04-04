@@ -1,6 +1,16 @@
 <mc-text [config]="{
-  name: 'company'
+  name: 'company',
+  value: 'a'
 }" (action)="onTextAction($event)"></mc-text>
-<mc-visualizer [style.height.px]="300" [config]="{
-  themes: ['companies']
-}" [data]="data"></mc-visualizer>
+<mc-visualizer [style.height.px]="350" [config]="{
+  themes: ['companies'],
+  gridConfig: {
+    idField: 'symbol'
+  }
+}" [data]="data" (action)="onCompanyVizAction($event)"></mc-visualizer>
+<mc-visualizer [style.height.px]="350" [config]="{
+  themes: ['daily'],
+  gridConfig: {
+    idField: 'date'
+  }
+}" [data]="dailyData"></mc-visualizer>

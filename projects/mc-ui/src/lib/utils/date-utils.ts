@@ -1,8 +1,5 @@
-import * as moment from 'moment';
+import { formatDate } from '@angular/common';
 
-export function pwcFormatDate(date: any, format = 'YYYY-MM-DD') {
-  return moment
-    .unix(date)
-    .utc()
-    .format(format);
+export function simpleFormatDate(date: string | number | Date, format = 'yyyy/MM/dd', locale = 'en-US') {
+  return formatDate(date, format, locale);
 }

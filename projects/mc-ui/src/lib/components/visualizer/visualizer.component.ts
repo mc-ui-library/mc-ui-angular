@@ -1,13 +1,27 @@
-import { VisualizerConfig, VisualizerType, GridConfig, GridActionEvent, GridAction } from '../../shared.models';
-import { Component, ElementRef, Input, ComponentRef } from '@angular/core';
+import {
+  VisualizerConfig,
+  VisualizerType,
+  GridConfig,
+  GridActionEvent,
+  GridAction,
+  VisualizerActionEvent,
+  VisualizerAction
+} from '../../shared.models';
+import {
+  Component,
+  ElementRef,
+  Input,
+  ComponentRef,
+  Output,
+  EventEmitter
+} from '@angular/core';
 import { BaseComponent } from '../base.component';
 import { SharedService } from '../../shared.service';
 import { GridComponent } from '../grid/grid.component';
 import { convertVizToGridData } from '../../utils/viz-utils';
 import { Subscription } from 'rxjs';
 
-interface State {
-}
+interface State {}
 
 @Component({
   selector: 'mc-visualizer',
@@ -15,20 +29,18 @@ interface State {
   templateUrl: 'visualizer.component.html'
 })
 export class VisualizerComponent extends BaseComponent {
-
   private cr: ComponentRef<any>;
   private compSubs: Array<Subscription> = [];
 
   defaultConfig: VisualizerConfig = {
     type: VisualizerType.grid,
-    config: {},
+    gridConfig: {},
     data: null
   };
 
   _config: VisualizerConfig;
 
-  defaultState: State = {
-  };
+  defaultState: State = {};
 
   state: State;
 
@@ -41,6 +53,8 @@ export class VisualizerComponent extends BaseComponent {
       }
     }
   }
+
+  @Output() action = new EventEmitter<VisualizerActionEvent>();
 
   constructor(protected er: ElementRef, private sharedService: SharedService) {
     super(er);
@@ -62,24 +76,38 @@ export class VisualizerComponent extends BaseComponent {
 
   rednerGrid(config: VisualizerConfig) {
     this.removeContent();
-    const gridCmp: ComponentRef<GridComponent> = this.sharedService.addComponent(GridComponent, this.el);
+    const gridCmp: ComponentRef<GridComponent> = this.sharedService.addComponent(
+      GridComponent,
+      this.el
+    );
     const instance = gridCmp.instance;
     const data = convertVizToGridData(config.data);
-    const rows = data.rows;
-    const rowCount = data.rows.length;
     const columns = data.columns;
-    const cfg: GridConfig = Object.assign({
-      themes: config.themes.concat(),
-      columns
-    }, config.config);
+    const cfg: GridConfig = Object.assign(
+      {
+        themes: ['visualizer', ...config.themes],
+        rowHeight: 42,
+        columns,
+        data
+      },
+      config.gridConfig
+    );
     instance.config = cfg;
-    this.compSubs.push(instance.action.subscribe((e: GridActionEvent) => {
-      switch (e.action) {
-        case GridAction.GET_DATA:
-          setTimeout(() => instance.data = { rows, rowCount });
-          break;
-      }
-    }));
+    this.compSubs.push(
+      instance.action.subscribe((e: GridActionEvent) => {
+        switch (e.action) {
+          case GridAction.SELECT_ROW:
+            this.action.emit({
+              target: this,
+              event: e,
+              action: VisualizerAction.SELECT_ITEM,
+              data: e.rowData,
+              el: e.rowEl
+            });
+            break;
+        }
+      })
+    );
     this.cr = gridCmp;
   }
 

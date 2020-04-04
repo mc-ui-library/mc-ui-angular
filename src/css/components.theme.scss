@@ -1,0 +1,35 @@
+@import './vars';
+
+mc-grid {
+  &.grid-visualizer {
+    mc-grid-header {
+      text-transform: uppercase;
+      .content-outer {
+        border-color: $c-border !important;
+      }
+    }
+    mc-grid-body {
+      .row {
+        border-top-color: transparent !important;
+        border-bottom-color: $c-border !important;
+        &.selected {
+          background-color: $c-bg;
+        }
+      }
+    }
+  }
+}
+
+mc-text {
+  input {
+    line-height: 38px;
+    border: 1px solid $c-border-2;
+    border-radius: 3px;
+    outline: 0;
+    padding: 0 12px;
+    transition: border-color ease-in-out 0.15s;
+    &:focus {
+      border-color: $c-active;
+    }
+  }
+}

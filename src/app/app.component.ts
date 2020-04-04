@@ -1,7 +1,14 @@
 import { Component, ViewContainerRef } from '@angular/core';
-import { VizData, InputActionEvent, InputAction } from 'projects/mc-ui/src/public-api';
+import {
+  VizData,
+  InputActionEvent,
+  InputAction,
+  VisualizerAction,
+  VisualizerActionEvent
+} from 'projects/mc-ui/src/public-api';
 import { AppBaseComponent } from './app-base.component';
 import { AppService } from './app.service';
+import { Company } from './models';
 
 @Component({
   selector: 'app-root',
@@ -9,8 +16,8 @@ import { AppService } from './app.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent extends AppBaseComponent {
-
   data: Array<VizData>;
+  dailyData: Array<VizData>;
 
   constructor(protected vcr: ViewContainerRef, private appService: AppService) {
     super(vcr);
@@ -18,14 +25,31 @@ export class AppComponent extends AppBaseComponent {
 
   loadCompanies(keyword: string) {
     if (keyword) {
-      this.appService.getCompanies(keyword).subscribe(data => this.data = data);
+      this.appService
+        .getCompanies(keyword)
+        .subscribe(data => (this.data = data));
     }
+  }
+
+  loadTimeSeries(symbol: string) {
+    this.appService
+      .getTimeSeries(symbol)
+      .subscribe(data => (this.dailyData = data));
   }
 
   onTextAction(e: InputActionEvent) {
     switch (e.action) {
       case InputAction.CHANGE:
         this.loadCompanies(e.value);
+        break;
+    }
+  }
+
+  onCompanyVizAction(e: VisualizerActionEvent) {
+    switch (e.action) {
+      case VisualizerAction.SELECT_ITEM:
+        const data: Company = e.data;
+        this.loadTimeSeries(data.symbol);
         break;
     }
   }

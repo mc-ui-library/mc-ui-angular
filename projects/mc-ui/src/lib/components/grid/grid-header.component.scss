@@ -7,15 +7,6 @@ $journal-row-a: 0.3;
   border: 0;
   visibility: hidden;
 
-  // override reset.scss, if we use the normalize.scss, we don't need this.
-  table, tbody, tr, td, th, div {
-    vertical-align: middle;
-  }
-
-  div, th {
-    position: relative;
-  }
-
   // colspan border color issue: https://github.com/mui-org/material-ui/issues/9149
   // chrome bug, you should not use rgba. you can't use a border color with alpha value.
   // convert the color from rgba(0,0,0,0.2) to #455872
@@ -25,8 +16,10 @@ $journal-row-a: 0.3;
     border-spacing: 0;
     &--row {
       border: 0;
+      padding: 0;
       &--cell {
         border: 0; // don't use tr/th/td border or size, they have a size bug. all sizing should be made by div.
+        padding: 0;
         &--content {
           // content sizing.
           padding: 0;
@@ -34,9 +27,13 @@ $journal-row-a: 0.3;
           cursor: pointer;
           .content-outer {
             height: 100%;
+            border-top: 1px solid transparent;
+            border-bottom: 1px solid transparent;
             .content-inner {
               height: 100%;
               text-align: left;
+              white-space: nowrap;
+              overflow: hidden;
               mc-icon {
                 width: 12px;
                 height: 9px;

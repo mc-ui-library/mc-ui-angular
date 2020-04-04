@@ -1,59 +1,5 @@
 import { TemplateRef } from '@angular/core';
 // ************* common component enums **************
-// Action need to have a string, since they can be 'data-action'.
-
-export enum ListAction {
-  UNSELECT_ITEM = 'UNSELECT_ITEM',
-  SELECT_ITEM = 'SELECT_ITEM'
-}
-
-export enum ScrollDataAction {
-  INIT = 'INIT',
-  APPEND = 'APPEND',
-  RELOAD = 'RELOAD',
-  INSERT = 'INSERT',
-  SORT = 'SORT'
-}
-
-export enum ScrollbarAction {
-  SCROLL_Y = 'SCROLL_Y',
-  SCROLL_Y_END = 'SCROLL_Y_END'
-}
-
-export enum ComponentAction {
-  RENDERED = 'RENDERED',
-  HID = 'HID'
-}
-
-export enum GridAction {
-  SELECT_CELL = 'SELECT_CELL',
-  SORT = 'SORT',
-  MOUSEOVER_CELL = 'MOUSEOVER_CELL',
-  UPDATE_WIDTH = 'UPDATE_WIDTH',
-  LOADED = 'LOADED',
-  SELECT_COLUMN = 'SELECT_COLUMN',
-  GET_DATA = 'GET_DATA',
-  SELECT_ROW = 'SELECT_ROW',
-  UNSELECT_ROW = 'UNSELECT_ROW',
-  REMOVE_PAGE = 'REMOVE_PAGE'
-}
-
-export enum GridAccordionAction {
-  UNSELECT_ROW = 'UNSELECT_ROW',
-  SELECT_ROW = 'SELECT_ROW',
-  SELECT_CELL = 'SELECT_CELL',
-  SORT = 'SORT'
-}
-
-export enum ScrollAction {
-  UPDATE_PAGES = 'UPDATE_PAGES',
-  GET_ROW_COUNT = 'GET_ROW_COUNT'
-}
-
-export enum InputAction {
-  CHANGE = 'CHANGE',
-  KEY_UP = 'KEY_UP'
-}
 
 export enum Align {
   LEFT = 'LEFT',
@@ -133,6 +79,67 @@ export enum InputType {
   date = 'date',
   color = 'color'
 }
+
+
+// ***** Component Action ****** Action need to have a string, since they can be 'data-action'.
+
+export enum ListAction {
+  UNSELECT_ITEM = 'UNSELECT_ITEM',
+  SELECT_ITEM = 'SELECT_ITEM'
+}
+
+export enum ScrollDataAction {
+  INIT = 'INIT',
+  APPEND = 'APPEND',
+  RELOAD = 'RELOAD',
+  INSERT = 'INSERT',
+  SORT = 'SORT'
+}
+
+export enum ScrollbarAction {
+  SCROLL_Y = 'SCROLL_Y',
+  SCROLL_Y_END = 'SCROLL_Y_END'
+}
+
+export enum ComponentAction {
+  RENDERED = 'RENDERED',
+  HID = 'HID'
+}
+
+export enum GridAction {
+  SELECT_CELL = 'SELECT_CELL',
+  SORT = 'SORT',
+  MOUSEOVER_CELL = 'MOUSEOVER_CELL',
+  UPDATE_WIDTH = 'UPDATE_WIDTH',
+  LOADED = 'LOADED',
+  SELECT_COLUMN = 'SELECT_COLUMN',
+  GET_DATA = 'GET_DATA',
+  SELECT_ROW = 'SELECT_ROW',
+  UNSELECT_ROW = 'UNSELECT_ROW',
+  REMOVE_PAGE = 'REMOVE_PAGE'
+}
+
+export enum GridAccordionAction {
+  UNSELECT_ROW = 'UNSELECT_ROW',
+  SELECT_ROW = 'SELECT_ROW',
+  SELECT_CELL = 'SELECT_CELL',
+  SORT = 'SORT'
+}
+
+export enum ScrollAction {
+  UPDATE_PAGES = 'UPDATE_PAGES',
+  GET_ROW_COUNT = 'GET_ROW_COUNT'
+}
+
+export enum InputAction {
+  CHANGE = 'CHANGE',
+  KEY_UP = 'KEY_UP'
+}
+
+export enum VisualizerAction {
+  SELECT_ITEM = 'SELECT_ITEM'
+}
+
 // ************* shared component interface **************
 
 // **** component config ****
@@ -269,7 +276,7 @@ export interface GridBodyConfig extends ComponentConfig {
 
 export interface VisualizerConfig extends ComponentConfig {
   type: VisualizerType;
-  config: any; // type's config
+  gridConfig: GridConfig; // type's config
   data: Array<VizData>;
 }
 
@@ -389,6 +396,10 @@ export interface InputActionEvent extends ComponentEvent {
   oldValue?: string;
   value: string;
   name: string;
+}
+
+export interface VisualizerActionEvent extends ComponentEvent {
+  action?: VisualizerAction;
 }
 
 // **** data type ****

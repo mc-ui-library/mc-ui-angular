@@ -3,12 +3,6 @@
   position: relative;
   height: 100%;
 
-  // override reset.scss, if we use the normalize.scss, we don't need this.
-  div {
-    vertical-align: middle;
-    position: relative;
-  }
-
   .row {
     border-top: 1px solid transparent;
     border-bottom: 1px solid transparent;
@@ -16,7 +10,7 @@
     &-odd {}
 
     &-even {
-      background-color: rgba(109, 108, 127, 0.15);
+      // assign a color in the component.themes.scss file.
     }
     .cells {
       .cell {
