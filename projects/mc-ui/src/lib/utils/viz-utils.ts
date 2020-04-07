@@ -1,33 +1,45 @@
 import {
-  VizData,
   Box,
-  VizScaleType,
+  VisualizerScaleType,
   Location,
-  VizSize,
-  Column
+  VisualizerSize,
+  Column,
+  MinMax,
+  VisualizerMetaField
 } from '../shared.models';
 import * as d3 from 'd3';
-import { isEmpty } from './utils';
 
-export function getMinMax(data: VizData[]) {
-  return data.reduce(
-    (res, d) => {
-      d.values.forEach(item => {
-        res.min = Math.min(res.min, item.value);
-        res.max = Math.max(res.max, item.value);
-      });
-      return res;
-    },
-    {
-      min: Infinity,
-      max: -Infinity
-    }
-  );
+export function getMinMaxMapByField(
+  fields: Array<string>,
+  data: Array<any>
+): Map<string, MinMax> {
+  return data.reduce((map, d) => {
+    fields.forEach(field => {
+      const val = +d[field];
+      if (typeof val === 'number') {
+        const totalMinMax = map.get(VisualizerMetaField.total) || {
+          min: -Infinity,
+          max: Infinity
+        };
+        const minMax = map.get(field) || {
+          min: -Infinity,
+          max: Infinity
+        };
+        minMax.min = Math.min(minMax.min, val);
+        minMax.max = Math.max(minMax.max, val);
+        totalMinMax.min = Math.min(totalMinMax.min, val);
+        totalMinMax.max = Math.max(totalMinMax.max, val);
+        map.set(field, minMax);
+        map.set(VisualizerMetaField.total, totalMinMax);
+      }
+    });
+    return map;
+  }, new Map<string, MinMax>());
 }
 
 export function renderChartContainer(
   el: HTMLElement,
-  vizSize: VizSize,
+  visualizerSize: VisualizerSize,
   themeClass: string[] = []
 ) {
   // apply margin
@@ -35,18 +47,18 @@ export function renderChartContainer(
     .select(el)
     .append('svg')
     .attr('class', themeClass.join(' '))
-    .attr('width', vizSize.width)
-    .attr('height', vizSize.height);
+    .attr('width', visualizerSize.width)
+    .attr('height', visualizerSize.height);
   return svg
     .append('g')
     .attr(
       'transform',
-      `translate(${vizSize.margin.left},${vizSize.margin.top})`
+      `translate(${visualizerSize.margin.left},${visualizerSize.margin.top})`
     );
 }
 
 export function getScale(
-  type: VizScaleType,
+  type: VisualizerScaleType,
   domain: any[],
   range: any,
   padding: number = null,
@@ -55,10 +67,10 @@ export function getScale(
 ) {
   let scale: any;
   switch (type) {
-    case VizScaleType.BAND:
+    case VisualizerScaleType.BAND:
       scale = d3.scaleBand();
       break;
-    case VizScaleType.LINEAR:
+    case VisualizerScaleType.LINEAR:
       scale = d3.scaleLinear();
       break;
   }
@@ -106,16 +118,16 @@ export function renderAxis(
   svg: any,
   location: Location,
   axis,
-  vizSize: Box,
+  visualizerSize: Box,
   themeClass: string[] = []
 ) {
   svg = svg.append('g').attr('class', themeClass.join(' '));
   switch (location) {
     case Location.BOTTOM:
-      svg = svg.attr('transform', `translate(0,${vizSize.height})`);
+      svg = svg.attr('transform', `translate(0,${visualizerSize.height})`);
       break;
     case Location.RIGHT:
-      svg = svg.attr('transform', `translate(${vizSize.width},0)`);
+      svg = svg.attr('transform', `translate(${visualizerSize.width},0)`);
       break;
   }
   svg.call(axis);
@@ -130,18 +142,18 @@ export function renderGrid(
   svg: any,
   direction: 'x' | 'y',
   axis,
-  vizSize: Box,
+  visualizerSize: Box,
   themeClass: string[] = []
 ) {
   svg = svg.append('g').attr('class', themeClass.join(' '));
   let tickSize;
   switch (direction) {
     case 'x':
-      svg = svg.attr('transform', `translate(0,${vizSize.height})`);
-      tickSize = -vizSize.height;
+      svg = svg.attr('transform', `translate(0,${visualizerSize.height})`);
+      tickSize = -visualizerSize.height;
       break;
     case 'y':
-      tickSize = -vizSize.width;
+      tickSize = -visualizerSize.width;
       break;
   }
   svg.call(axis.tickSize(tickSize).tickFormat(''));
@@ -152,44 +164,11 @@ export function getAxisSize(
   svg: any,
   location: Location,
   axis,
-  vizSize: Box,
+  visualizerSize: Box,
   themeClass: string[] = []
 ) {
-  renderAxis(svg, location, axis, vizSize, themeClass);
+  renderAxis(svg, location, axis, visualizerSize, themeClass);
   return getSVGSize(el, '.' + themeClass[0]);
-}
-
-export function convertVizToGridData(
-  data: Array<VizData>,
-  seriesColumnName = ''
-) {
-  const rows = [];
-  const columns: Array<Column> = [];
-  if (seriesColumnName) {
-    columns.push({
-      name: seriesColumnName,
-      field: 'series'
-    });
-  }
-  data.forEach(dataItem => {
-    columns.push({
-      name: dataItem.label,
-      field: dataItem.label
-    });
-    dataItem.values.forEach((val, j) => {
-      // rows
-      if (!rows[j]) {
-        rows[j] = {
-          series: val.series
-        };
-      }
-      rows[j][dataItem.label] = isEmpty(val.value) ? '' : val.value;
-    });
-  });
-  return {
-    columns,
-    rows
-  };
 }
 
 // function renderRect(data, svg, scaleX, scaleY, color, height, hasNegativeValue = false, minX = 0, scaleX1: any = {}, scaleY1: any = {}, colorBySize = false, vertical = true, stacked = false, halfShift = false, maxBarWidth = 100) {

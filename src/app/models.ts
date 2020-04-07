@@ -35,3 +35,14 @@ export interface TimeSeriesDetail {
   close: number;
   volume: number;
 }
+
+export interface NasdaqCompany {
+  Symbol: string;
+  'Security Name': string;
+  'Market Category': string;
+  'Test Issue': string;
+  'Financial Status': string;
+  'Round Lot Size': number;
+  ETF: string;
+  NextShares: string;
+}

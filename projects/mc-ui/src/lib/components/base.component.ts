@@ -21,9 +21,11 @@ import { setStateIf, setState } from '../utils/data-utils';
  * https://www.mokkapps.de/blog/the-last-guide-for-angular-change-detection-you-will-ever-need/
  * It checks all the values or property of a value that are used by the component template.
  * If a property of an object is used for the template, it checks only the property value even if the obejct is changed.
- * The object is changed, but the property value of the object that is used by the template is not changed, it will not trigger the change detection.
+ * The object is changed, but the property value of the object that is used by the template is not changed,
+ * it will not trigger the change detection.
  * If you don't want to check the property that is used by the template, you can use "changeDetection: ChangeDetectionStrategy.OnPush".
- * If you change the property of an object that is used by the template. The detector only check the object is changed or not when using OnPush.
+ * If you change the property of an object that is used by the template.
+ * The detector only check the object is changed or not when using OnPush.
  * If you use "OnPush", you may need immutable.js library for immutable object.
  */
 
@@ -51,7 +53,8 @@ export class BaseComponent implements OnInit, OnDestroy, AfterViewInit {
   // you can add default state properties for the template. state has all the properties that are used by the template
   defaultState: any = {};
 
-  // if you want to update the template after rendered the component, you can use a specific "Input" property for mutating the state property.
+  // if you want to update the template after rendered the component,
+  // you can use a specific "Input" property for mutating the state property.
   state: any;
   componentName: string;
   initialized = false;

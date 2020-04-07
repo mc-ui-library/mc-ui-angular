@@ -18,10 +18,7 @@ import {
 import { BaseComponent } from '../base.component';
 import { SharedService } from '../../shared.service';
 import { GridComponent } from '../grid/grid.component';
-import { convertVizToGridData } from '../../utils/viz-utils';
 import { Subscription } from 'rxjs';
-
-interface State {}
 
 @Component({
   selector: 'mc-visualizer',
@@ -33,16 +30,12 @@ export class VisualizerComponent extends BaseComponent {
   private compSubs: Array<Subscription> = [];
 
   defaultConfig: VisualizerConfig = {
-    type: VisualizerType.grid,
+    type: VisualizerType.GRID,
     gridConfig: {},
     data: null
   };
 
   _config: VisualizerConfig;
-
-  defaultState: State = {};
-
-  state: State;
 
   @Input()
   set data(data: any) {
@@ -67,7 +60,7 @@ export class VisualizerComponent extends BaseComponent {
   render(config: VisualizerConfig) {
     if (config.data) {
       switch (config.type) {
-        case VisualizerType.grid:
+        case VisualizerType.GRID:
           this.rednerGrid(config);
           break;
       }
@@ -81,14 +74,16 @@ export class VisualizerComponent extends BaseComponent {
       this.el
     );
     const instance = gridCmp.instance;
-    const data = convertVizToGridData(config.data);
-    const columns = data.columns;
+    const { columns, data } = config.data;
     const cfg: GridConfig = Object.assign(
       {
         themes: ['visualizer', ...config.themes],
         rowHeight: 42,
         columns,
-        data
+        data: {
+          rows: data,
+          rowCount: data.length
+        }
       },
       config.gridConfig
     );

@@ -39,29 +39,12 @@ export enum PopupStartFrom {
   BOTTOM
 }
 
-export enum ChartTypes {
-  VERTICAL_BAR = 'vertical-bar',
-  LINE = 'line',
-  BAR_LINE = 'bar-line'
-}
-
-export enum VizScaleType {
-  LINEAR = 'linear',
-  BAND = 'band'
-}
-
 export enum Location {
   LEFT = 'LEFT',
   RIGHT = 'RIGHT',
   CENTER = 'CENTER',
   TOP = 'TOP',
   BOTTOM = 'BOTTOM'
-}
-
-export enum VisualizerType {
-  grid,
-  bar,
-  line
 }
 
 export enum InputType {
@@ -80,6 +63,11 @@ export enum InputType {
   color = 'color'
 }
 
+export enum DataType {
+  STRING,
+  NUMBER,
+  DATE
+}
 
 // ***** Component Action ****** Action need to have a string, since they can be 'data-action'.
 
@@ -138,6 +126,23 @@ export enum InputAction {
 
 export enum VisualizerAction {
   SELECT_ITEM = 'SELECT_ITEM'
+}
+
+export enum VisualizerType {
+  GRID,
+  VERTICAL_BAR,
+  HORIZONTAL_BAR,
+  LINE,
+  BAR_LINE
+}
+
+export enum VisualizerScaleType {
+  LINEAR,
+  BAND
+}
+
+export enum VisualizerMetaField {
+  total = '__total__'
 }
 
 // ************* shared component interface **************
@@ -276,29 +281,16 @@ export interface GridBodyConfig extends ComponentConfig {
 
 export interface VisualizerConfig extends ComponentConfig {
   type: VisualizerType;
-  gridConfig: GridConfig; // type's config
-  data: Array<VizData>;
-}
-
-export interface ChartConfig {
-  type?: ChartTypes;
-  labels?: string[];
-  series?: string[];
-  data?: VizData[];
-  beautifyMinRatio?: number;
-  beautibymaxRatio?: number;
-  padding?: number;
-  paddingInner?: number;
-  paddingOuter?: number;
+  gridConfig?: GridConfig; // type's config
+  dataFields?: Array<string>;
+  data2Fields?: Array<string>; // for bar-line chart etc.
+  labelField?: string;
+  hasGrid?: boolean;
+  data: VisualizerData;
   ticks?: number;
-  min?: number; // fixed min
-  max?: number; // fixed max
-  hasXAxis?: boolean;
-}
-
-export interface BarLineChartConfig extends ChartConfig {
-  barConfig: ChartConfig;
-  lineConfig: ChartConfig;
+  scalePadding?: number;
+  scalePaddingInner?: number;
+  scalePaddingOuter?: number;
 }
 
 export interface TextConfig extends ComponentConfig {
@@ -461,6 +453,7 @@ export interface Message {
 export interface Column {
   field?: string; // field name;
   name?: string; // column name
+  type?: DataType;
   width?: number;
   sort?: boolean;
   sortDirection?: SortDirection;
@@ -518,41 +511,52 @@ export interface ExtraHeightPage {
   extraHeight: number;
 }
 
-export interface VizSize {
+export interface VisualizerSize {
   width: number;
   height: number;
   // container - margin size for easy using.
   chart?: {
-    width?: number,
-    height?: number
+    width?: number;
+    height?: number;
   };
   margin?: {
-    left?: number,
-    right?: number,
-    bottom?: number,
-    top?: number
+    left?: number;
+    right?: number;
+    bottom?: number;
+    top?: number;
   };
 }
 
 /**
- * Visualizer Data Structure
- * [
- *  { label: 'xx', values: [ { series: 'xxx', value: xx, meta: {...} }, ... ]},
- *  ...
- * ]
+ * Visualizer Basic Data Structure
  */
 
-export interface VizItem {
-  series?: string;
-  value: any;
-  meta?: any;
-}
-export interface VizData {
-  label: string;
-  values: Array<VizItem>;
+export interface VisualizerData {
+  columns: Array<Column>;
+  data: Array<any>;
 }
 
-export interface VizItemDomain {
+export interface VisualizerItemDomain {
   min: number;
   max: number;
+}
+
+export interface Filter {
+  field: string;
+  type?: DataType;
+  keyword: string;
+}
+
+export interface MinMax {
+  min: number;
+  max: number;
+}
+
+export interface VisualizerUnit {
+  yScale?: any;
+  yAxis?: any;
+  xScale?: any;
+  xAxis?: any;
+  y2Scale?: any;
+  y2Axis?: any;
 }

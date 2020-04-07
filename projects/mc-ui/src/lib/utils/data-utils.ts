@@ -1,5 +1,13 @@
-import { SortItem, SortDirection } from '../shared.models';
+import {
+  SortItem,
+  SortDirection,
+  Column,
+  VisualizerData,
+  Filter,
+  DataType
+} from '../shared.models';
 import { isEmpty } from './utils';
+import * as papa from 'papaparse';
 
 export function sortObjectArray(data: any[], sort: SortItem) {
   data = data.concat();
@@ -34,4 +42,50 @@ export function setState(target: any, source: any) {
     target[key] = source[key];
   });
   return target;
+}
+
+export function convertCsvToJson(text: string) {
+  const result = papa.parse(text, { header: true });
+  if (result.error) {
+    console.warn('CSV parsing Error: ' + result.error);
+  }
+  return result.data;
+}
+
+export function convertKeysToColumns(obj: any): Array<Column> {
+  return Object.keys(obj).reduce((columns: Array<Column>, key) => {
+    columns.push({ field: key, name: key });
+    return columns;
+  }, []);
+}
+
+export function convertCsvToVisualizerData(
+  text: string,
+  filters: Array<Filter> = null
+): VisualizerData {
+  let data: Array<any> = convertCsvToJson(text);
+  const columns = convertKeysToColumns(data[0] || {});
+  if (filters) {
+    data = data.filter((item: any) =>
+      filters.some(
+        filter => {
+          const value = item[filter.field];
+          const keyword = filter.keyword;
+          switch (filter.type) {
+            case DataType.DATE:
+            case DataType.NUMBER:
+              // TODO: compare conditions
+              return value === keyword;
+            default:
+              // string
+              return (value + '').toLowerCase().includes(keyword.toLowerCase());
+          }
+        }
+      )
+    );
+  }
+  return {
+    columns,
+    data
+  };
 }
