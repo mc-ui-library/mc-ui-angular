@@ -5,34 +5,39 @@ import {
   VisualizerActionEvent,
   VisualizerConfig,
   VisualizerType,
-  VisualizerScaleType,
   Location,
   VisualizerMetaField,
-  VisualizerUnit
+  VisualizerUnit,
+  ComponentActionEvent,
+  ComponentAction,
+  VisualizerAction,
+  VisualizerRenderInfo
 } from '../../../shared.models';
 import {
-  getScale,
-  getAxis,
   renderChartContainer,
   getAxisSize,
   renderAxis,
   renderGrid,
   getMinMaxMapByField
 } from '../../../utils/viz-utils';
+import * as d3 from 'd3';
 
 @Component({
   selector: 'mc-axis',
   styleUrls: ['axis.component.scss'],
-  templateUrl: 'axis.component.html'
+  template: ''
 })
 export class AxisComponent extends BaseComponent {
+
+  renderInfo: VisualizerRenderInfo;
+
   defaultConfig: VisualizerConfig = {
     type: VisualizerType.VERTICAL_BAR,
     labelField: '',
     dataFields: null,
     data2Fields: null,
     hasGrid: true,
-    ticks: 9,
+    ticks: 8,
     scalePadding: 1,
     scalePaddingInner: 0.2,
     scalePaddingOuter: 0,
@@ -65,7 +70,7 @@ export class AxisComponent extends BaseComponent {
     }
   }
 
-  getSize(): VisualizerSize {
+  initSize(): VisualizerSize {
     const width = this.el.offsetWidth;
     const height = this.el.offsetHeight;
     return {
@@ -97,65 +102,63 @@ export class AxisComponent extends BaseComponent {
     const minMaxMap = getMinMaxMapByField(config.dataFields, config.data.data);
     const totalMinMax = minMaxMap.get(VisualizerMetaField.total);
     // y scale
-    const yScale = getScale(
-      VisualizerScaleType.LINEAR,
-      [totalMinMax.min, totalMinMax.max],
-      [visualizerSize.chart.height, 0]
-    );
-    const yAxis = getAxis(Location.LEFT, yScale, config.ticks);
+    const yScale = d3.scaleLinear()
+    .domain([totalMinMax.min, totalMinMax.max])
+    .rangeRound([visualizerSize.chart.height, 0]);
+
+    const yAxis = d3.axisLeft(yScale).ticks(config.ticks);
 
     let y2Scale;
     let y2Axis;
     if (config.data2Fields) {
       const minMaxMap2 = getMinMaxMapByField(config.data2Fields, config.data.data);
       const totalMinMax2 = minMaxMap2.get(VisualizerMetaField.total);
-      y2Scale = getScale(VisualizerScaleType.LINEAR, [totalMinMax2.min, totalMinMax2.max], [visualizerSize.chart.height, 0]);
-      y2Axis = getAxis(Location.RIGHT, y2Scale, config.ticks);
+      y2Scale = d3.scaleLinear()
+      .domain([totalMinMax2.min, totalMinMax2.max])
+      .rangeRound([visualizerSize.chart.height, 0]);
+      y2Axis = d3.axisRight(y2Scale).ticks(config.ticks);
     }
 
     // x scale
-    const xScale = getScale(
-      VisualizerScaleType.BAND,
-      this.getLabels(),
-      [0, visualizerSize.chart.width],
-      config.scalePadding,
-      config.scalePaddingInner,
-      config.scalePaddingOuter
-    );
-    const xAxis = getAxis(Location.BOTTOM, xScale);
+    const labels = this.getLabels();
+    const xScale = d3.scaleBand()
+    .domain(this.getLabels())
+    .rangeRound([0, visualizerSize.chart.width])
+    .padding(config.scalePadding)
+    .paddingInner(config.scalePaddingInner)
+    .paddingOuter(config.scalePaddingOuter);
+
+    const xAxis = d3.axisBottom(xScale);
     return {
       yScale,
       yAxis,
       xScale,
       xAxis,
       y2Scale,
-      y2Axis
+      y2Axis,
+      labels
     };
   }
 
-  updateSize(
+  getSize(
     visualizerSize,
-    unit,
-    containerClass,
-    yAxisClass,
-    y2AxisClass,
-    xAxisClass
+    unit
   ) {
     // *** render for measuring size ***
-    const svg = renderChartContainer(this.el, visualizerSize, [containerClass]);
+    const svg = renderChartContainer(this.el, visualizerSize);
     // left / right margin
     let size = getAxisSize(this.el, svg, Location.LEFT, unit.yAxis, visualizerSize, [
-      yAxisClass
+      'y-axis'
     ]);
     visualizerSize.margin.left = size.width;
     if (this._config.data2Fields) {
       size = getAxisSize(this.el, svg, Location.RIGHT, unit.y2Axis, visualizerSize, [
-        y2AxisClass
+        'y2-axis'
       ]);
       visualizerSize.margin.right = size.width;
     }
     size = getAxisSize(this.el, svg, Location.BOTTOM, unit.xAxis, visualizerSize, [
-      xAxisClass
+      'x-axis'
     ]);
     visualizerSize.margin.bottom = size.height;
 
@@ -174,41 +177,43 @@ export class AxisComponent extends BaseComponent {
   }
 
   render(config: VisualizerConfig) {
-    const containerClass = this.componentName + '-' + 'container';
-    const yAxisClass = this.componentName + '-' + 'y-axis';
-    const y2AxisClass = this.componentName + '-' + 'y2-axis';
-    const xAxisClass = this.componentName + '-' + 'x-axis';
-
-    let visualizerSize = this.getSize();
+    let visualizerSize = this.initSize();
     let unit = this.getUnit(config, visualizerSize);
-    visualizerSize = this.updateSize(
+    visualizerSize = this.getSize(
       visualizerSize,
-      unit,
-      containerClass,
-      yAxisClass,
-      y2AxisClass,
-      xAxisClass
+      unit
     );
     // update unit by the correct size
     unit = this.getUnit(config, visualizerSize);
 
     // *** re-render with correct size ***
-    const svg = renderChartContainer(this.el, visualizerSize, [containerClass]);
-    renderAxis(svg, Location.LEFT, unit.yAxis, visualizerSize.chart, [yAxisClass]);
+    const svg = renderChartContainer(this.el, visualizerSize);
+    renderAxis(svg, Location.LEFT, unit.yAxis, visualizerSize.chart, ['y-axis']);
     if (config.data2Fields) {
       renderAxis(svg, Location.RIGHT, unit.y2Axis, visualizerSize.chart, [
-        y2AxisClass
+        'y2-axis'
       ]);
     }
-    renderAxis(svg, Location.BOTTOM, unit.xAxis, visualizerSize.chart, [xAxisClass]);
+    renderAxis(svg, Location.BOTTOM, unit.xAxis, visualizerSize.chart, ['x-axis']);
 
     // render grid
     if (config.hasGrid) {
-      renderGrid(svg, 'y', unit.yAxis, visualizerSize.chart, [
-        this.componentName + '-' + 'y-grid'
-      ]);
+      renderGrid(svg, 'y', unit.yAxis, visualizerSize.chart, ['y-grid']);
     }
+    this.renderInfo = {
+      svg,
+      unit,
+      size: visualizerSize
+    };
   }
 
-  destroyCmp() {}
+  emitRenderedActionEvent() {
+    const action: VisualizerActionEvent = {
+      target: this,
+      action: VisualizerAction.RENDERED,
+      config: this._config,
+      renderInfo: this.renderInfo
+    };
+    this.action.emit(action);
+  }
 }

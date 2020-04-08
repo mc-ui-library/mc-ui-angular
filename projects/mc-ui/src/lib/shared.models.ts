@@ -125,7 +125,8 @@ export enum InputAction {
 }
 
 export enum VisualizerAction {
-  SELECT_ITEM = 'SELECT_ITEM'
+  SELECT_ITEM = 'SELECT_ITEM',
+  RENDERED = 'RENDERED',
 }
 
 export enum VisualizerType {
@@ -392,6 +393,8 @@ export interface InputActionEvent extends ComponentEvent {
 
 export interface VisualizerActionEvent extends ComponentEvent {
   action?: VisualizerAction;
+  config?: VisualizerConfig;
+  renderInfo?: VisualizerRenderInfo;
 }
 
 // **** data type ****
@@ -559,4 +562,11 @@ export interface VisualizerUnit {
   xAxis?: any;
   y2Scale?: any;
   y2Axis?: any;
+  labels?: Array<string>;
+}
+
+export interface VisualizerRenderInfo {
+  svg?: any;
+  unit?: VisualizerUnit;
+  size?: VisualizerSize;
 }
