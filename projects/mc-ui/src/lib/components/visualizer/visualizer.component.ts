@@ -19,6 +19,7 @@ import { BaseComponent } from '../base.component';
 import { SharedService } from '../../shared.service';
 import { GridComponent } from '../grid/grid.component';
 import { Subscription } from 'rxjs';
+import { BarComponent } from './bar/bar.component';
 
 @Component({
   selector: 'mc-visualizer',
@@ -32,6 +33,14 @@ export class VisualizerComponent extends BaseComponent {
   defaultConfig: VisualizerConfig = {
     type: VisualizerType.GRID,
     gridConfig: {},
+    labelField: '',
+    dataFields: null,
+    data2Fields: null,
+    hasGrid: true,
+    ticks: 8,
+    scalePadding: 1,
+    scalePaddingInner: 0.2,
+    scalePaddingOuter: 0,
     data: null
   };
 
@@ -63,17 +72,31 @@ export class VisualizerComponent extends BaseComponent {
         case VisualizerType.GRID:
           this.rednerGrid(config);
           break;
+        case VisualizerType.BAR:
+          this.renderBar(config);
+          break;
       }
     }
   }
 
+  renderBar(config: VisualizerConfig) {
+    this.removeContent();
+    const cr: ComponentRef<BarComponent> = this.sharedService.addComponent(
+      BarComponent,
+      this.el
+    );
+    const instance = cr.instance;
+    instance.config = config;
+    this.cr = cr;
+  }
+
   rednerGrid(config: VisualizerConfig) {
     this.removeContent();
-    const gridCmp: ComponentRef<GridComponent> = this.sharedService.addComponent(
+    const cr: ComponentRef<GridComponent> = this.sharedService.addComponent(
       GridComponent,
       this.el
     );
-    const instance = gridCmp.instance;
+    const instance = cr.instance;
     const { columns, data } = config.data;
     const cfg: GridConfig = Object.assign(
       {
@@ -103,7 +126,7 @@ export class VisualizerComponent extends BaseComponent {
         }
       })
     );
-    this.cr = gridCmp;
+    this.cr = cr;
   }
 
   removeContent() {

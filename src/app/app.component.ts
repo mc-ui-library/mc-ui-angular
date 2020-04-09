@@ -4,11 +4,12 @@ import {
   InputActionEvent,
   InputAction,
   VisualizerAction,
-  VisualizerActionEvent
+  VisualizerActionEvent,
+  VisualizerType
 } from 'projects/mc-ui/src/public-api';
 import { AppBaseComponent } from './app-base.component';
 import { AppService } from './app.service';
-import { Company, NasdaqCompany } from './models';
+import { NasdaqCompany } from './models';
 
 @Component({
   selector: 'app-root',
@@ -18,6 +19,7 @@ import { Company, NasdaqCompany } from './models';
 export class AppComponent extends AppBaseComponent {
   data: VisualizerData;
   dailyData: VisualizerData;
+  VisualizerType = VisualizerType;
 
   constructor(protected vcr: ViewContainerRef, private appService: AppService) {
     super(vcr);

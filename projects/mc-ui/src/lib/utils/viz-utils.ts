@@ -113,6 +113,25 @@ export function getAxisSize(
   return getSVGSize(el, '.' + themeClass[0]);
 }
 
+export function initVisualizerSize(el: HTMLElement): VisualizerSize {
+  const width = el.offsetWidth;
+  const height = el.offsetHeight;
+  return {
+    width,
+    height,
+    chart: {
+      width,
+      height
+    },
+    margin: {
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0
+    }
+  };
+}
+
 export function renderRects(
   config: VisualizerConfig,
   renderInfo: VisualizerRenderInfo
@@ -120,16 +139,25 @@ export function renderRects(
   const { svg, unit, size } = renderInfo;
   const data = config.data.data;
   const animDuration = 300;
+
+  unit.xScaleInner = d3
+    .scaleBand()
+    .domain(unit.fields)
+    .rangeRound([0, unit.xScale.bandwidth()])
+    .padding(0);
+
   let rects = svg
     .append('g')
     .selectAll('g')
-    .data(data)
+    .data(unit.labels)
     .enter()
     .append('g')
     .attr('class', 'group rects')
-    .attr('transform', d => `translate(${unit.xScale(d.label)},0)`);
+    .attr('transform', (label: string) => `translate(${unit.xScale(label)},0)`);
 
-  rects = rects.selectAll('rect').data(d => config.dataFields);
+  rects = rects.selectAll('rect').data((d, i) => {
+    unit.fields.map(field => ({ field, value: data[i][field] }));
+  });
 
   // for updating data
   rects
@@ -142,37 +170,22 @@ export function renderRects(
 
   rects
     .attr('class', 'item rect')
-    .attr('width', fields => unit.xScale.bandwidth())
-    .attr('x', (d, i) => )
-    .attr('fill', d =>
-      d.color ? d.color : unit.color(this.colorBySize ? d.value : d.series)
-    )
-    .attr('title', d => d.title || `${d.series}: ${d.value}`)
+    .attr('width', d => unit.xScaleInner.bandwidth(d.field))
+    .attr('x', d => unit.xScaleInner(d.field))
+    .attr('fill', d => unit.colorScale(d.field))
+    .attr('title', d => `${d.field}: ${d.value}`)
     .attr(
       'y',
-      !this.hasNegativeValue ? size.height - size.margin.bottom : unit.scaleY(0)
+      unit.minMax.min < 0 ? size.height - size.margin.bottom : unit.yScale(0)
     )
     .attr('height', 0)
     .transition()
-    .duration(duration)
-    .ease(this.d3.easeSinOut)
-    .attr('y', (d, i) => {
-      let y;
-      if (this.barType === 'stacked') {
-        y = unit.scaleY(d.value1);
-      } else {
-        y = +d.value > 0 ? unit.scaleY(d.value) : unit.scaleY(0);
-      }
-      return y;
-    })
-    .attr('height', d => {
-      let h =
-        this.barType === 'stacked'
-          ? size.cHeight - unit.scaleY(d.value1 - d.value0)
-          : this.hasNegativeValue
-          ? Math.abs(unit.scaleY(d.value) - unit.scaleY(0))
-          : size.cHeight - unit.scaleY(d.value);
-      h = h < 1 ? 1 : h;
-      return h;
-    });
+    .duration(animDuration)
+    .ease(d3.easeSinOut)
+    .attr('y', d => (d.value > 0 ? unit.yScale(d.value) : unit.yScale(0)))
+    .attr('height', d =>
+      unit.minMax2.min < 0
+        ? Math.abs(unit.yScale(d.value) - unit.yScale(0))
+        : size.chart.height - unit.yScale(d.value)
+    );
 }

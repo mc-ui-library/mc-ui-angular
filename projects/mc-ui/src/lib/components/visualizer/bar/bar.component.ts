@@ -1,22 +1,13 @@
 import { Component, ElementRef, Output, EventEmitter } from '@angular/core';
 import { BaseComponent } from '../../base.component';
 import {
-  VisualizerSize,
   VisualizerActionEvent,
   VisualizerConfig,
   VisualizerType,
-  Location,
-  VisualizerMetaField,
-  VisualizerUnit,
-  VisualizerAction,
-  VisualizerRenderInfo
+  VisualizerAction
 } from '../../../shared.models';
 import {
-  renderChartContainer,
-  getAxisSize,
-  renderAxis,
-  renderGrid,
-  getMinMaxMapByField
+  renderRects
 } from '../../../utils/viz-utils';
 import * as d3 from 'd3';
 
@@ -28,7 +19,7 @@ import * as d3 from 'd3';
 export class BarComponent extends BaseComponent {
 
   defaultConfig: VisualizerConfig = {
-    type: VisualizerType.VERTICAL_BAR,
+    type: VisualizerType.BAR,
     labelField: '',
     dataFields: null,
     data2Fields: null,
@@ -48,14 +39,10 @@ export class BarComponent extends BaseComponent {
     super(er);
   }
 
-  render(config: VisualizerConfig, renderInfo: VisualizerRenderInfo) {
-
-  }
-
   onAxisAction(e: VisualizerActionEvent) {
     switch (e.action) {
       case VisualizerAction.RENDERED:
-        this.render(e.config, e.renderInfo);
+        renderRects(e.config, e.renderInfo);
         break;
     }
   }

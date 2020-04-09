@@ -131,7 +131,7 @@ export enum VisualizerAction {
 
 export enum VisualizerType {
   GRID,
-  VERTICAL_BAR,
+  BAR,
   HORIZONTAL_BAR,
   LINE,
   BAR_LINE
@@ -559,10 +559,16 @@ export interface VisualizerUnit {
   yScale?: any;
   yAxis?: any;
   xScale?: any;
+  xScaleInner?: any;
   xAxis?: any;
   y2Scale?: any;
   y2Axis?: any;
   labels?: Array<string>;
+  colorScale?: any;
+  fields?: Array<string>;
+  fields2?: Array<string>;
+  minMax?: MinMax;
+  minMax2?: MinMax;
 }
 
 export interface VisualizerRenderInfo {

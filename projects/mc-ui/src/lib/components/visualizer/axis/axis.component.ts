@@ -18,7 +18,8 @@ import {
   getAxisSize,
   renderAxis,
   renderGrid,
-  getMinMaxMapByField
+  getMinMaxMapByField,
+  initVisualizerSize
 } from '../../../utils/viz-utils';
 import * as d3 from 'd3';
 
@@ -32,7 +33,7 @@ export class AxisComponent extends BaseComponent {
   renderInfo: VisualizerRenderInfo;
 
   defaultConfig: VisualizerConfig = {
-    type: VisualizerType.VERTICAL_BAR,
+    type: VisualizerType.BAR,
     labelField: '',
     dataFields: null,
     data2Fields: null,
@@ -70,25 +71,6 @@ export class AxisComponent extends BaseComponent {
     }
   }
 
-  initSize(): VisualizerSize {
-    const width = this.el.offsetWidth;
-    const height = this.el.offsetHeight;
-    return {
-      width,
-      height,
-      chart: {
-        width,
-        height
-      },
-      margin: {
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0
-      }
-    };
-  }
-
   getLabels(): Array<string> {
     const data = this._config.data;
     if (data) {
@@ -110,9 +92,10 @@ export class AxisComponent extends BaseComponent {
 
     let y2Scale;
     let y2Axis;
+    let totalMinMax2;
     if (config.data2Fields) {
       const minMaxMap2 = getMinMaxMapByField(config.data2Fields, config.data.data);
-      const totalMinMax2 = minMaxMap2.get(VisualizerMetaField.total);
+      totalMinMax2 = minMaxMap2.get(VisualizerMetaField.total);
       y2Scale = d3.scaleLinear()
       .domain([totalMinMax2.min, totalMinMax2.max])
       .rangeRound([visualizerSize.chart.height, 0]);
@@ -122,13 +105,15 @@ export class AxisComponent extends BaseComponent {
     // x scale
     const labels = this.getLabels();
     const xScale = d3.scaleBand()
-    .domain(this.getLabels())
+    .domain(labels)
     .rangeRound([0, visualizerSize.chart.width])
     .padding(config.scalePadding)
     .paddingInner(config.scalePaddingInner)
     .paddingOuter(config.scalePaddingOuter);
 
     const xAxis = d3.axisBottom(xScale);
+    // TODO: you can have a color array instead of "schemeCategory20" things.
+    const colorScale = d3.scaleOrdinal('schemeCategory20');
     return {
       yScale,
       yAxis,
@@ -136,7 +121,12 @@ export class AxisComponent extends BaseComponent {
       xAxis,
       y2Scale,
       y2Axis,
-      labels
+      labels,
+      colorScale,
+      fields: config.dataFields,
+      fields2: config.data2Fields,
+      minMax: totalMinMax,
+      minMax2: totalMinMax2
     };
   }
 
@@ -177,7 +167,7 @@ export class AxisComponent extends BaseComponent {
   }
 
   render(config: VisualizerConfig) {
-    let visualizerSize = this.initSize();
+    let visualizerSize = initVisualizerSize(this.el);
     let unit = this.getUnit(config, visualizerSize);
     visualizerSize = this.getSize(
       visualizerSize,

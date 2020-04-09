@@ -12,3 +12,4 @@ export * from './scroll/scroll.component';
 export * from './loader/loader.component';
 export * from './visualizer/visualizer.component';
 export * from './form/fields/text/text.component';
+export * from './visualizer/bar/bar.component';
