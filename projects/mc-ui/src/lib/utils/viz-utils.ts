@@ -3,38 +3,29 @@ import {
   Location,
   VisualizerSize,
   MinMax,
-  VisualizerMetaField,
   VisualizerConfig,
-  VisualizerRenderInfo
+  VisualizerRenderInfo,
+  VisualizerChartSize
 } from '../shared.models';
 import * as d3 from 'd3';
 
-export function getMinMaxMapByField(
+export function getMinMax(
   fields: Array<string>,
-  data: Array<any>
-): Map<string, MinMax> {
-  return data.reduce((map, d) => {
+  data: Array<any>,
+  decorationMaxRate = 1
+): MinMax {
+  const mm = data.reduce((minMax: MinMax, d) => {
     fields.forEach(field => {
       const val = +d[field];
-      if (typeof val === 'number') {
-        const totalMinMax = map.get(VisualizerMetaField.total) || {
-          min: -Infinity,
-          max: Infinity
-        };
-        const minMax = map.get(field) || {
-          min: -Infinity,
-          max: Infinity
-        };
+      if (typeof val === 'number' && !isNaN(val)) {
         minMax.min = Math.min(minMax.min, val);
         minMax.max = Math.max(minMax.max, val);
-        totalMinMax.min = Math.min(totalMinMax.min, val);
-        totalMinMax.max = Math.max(totalMinMax.max, val);
-        map.set(field, minMax);
-        map.set(VisualizerMetaField.total, totalMinMax);
       }
     });
-    return map;
-  }, new Map<string, MinMax>());
+    return minMax;
+  }, {min: Infinity, max: -Infinity});
+  mm.max = mm.max * decorationMaxRate;
+  return mm;
 }
 
 export function renderChartContainer(
@@ -60,19 +51,25 @@ export function renderAxis(
   svg: any,
   location: Location,
   axis,
-  visualizerSize: Box,
+  size: VisualizerChartSize,
   themeClass: string[] = []
 ) {
   svg = svg.append('g').attr('class', themeClass.join(' '));
   switch (location) {
     case Location.BOTTOM:
-      svg = svg.attr('transform', `translate(0,${visualizerSize.height})`);
+      svg = svg.attr('transform', `translate(0,${size.height})`).call(axis);
+      if (size.rotateXAxisText) {
+        svg.selectAll('.tick text')
+            .attr('style', 'transform: rotate(-45deg) translate(-4px,-6px);text-anchor:end;');
+      }
       break;
     case Location.RIGHT:
-      svg = svg.attr('transform', `translate(${visualizerSize.width},0)`);
+      svg.attr('transform', `translate(${size.width},0)`).call(axis);
+      break;
+    case Location.LEFT:
+      svg.call(axis);
       break;
   }
-  svg.call(axis);
 }
 
 export function getSVGSize(el: HTMLElement, selector: string) {
@@ -106,11 +103,22 @@ export function getAxisSize(
   svg: any,
   location: Location,
   axis: any,
-  visualizerSize: Box,
+  visualizerSize: VisualizerSize,
   themeClass: string[] = []
 ) {
   renderAxis(svg, location, axis, visualizerSize, themeClass);
-  return getSVGSize(el, '.' + themeClass[0]);
+  const boxSize = getSVGSize(el, '.' + themeClass[0]);
+  switch (location) {
+    case Location.BOTTOM:
+      visualizerSize = applyXAxisTextSize(el, visualizerSize, themeClass[0]);
+      break;
+    case Location.LEFT:
+      visualizerSize.margin.left = boxSize.width;
+      break;
+    case Location.RIGHT:
+      visualizerSize.margin.right = boxSize.width;
+  }
+  return visualizerSize;
 }
 
 export function initVisualizerSize(el: HTMLElement): VisualizerSize {
@@ -121,15 +129,41 @@ export function initVisualizerSize(el: HTMLElement): VisualizerSize {
     height,
     chart: {
       width,
-      height
+      height,
+      rotateXAxisText: false // when overlapping the x axis text
     },
     margin: {
-      top: 0,
+      top: 0, // for showing the first y axis label
       left: 0,
       right: 0,
       bottom: 0
     }
   };
+}
+
+export function applyXAxisTextSize(el: any, size: VisualizerSize, cls: string) {
+  const els = el.querySelectorAll(`.${cls} .tick`);
+  const tickWidth = els.length > 1 ? getTranslateX(els[1]) - getTranslateX(els[0]) : -1;
+  let lastTextSize;
+  const maxWidth: any = Array.from(els).reduce((max: number, _el: any) => {
+    lastTextSize = _el.getBBox();
+    return Math.max(lastTextSize.width, max);
+  }, -Infinity);
+  let textHeight = lastTextSize.height;
+  if (tickWidth < maxWidth) {
+    size.chart.rotateXAxisText = true;
+    textHeight = maxWidth;
+  }
+  size.margin.top = lastTextSize.height / 2;
+  size.margin.right = maxWidth / 2;
+  size.margin.bottom = size.chart.rotateXAxisText ? textHeight + 5 : lastTextSize.height;
+  return size;
+}
+
+export function getTranslateX(el) {
+  const t = el.getAttribute('transform');
+  const val = t.split('translate(')[1].split(',')[0];
+  return +val;
 }
 
 export function renderRects(
@@ -138,7 +172,7 @@ export function renderRects(
 ) {
   const { svg, unit, size } = renderInfo;
   const data = config.data.data;
-  const animDuration = 300;
+  const animDuration = 1000;
 
   unit.xScaleInner = d3
     .scaleBand()
@@ -155,9 +189,7 @@ export function renderRects(
     .attr('class', 'group rects')
     .attr('transform', (label: string) => `translate(${unit.xScale(label)},0)`);
 
-  rects = rects.selectAll('rect').data((d, i) => {
-    unit.fields.map(field => ({ field, value: data[i][field] }));
-  });
+  rects = rects.selectAll('rect').data((d, i) => unit.fields.map(field => ({ field, value: +data[i][field] })));
 
   // for updating data
   rects
@@ -181,11 +213,12 @@ export function renderRects(
     .attr('height', 0)
     .transition()
     .duration(animDuration)
-    .ease(d3.easeSinOut)
+    .ease(d3.easeQuadIn)
     .attr('y', d => (d.value > 0 ? unit.yScale(d.value) : unit.yScale(0)))
-    .attr('height', d =>
-      unit.minMax2.min < 0
+    .attr('height', d => {
+      const h = unit.minMax.min < 0
         ? Math.abs(unit.yScale(d.value) - unit.yScale(0))
-        : size.chart.height - unit.yScale(d.value)
-    );
+        : size.chart.height - unit.yScale(d.value);
+      return h < 0 ? 0 : h;
+    });
 }

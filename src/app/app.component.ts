@@ -19,6 +19,7 @@ import { NasdaqCompany } from './models';
 export class AppComponent extends AppBaseComponent {
   data: VisualizerData;
   dailyData: VisualizerData;
+  barData: VisualizerData;
   VisualizerType = VisualizerType;
 
   constructor(protected vcr: ViewContainerRef, private appService: AppService) {
@@ -36,7 +37,14 @@ export class AppComponent extends AppBaseComponent {
   loadDailyDataBySymbol(symbol: string) {
     this.appService
       .getDailyDataBySymbol(symbol)
-      .subscribe(data => (this.dailyData = data));
+      .subscribe(data => {
+        this.dailyData = data;
+        // Test data
+        this.barData = {
+          columns: data.columns,
+          data: data.data.slice(0, 10)
+        };
+      });
   }
 
   onTextAction(e: InputActionEvent) {

@@ -9,14 +9,21 @@ import {
 import {
   renderRects
 } from '../../../utils/viz-utils';
-import * as d3 from 'd3';
+
+interface State {
+  axisConfig: VisualizerConfig;
+}
 
 @Component({
   selector: 'mc-bar',
   styleUrls: ['bar.component.scss'],
-  template: ''
+  templateUrl: 'bar.component.html'
 })
 export class BarComponent extends BaseComponent {
+
+  defaultState: State = {
+    axisConfig: null
+  };
 
   defaultConfig: VisualizerConfig = {
     type: VisualizerType.BAR,
@@ -31,12 +38,18 @@ export class BarComponent extends BaseComponent {
     data: null
   };
 
+  state: State;
+
   _config: VisualizerConfig;
 
   @Output() action = new EventEmitter<VisualizerActionEvent>();
 
   constructor(protected er: ElementRef) {
     super(er);
+  }
+
+  applyState(config: VisualizerConfig) {
+    this.setState({ axisConfig: config });
   }
 
   onAxisAction(e: VisualizerActionEvent) {

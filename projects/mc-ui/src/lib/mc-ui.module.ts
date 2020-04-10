@@ -17,7 +17,8 @@ import {
   LoaderComponent,
   VisualizerComponent,
   TextComponent,
-  BarComponent
+  BarComponent,
+  AxisComponent
 } from './components';
 import {
   PerfectScrollbarModule
@@ -42,7 +43,8 @@ import { HttpClientModule } from '@angular/common/http';
     PopupComponent,
     VisualizerComponent,
     BarComponent,
-    TextComponent
+    TextComponent,
+    AxisComponent
   ],
   exports: [
     ListComponent,
@@ -59,7 +61,8 @@ import { HttpClientModule } from '@angular/common/http';
     PopupComponent,
     VisualizerComponent,
     BarComponent,
-    TextComponent
+    TextComponent,
+    AxisComponent
   ],
   providers: [
     SharedService

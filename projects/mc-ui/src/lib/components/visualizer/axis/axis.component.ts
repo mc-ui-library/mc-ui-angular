@@ -8,8 +8,6 @@ import {
   Location,
   VisualizerMetaField,
   VisualizerUnit,
-  ComponentActionEvent,
-  ComponentAction,
   VisualizerAction,
   VisualizerRenderInfo
 } from '../../../shared.models';
@@ -18,8 +16,8 @@ import {
   getAxisSize,
   renderAxis,
   renderGrid,
-  getMinMaxMapByField,
-  initVisualizerSize
+  initVisualizerSize,
+  getMinMax
 } from '../../../utils/viz-utils';
 import * as d3 from 'd3';
 
@@ -42,7 +40,8 @@ export class AxisComponent extends BaseComponent {
     scalePadding: 1,
     scalePaddingInner: 0.2,
     scalePaddingOuter: 0,
-    data: null
+    data: null,
+    decorationMaxRate: 1.1
   };
 
   _config: VisualizerConfig;
@@ -81,23 +80,21 @@ export class AxisComponent extends BaseComponent {
   }
 
   getUnit(config: VisualizerConfig, visualizerSize: VisualizerSize): VisualizerUnit {
-    const minMaxMap = getMinMaxMapByField(config.dataFields, config.data.data);
-    const totalMinMax = minMaxMap.get(VisualizerMetaField.total);
+    const minMax = getMinMax(config.dataFields, config.data.data, config.decorationMaxRate);
     // y scale
     const yScale = d3.scaleLinear()
-    .domain([totalMinMax.min, totalMinMax.max])
+    .domain([minMax.min, minMax.max])
     .rangeRound([visualizerSize.chart.height, 0]);
 
     const yAxis = d3.axisLeft(yScale).ticks(config.ticks);
 
     let y2Scale;
     let y2Axis;
-    let totalMinMax2;
+    let minMax2;
     if (config.data2Fields) {
-      const minMaxMap2 = getMinMaxMapByField(config.data2Fields, config.data.data);
-      totalMinMax2 = minMaxMap2.get(VisualizerMetaField.total);
+      minMax2 = getMinMax(config.data2Fields, config.data.data, config.decorationMaxRate);
       y2Scale = d3.scaleLinear()
-      .domain([totalMinMax2.min, totalMinMax2.max])
+      .domain([minMax2.min, minMax2.max])
       .rangeRound([visualizerSize.chart.height, 0]);
       y2Axis = d3.axisRight(y2Scale).ticks(config.ticks);
     }
@@ -112,8 +109,8 @@ export class AxisComponent extends BaseComponent {
     .paddingOuter(config.scalePaddingOuter);
 
     const xAxis = d3.axisBottom(xScale);
-    // TODO: you can have a color array instead of "schemeCategory20" things.
-    const colorScale = d3.scaleOrdinal('schemeCategory20');
+    // TODO: you can have a color array instead of "schemeCategory10".
+    const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
     return {
       yScale,
       yAxis,
@@ -125,8 +122,8 @@ export class AxisComponent extends BaseComponent {
       colorScale,
       fields: config.dataFields,
       fields2: config.data2Fields,
-      minMax: totalMinMax,
-      minMax2: totalMinMax2
+      minMax,
+      minMax2
     };
   }
 
@@ -137,23 +134,17 @@ export class AxisComponent extends BaseComponent {
     // *** render for measuring size ***
     const svg = renderChartContainer(this.el, visualizerSize);
     // left / right margin
-    let size = getAxisSize(this.el, svg, Location.LEFT, unit.yAxis, visualizerSize, [
+    visualizerSize = getAxisSize(this.el, svg, Location.LEFT, unit.yAxis, visualizerSize, [
       'y-axis'
     ]);
-    visualizerSize.margin.left = size.width;
     if (this._config.data2Fields) {
-      size = getAxisSize(this.el, svg, Location.RIGHT, unit.y2Axis, visualizerSize, [
+      visualizerSize = getAxisSize(this.el, svg, Location.RIGHT, unit.y2Axis, visualizerSize, [
         'y2-axis'
       ]);
-      visualizerSize.margin.right = size.width;
     }
-    size = getAxisSize(this.el, svg, Location.BOTTOM, unit.xAxis, visualizerSize, [
+    visualizerSize = getAxisSize(this.el, svg, Location.BOTTOM, unit.xAxis, visualizerSize, [
       'x-axis'
     ]);
-    visualizerSize.margin.bottom = size.height;
-
-    // TODO: need to measure the label width that is overlap each other.
-    // If it is overlaped, the label direacton should be 45 degree or something to avoid the overlap.
 
     // save for re-use the chart drawing area
     visualizerSize.chart.height =

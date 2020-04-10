@@ -292,6 +292,7 @@ export interface VisualizerConfig extends ComponentConfig {
   scalePadding?: number;
   scalePaddingInner?: number;
   scalePaddingOuter?: number;
+  decorationMaxRate?: number;
 }
 
 export interface TextConfig extends ComponentConfig {
@@ -514,20 +515,24 @@ export interface ExtraHeightPage {
   extraHeight: number;
 }
 
+export interface VisualizerChartSize {
+  width?: number;
+  height?: number;
+  rotateXAxisText?: boolean;
+}
+
+export interface Margin {
+  left?: number;
+  right?: number;
+  bottom?: number;
+  top?: number;
+}
 export interface VisualizerSize {
   width: number;
   height: number;
   // container - margin size for easy using.
-  chart?: {
-    width?: number;
-    height?: number;
-  };
-  margin?: {
-    left?: number;
-    right?: number;
-    bottom?: number;
-    top?: number;
-  };
+  chart?: VisualizerChartSize;
+  margin?: Margin;
 }
 
 /**

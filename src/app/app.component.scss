@@ -1,0 +1,15 @@
+@import './../css/vars';
+
+:host {
+  @include container;
+  .body {
+    .left {
+      float: left;
+      width: 50%;
+    }
+    .right {
+      float: left;
+      width: 50%;
+    }
+  }
+}

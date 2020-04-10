@@ -13,6 +13,7 @@
       // assign a color in the component.themes.scss file.
     }
     .cells {
+      white-space: nowrap;
       .cell {
         cursor: pointer;
         overflow: hidden;

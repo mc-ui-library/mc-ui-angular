@@ -22,3 +22,10 @@ $c-bg: $c-gray;
 // semantic
 
 $c-active: $c-blue;
+
+@mixin container {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}

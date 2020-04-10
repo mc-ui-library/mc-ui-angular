@@ -1,22 +1,28 @@
 <mc-text [config]="{
   name: 'company',
-  value: 'a'
+  value: 'ASTC'
 }" (action)="onTextAction($event)"></mc-text>
-<mc-visualizer [style.height.px]="350" [config]="{
+<div class="body">
+  <div class="left">
+    <mc-visualizer [style.height.px]="350" [config]="{
   themes: ['companies'],
   gridConfig: {
     idField: 'symbol'
   }
 }" [data]="data" (action)="onCompanyVizAction($event)"></mc-visualizer>
-<mc-visualizer [style.height.px]="350" [config]="{
+    <mc-visualizer [style.height.px]="350" [config]="{
   themes: ['daily'],
   gridConfig: {
     idField: 'Date'
   }
 }" [data]="dailyData"></mc-visualizer>
-<mc-visualizer [style.height.px]="350" [config]="{
+  </div>
+  <div class="right">
+    <mc-visualizer [style.height.px]="350" [config]="{
   themes: ['daily'],
   type: VisualizerType.BAR,
   labelField: 'Date',
-  dataFields: ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volumn']
-}" [data]="dailyData"></mc-visualizer>
+  dataFields: ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']
+}" [data]="barData"></mc-visualizer>
+  </div>
+</div>
