@@ -283,6 +283,7 @@ export interface GridBodyConfig extends ComponentConfig {
 export interface VisualizerConfig extends ComponentConfig {
   type: VisualizerType;
   gridConfig?: GridConfig; // type's config
+  barConfig?: BarConfig;
   dataFields?: Array<string>;
   data2Fields?: Array<string>; // for bar-line chart etc.
   labelField?: string;
@@ -293,6 +294,10 @@ export interface VisualizerConfig extends ComponentConfig {
   scalePaddingInner?: number;
   scalePaddingOuter?: number;
   decorationMaxRate?: number;
+}
+
+export interface BarConfig {
+  barWidth?: number;
 }
 
 export interface TextConfig extends ComponentConfig {
@@ -564,6 +569,7 @@ export interface VisualizerUnit {
   yScale?: any;
   yAxis?: any;
   xScale?: any;
+  // rect group
   xScaleInner?: any;
   xAxis?: any;
   y2Scale?: any;
@@ -574,6 +580,8 @@ export interface VisualizerUnit {
   fields2?: Array<string>;
   minMax?: MinMax;
   minMax2?: MinMax;
+  // line
+  line?: any;
 }
 
 export interface VisualizerRenderInfo {

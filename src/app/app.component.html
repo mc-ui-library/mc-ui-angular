@@ -1,28 +1,54 @@
-<mc-text [config]="{
+<mc-text
+  [config]="{
   name: 'company',
   value: 'ASTC'
-}" (action)="onTextAction($event)"></mc-text>
+}"
+  (action)="onTextAction($event)"
+></mc-text>
 <div class="body">
   <div class="left">
-    <mc-visualizer [style.height.px]="350" [config]="{
+    <mc-visualizer
+      [style.height.px]="350"
+      [config]="{
   themes: ['companies'],
   gridConfig: {
     idField: 'symbol'
   }
-}" [data]="data" (action)="onCompanyVizAction($event)"></mc-visualizer>
-    <mc-visualizer [style.height.px]="350" [config]="{
+}"
+      [data]="data"
+      (action)="onCompanyVizAction($event)"
+    ></mc-visualizer>
+    <mc-visualizer
+      [style.height.px]="350"
+      [config]="{
   themes: ['daily'],
   gridConfig: {
     idField: 'Date'
   }
-}" [data]="dailyData"></mc-visualizer>
+}"
+      [data]="dailyData"
+    ></mc-visualizer>
   </div>
   <div class="right">
-    <mc-visualizer [style.height.px]="350" [config]="{
+    <mc-visualizer
+      [style.height.px]="350"
+      [config]="{
   themes: ['daily'],
   type: VisualizerType.BAR,
   labelField: 'Date',
   dataFields: ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']
-}" [data]="barData"></mc-visualizer>
+}"
+      [data]="barData"
+    ></mc-visualizer>
+    <mc-visualizer
+      [style.height.px]="350"
+      [config]="{
+  themes: ['daily'],
+  type: VisualizerType.LINE,
+  labelField: 'Date',
+  dataFields: ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']
+}"
+      [data]="lineData"
+    ></mc-visualizer>
   </div>
 </div>

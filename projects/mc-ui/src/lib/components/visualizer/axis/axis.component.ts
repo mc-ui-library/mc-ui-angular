@@ -6,7 +6,6 @@ import {
   VisualizerConfig,
   VisualizerType,
   Location,
-  VisualizerMetaField,
   VisualizerUnit,
   VisualizerAction,
   VisualizerRenderInfo
@@ -101,12 +100,31 @@ export class AxisComponent extends BaseComponent {
 
     // x scale
     const labels = this.getLabels();
-    const xScale = d3.scaleBand()
+    let xScale = d3.scaleBand()
     .domain(labels)
     .rangeRound([0, visualizerSize.chart.width])
     .padding(config.scalePadding)
     .paddingInner(config.scalePaddingInner)
     .paddingOuter(config.scalePaddingOuter);
+
+    // apply barWidth if needed
+    if (this._config.barConfig && this._config.barConfig.barWidth) {
+      const barWidth = this._config.barConfig.barWidth;
+      const barGroupWidth = xScale.bandwidth();
+      const newBarGroupWidth = barWidth * config.dataFields.length;
+      if (barGroupWidth < newBarGroupWidth) {
+        const widthGap = newBarGroupWidth - barGroupWidth;
+        const extraWidth = widthGap * labels.length;
+        visualizerSize.width += extraWidth;
+        visualizerSize.chart.width += extraWidth;
+        xScale = d3.scaleBand()
+        .domain(labels)
+        .rangeRound([0, visualizerSize.chart.width])
+        .padding(config.scalePadding)
+        .paddingInner(config.scalePaddingInner)
+        .paddingOuter(config.scalePaddingOuter);
+      }
+    }
 
     const xAxis = d3.axisBottom(xScale);
     // TODO: you can have a color array instead of "schemeCategory10".

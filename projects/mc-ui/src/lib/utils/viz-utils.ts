@@ -14,16 +14,19 @@ export function getMinMax(
   data: Array<any>,
   decorationMaxRate = 1
 ): MinMax {
-  const mm = data.reduce((minMax: MinMax, d) => {
-    fields.forEach(field => {
-      const val = +d[field];
-      if (typeof val === 'number' && !isNaN(val)) {
-        minMax.min = Math.min(minMax.min, val);
-        minMax.max = Math.max(minMax.max, val);
-      }
-    });
-    return minMax;
-  }, {min: Infinity, max: -Infinity});
+  const mm = data.reduce(
+    (minMax: MinMax, d) => {
+      fields.forEach(field => {
+        const val = +d[field];
+        if (typeof val === 'number' && !isNaN(val)) {
+          minMax.min = Math.min(minMax.min, val);
+          minMax.max = Math.max(minMax.max, val);
+        }
+      });
+      return minMax;
+    },
+    { min: Infinity, max: -Infinity }
+  );
   mm.max = mm.max * decorationMaxRate;
   return mm;
 }
@@ -59,8 +62,12 @@ export function renderAxis(
     case Location.BOTTOM:
       svg = svg.attr('transform', `translate(0,${size.height})`).call(axis);
       if (size.rotateXAxisText) {
-        svg.selectAll('.tick text')
-            .attr('style', 'transform: rotate(-45deg) translate(-4px,-6px);text-anchor:end;');
+        svg
+          .selectAll('.tick text')
+          .attr(
+            'style',
+            'transform: rotate(-45deg) translate(-4px,-6px);text-anchor:end;'
+          );
       }
       break;
     case Location.RIGHT:
@@ -143,7 +150,8 @@ export function initVisualizerSize(el: HTMLElement): VisualizerSize {
 
 export function applyXAxisTextSize(el: any, size: VisualizerSize, cls: string) {
   const els = el.querySelectorAll(`.${cls} .tick`);
-  const tickWidth = els.length > 1 ? getTranslateX(els[1]) - getTranslateX(els[0]) : -1;
+  const tickWidth =
+    els.length > 1 ? getTranslateX(els[1]) - getTranslateX(els[0]) : -1;
   let lastTextSize;
   const maxWidth: any = Array.from(els).reduce((max: number, _el: any) => {
     lastTextSize = _el.getBBox();
@@ -156,7 +164,9 @@ export function applyXAxisTextSize(el: any, size: VisualizerSize, cls: string) {
   }
   size.margin.top = lastTextSize.height / 2;
   size.margin.right = maxWidth / 2;
-  size.margin.bottom = size.chart.rotateXAxisText ? textHeight + 5 : lastTextSize.height;
+  size.margin.bottom = size.chart.rotateXAxisText
+    ? textHeight + 5
+    : lastTextSize.height;
   return size;
 }
 
@@ -189,7 +199,11 @@ export function renderRects(
     .attr('class', 'group rects')
     .attr('transform', (label: string) => `translate(${unit.xScale(label)},0)`);
 
-  rects = rects.selectAll('rect').data((d, i) => unit.fields.map(field => ({ field, value: +data[i][field] })));
+  rects = rects
+    .selectAll('rect')
+    .data((d, i) =>
+      unit.fields.map(field => ({ field, value: +data[i][field] }))
+    );
 
   // for updating data
   rects
@@ -216,9 +230,88 @@ export function renderRects(
     .ease(d3.easeQuadIn)
     .attr('y', d => (d.value > 0 ? unit.yScale(d.value) : unit.yScale(0)))
     .attr('height', d => {
-      const h = unit.minMax.min < 0
-        ? Math.abs(unit.yScale(d.value) - unit.yScale(0))
-        : size.chart.height - unit.yScale(d.value);
+      const h =
+        unit.minMax.min < 0
+          ? Math.abs(unit.yScale(d.value) - unit.yScale(0))
+          : size.chart.height - unit.yScale(d.value);
       return h < 0 ? 0 : h;
     });
+}
+
+export function renderLines(
+  config: VisualizerConfig,
+  renderInfo: VisualizerRenderInfo
+) {
+  const { svg, unit, size } = renderInfo;
+  const data = config.data.data;
+  const animDuration = 1000;
+
+  const fieldLabelValueMap = unit.labels.reduce((map, label, rowIndex) => {
+    unit.fields.forEach(field => {
+      const labelValues = map.get(field) || [];
+      labelValues.push({ field, label, value: data[rowIndex][field] });
+      map.set(field, labelValues);
+    });
+    return map;
+  }, new Map<string, Array<any>>());
+
+  const lineData = [...fieldLabelValueMap.values()];
+
+  unit.line = d3
+    .line()
+    .x((d: any) => unit.xScale(d.label))
+    .y((d: any) => unit.yScale(d.value));
+
+  const line = svg
+    .selectAll('.lines')
+    .data(lineData)
+    .enter()
+    .append('g')
+    .attr('class', 'lines')
+    .attr('transform', d => `translate(${unit.xScale.bandwidth() / 2},0)`);
+
+  const path = line
+    .append('path')
+    .attr('class', 'line')
+    .attr('d', d => unit.line(d))
+    .style('stroke', d => unit.colorScale(d[0].field))
+    .style('stroke-width', 1.5)
+    .style('stroke-linejoin', 'round')
+    .style('stroke-linecap', 'round')
+    .style('fill', 'none')
+    .attr('stroke-dasharray', function() {
+      const totalLength = this.getTotalLength();
+      return totalLength + ' ' + totalLength;
+    })
+    .attr('stroke-dashoffset', function() {
+      const totalLength = this.getTotalLength();
+      return totalLength;
+    })
+    .transition()
+    .duration(animDuration)
+    .ease(d3.easeLinear)
+    .attr('stroke-dashoffset', 0);
+
+  const circle = svg
+    .selectAll('.circles')
+    .data(lineData)
+    .enter()
+    .append('g')
+    .attr('class', 'circles')
+    .attr('transform', d => `translate(${unit.xScale.bandwidth() / 2},0)`);
+
+  const circles = circle
+    .selectAll('circle')
+    .data(d => d)
+    .enter()
+    .append('circle');
+  circles
+    .attr('class', 'circle')
+    .attr('cx', d => unit.xScale(d.label))
+    .attr('cy', d => unit.yScale(d.value))
+    .attr('r', '2')
+    .attr('onmouseover', 'this.setAttribute("r", 4)')
+    .attr('onmouseout', 'this.setAttribute("r", 2)')
+    .style('stroke', d => unit.colorScale(d.field))
+    .style('fill', '#fff');
 }

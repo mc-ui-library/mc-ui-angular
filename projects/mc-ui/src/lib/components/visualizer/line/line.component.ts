@@ -7,7 +7,7 @@ import {
   VisualizerAction
 } from '../../../shared.models';
 import {
-  renderRects
+  renderLines
 } from '../../../utils/viz-utils';
 
 interface State {
@@ -15,21 +15,18 @@ interface State {
 }
 
 @Component({
-  selector: 'mc-bar',
-  styleUrls: ['bar.component.scss'],
-  templateUrl: 'bar.component.html'
+  selector: 'mc-line',
+  styleUrls: ['line.component.scss'],
+  templateUrl: 'line.component.html'
 })
-export class BarComponent extends BaseComponent {
+export class LineComponent extends BaseComponent {
 
   defaultState: State = {
     axisConfig: null
   };
 
   defaultConfig: VisualizerConfig = {
-    type: VisualizerType.BAR,
-    barConfig: {
-      barWidth: 20
-    },
+    type: VisualizerType.LINE,
     labelField: '',
     dataFields: null,
     data2Fields: null,
@@ -58,7 +55,7 @@ export class BarComponent extends BaseComponent {
   onAxisAction(e: VisualizerActionEvent) {
     switch (e.action) {
       case VisualizerAction.RENDERED:
-        renderRects(e.config, e.renderInfo);
+        renderLines(e.config, e.renderInfo);
         break;
     }
   }

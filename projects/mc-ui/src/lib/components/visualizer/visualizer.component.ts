@@ -20,6 +20,7 @@ import { SharedService } from '../../shared.service';
 import { GridComponent } from '../grid/grid.component';
 import { Subscription } from 'rxjs';
 import { BarComponent } from './bar/bar.component';
+import { LineComponent } from './line/line.component';
 
 @Component({
   selector: 'mc-visualizer',
@@ -75,6 +76,9 @@ export class VisualizerComponent extends BaseComponent {
         case VisualizerType.BAR:
           this.renderBar(config);
           break;
+        case VisualizerType.LINE:
+          this.renderLine(config);
+          break;
       }
     }
   }
@@ -83,6 +87,17 @@ export class VisualizerComponent extends BaseComponent {
     this.removeContent();
     const cr: ComponentRef<BarComponent> = this.sharedService.addComponent(
       BarComponent,
+      this.el
+    );
+    const instance = cr.instance;
+    instance.config = config;
+    this.cr = cr;
+  }
+
+  renderLine(config: VisualizerConfig) {
+    this.removeContent();
+    const cr: ComponentRef<LineComponent> = this.sharedService.addComponent(
+      LineComponent,
       this.el
     );
     const instance = cr.instance;

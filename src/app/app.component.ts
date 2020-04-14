@@ -20,6 +20,7 @@ export class AppComponent extends AppBaseComponent {
   data: VisualizerData;
   dailyData: VisualizerData;
   barData: VisualizerData;
+  lineData: VisualizerData;
   VisualizerType = VisualizerType;
 
   constructor(protected vcr: ViewContainerRef, private appService: AppService) {
@@ -41,6 +42,10 @@ export class AppComponent extends AppBaseComponent {
         this.dailyData = data;
         // Test data
         this.barData = {
+          columns: data.columns,
+          data: data.data.slice(0, 10)
+        };
+        this.lineData = {
           columns: data.columns,
           data: data.data.slice(0, 10)
         };
