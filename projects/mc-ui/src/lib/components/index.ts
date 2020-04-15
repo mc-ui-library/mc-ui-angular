@@ -15,3 +15,4 @@ export * from './form/fields/text/text.component';
 export * from './visualizer/bar/bar.component';
 export * from './visualizer/line/line.component';
 export * from './visualizer/axis/axis.component';
+export * from './visualizer/boxplot/boxplot.component';

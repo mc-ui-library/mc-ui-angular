@@ -7,7 +7,7 @@ import {
   VisualizerAction
 } from '../../../shared.models';
 import {
-  renderRects
+  renderLines, renderBoxplots
 } from '../../../utils/viz-utils';
 
 interface State {
@@ -15,20 +15,25 @@ interface State {
 }
 
 @Component({
-  selector: 'mc-bar',
-  styleUrls: ['bar.component.scss'],
-  templateUrl: 'bar.component.html'
+  selector: 'mc-boxplot',
+  styleUrls: ['boxplot.component.scss'],
+  templateUrl: 'boxplot.component.html'
 })
-export class BarComponent extends BaseComponent {
+export class BoxplotComponent extends BaseComponent {
 
   defaultState: State = {
     axisConfig: null
   };
 
   defaultConfig: VisualizerConfig = {
-    type: VisualizerType.BAR,
-    barConfig: {
-      barWidth: null
+    type: VisualizerType.BOXPLOT,
+    boxplotConfig: {
+      boxplotField: {
+        min: 'Low',
+        max: 'High',
+        start: 'Open',
+        end: 'Close'
+      }
     },
     labelField: '',
     dataFields: null,
@@ -58,7 +63,7 @@ export class BarComponent extends BaseComponent {
   onAxisAction(e: VisualizerActionEvent) {
     switch (e.action) {
       case VisualizerAction.RENDERED:
-        renderRects(e.config, e.renderInfo);
+        renderBoxplots(e.config, e.renderInfo);
         break;
     }
   }

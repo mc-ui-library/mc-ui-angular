@@ -21,6 +21,7 @@ import { GridComponent } from '../grid/grid.component';
 import { Subscription } from 'rxjs';
 import { BarComponent } from './bar/bar.component';
 import { LineComponent } from './line/line.component';
+import { BoxplotComponent } from './boxplot/boxplot.component';
 
 @Component({
   selector: 'mc-visualizer',
@@ -79,8 +80,22 @@ export class VisualizerComponent extends BaseComponent {
         case VisualizerType.LINE:
           this.renderLine(config);
           break;
+        case VisualizerType.BOXPLOT:
+          this.renderBoxplot(config);
+          break;
       }
     }
+  }
+
+  renderBoxplot(config: VisualizerConfig) {
+    this.removeContent();
+    const cr: ComponentRef<BoxplotComponent> = this.sharedService.addComponent(
+      BoxplotComponent,
+      this.el
+    );
+    const instance = cr.instance;
+    instance.config = config;
+    this.cr = cr;
   }
 
   renderBar(config: VisualizerConfig) {
@@ -113,11 +128,16 @@ export class VisualizerComponent extends BaseComponent {
     );
     const instance = cr.instance;
     const { columns, data } = config.data;
+    const fieldMap = new Set(config.dataFields || []);
+    let dataColumns = columns;
+    if (fieldMap.size) {
+      dataColumns = dataColumns.filter(col => fieldMap.has(col.field));
+    }
     const cfg: GridConfig = Object.assign(
       {
         themes: ['visualizer', ...config.themes],
         rowHeight: 42,
-        columns,
+        columns: dataColumns,
         data: {
           rows: data,
           rowCount: data.length

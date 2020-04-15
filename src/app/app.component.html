@@ -24,7 +24,8 @@
   themes: ['daily'],
   gridConfig: {
     idField: 'Date'
-  }
+  },
+  dataFields: ['Open', 'High', 'Low', 'Close']
 }"
       [data]="dailyData"
     ></mc-visualizer>
@@ -36,7 +37,7 @@
   themes: ['daily'],
   type: VisualizerType.BAR,
   labelField: 'Date',
-  dataFields: ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']
+  dataFields: ['Open', 'High', 'Low', 'Close']
 }"
       [data]="barData"
     ></mc-visualizer>
@@ -46,9 +47,19 @@
   themes: ['daily'],
   type: VisualizerType.LINE,
   labelField: 'Date',
-  dataFields: ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']
+  dataFields: ['Open', 'High', 'Low', 'Close']
 }"
       [data]="lineData"
+    ></mc-visualizer>
+    <mc-visualizer
+      [style.height.px]="350"
+      [config]="{
+  themes: ['daily'],
+  type: VisualizerType.BOXPLOT,
+  labelField: 'Date',
+  dataFields: ['Open', 'High', 'Low', 'Close']
+}"
+      [data]="boxplotData"
     ></mc-visualizer>
   </div>
 </div>

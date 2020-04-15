@@ -5,7 +5,8 @@ import {
   MinMax,
   VisualizerConfig,
   VisualizerRenderInfo,
-  VisualizerChartSize
+  VisualizerChartSize,
+  VisualizerData
 } from '../shared.models';
 import * as d3 from 'd3';
 
@@ -238,6 +239,18 @@ export function renderRects(
     });
 }
 
+export function getLabelValues(labels: Array<string>, fields: Array<string>, data: Array<any>) {
+  const fieldLabelValueMap = labels.reduce((map, label, rowIndex) => {
+    fields.forEach(field => {
+      const labelValues = map.get(field) || [];
+      labelValues.push({ field, label, value: data[rowIndex][field] });
+      map.set(field, labelValues);
+    });
+    return map;
+  }, new Map<string, Array<any>>());
+  return [...fieldLabelValueMap.values()];
+}
+
 export function renderLines(
   config: VisualizerConfig,
   renderInfo: VisualizerRenderInfo
@@ -246,16 +259,7 @@ export function renderLines(
   const data = config.data.data;
   const animDuration = 1000;
 
-  const fieldLabelValueMap = unit.labels.reduce((map, label, rowIndex) => {
-    unit.fields.forEach(field => {
-      const labelValues = map.get(field) || [];
-      labelValues.push({ field, label, value: data[rowIndex][field] });
-      map.set(field, labelValues);
-    });
-    return map;
-  }, new Map<string, Array<any>>());
-
-  const lineData = [...fieldLabelValueMap.values()];
+  const lineData = getLabelValues(unit.labels, unit.fields, data);
 
   unit.line = d3
     .line()
@@ -314,4 +318,51 @@ export function renderLines(
     .attr('onmouseout', 'this.setAttribute("r", 2)')
     .style('stroke', d => unit.colorScale(d.field))
     .style('fill', '#fff');
+}
+
+
+export function renderBoxplots(
+  config: VisualizerConfig,
+  renderInfo: VisualizerRenderInfo
+) {
+  const { svg, unit, size } = renderInfo;
+  const data = config.data.data;
+  const boxplotField = config.boxplotConfig.boxplotField;
+
+  let min: number;
+  let max: number;
+  svg.append('g')
+  .selectAll('line')
+    .data(unit.labels)
+    .enter()
+    .append('line')
+    .attr('class', 'item line')
+    .attr('x1', label => unit.xScale(label) + unit.xScale.bandwidth(label) / 2)
+    .attr('y1', (label, i) => {
+      min = +data[i][boxplotField.min];
+      max = +data[i][boxplotField.max];
+      return unit.yScale(min);
+    })
+    .attr('x2', label => unit.xScale(label) + unit.xScale.bandwidth(label) / 2)
+    .attr('y2', label => unit.yScale(max))
+    .style('stroke', 'black');
+
+  let start: number;
+  let end: number;
+  svg.append('g')
+  .selectAll('rect')
+    .data(unit.labels)
+    .enter()
+    .append('rect')
+    .attr('class', 'item rect')
+    .attr('width', label => unit.xScale.bandwidth(label))
+    .attr('x', label => unit.xScale(label))
+    .attr('fill', (label, i) => {
+      start = +data[i][boxplotField.start];
+      end = +data[i][boxplotField.end];
+      return start > end ? 'red' : 'blue';
+    })
+    .attr('y', (label, i) => size.chart.height - (start > end ? unit.yScale(start) : unit.yScale(end)))
+    .attr('height', (d, i) => Math.abs(unit.yScale(start) - unit.yScale(end)));
+
 }

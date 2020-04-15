@@ -19,7 +19,8 @@ import {
   TextComponent,
   BarComponent,
   AxisComponent,
-  LineComponent
+  LineComponent,
+  BoxplotComponent
 } from './components';
 import {
   PerfectScrollbarModule
@@ -46,7 +47,8 @@ import { HttpClientModule } from '@angular/common/http';
     BarComponent,
     TextComponent,
     AxisComponent,
-    LineComponent
+    LineComponent,
+    BoxplotComponent
   ],
   exports: [
     ListComponent,
@@ -65,7 +67,8 @@ import { HttpClientModule } from '@angular/common/http';
     BarComponent,
     TextComponent,
     AxisComponent,
-    LineComponent
+    LineComponent,
+    BoxplotComponent
   ],
   providers: [
     SharedService

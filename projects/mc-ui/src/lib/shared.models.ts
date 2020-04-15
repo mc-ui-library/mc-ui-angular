@@ -134,7 +134,8 @@ export enum VisualizerType {
   BAR,
   HORIZONTAL_BAR,
   LINE,
-  BAR_LINE
+  BAR_LINE,
+  BOXPLOT
 }
 
 export enum VisualizerScaleType {
@@ -284,6 +285,7 @@ export interface VisualizerConfig extends ComponentConfig {
   type: VisualizerType;
   gridConfig?: GridConfig; // type's config
   barConfig?: BarConfig;
+  boxplotConfig?: BoxplotConfig;
   dataFields?: Array<string>;
   data2Fields?: Array<string>; // for bar-line chart etc.
   labelField?: string;
@@ -298,6 +300,10 @@ export interface VisualizerConfig extends ComponentConfig {
 
 export interface BarConfig {
   barWidth?: number;
+}
+
+export interface BoxplotConfig {
+  boxplotField: BoxplotField;
 }
 
 export interface TextConfig extends ComponentConfig {
@@ -588,4 +594,11 @@ export interface VisualizerRenderInfo {
   svg?: any;
   unit?: VisualizerUnit;
   size?: VisualizerSize;
+}
+
+export interface BoxplotField {
+  start: string;
+  end: string;
+  max: string;
+  min: string;
 }
