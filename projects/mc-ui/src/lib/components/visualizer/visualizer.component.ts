@@ -22,6 +22,7 @@ import { Subscription } from 'rxjs';
 import { BarComponent } from './bar/bar.component';
 import { LineComponent } from './line/line.component';
 import { BoxplotComponent } from './boxplot/boxplot.component';
+import { StockComponent } from './stock/stock.component';
 
 @Component({
   selector: 'mc-visualizer',
@@ -83,6 +84,9 @@ export class VisualizerComponent extends BaseComponent {
         case VisualizerType.BOXPLOT:
           this.renderBoxplot(config);
           break;
+        case VisualizerType.STOCK:
+          this.renderStock(config);
+          break;
       }
     }
   }
@@ -113,6 +117,17 @@ export class VisualizerComponent extends BaseComponent {
     this.removeContent();
     const cr: ComponentRef<LineComponent> = this.sharedService.addComponent(
       LineComponent,
+      this.el
+    );
+    const instance = cr.instance;
+    instance.config = config;
+    this.cr = cr;
+  }
+
+  renderStock(config: VisualizerConfig) {
+    this.removeContent();
+    const cr: ComponentRef<StockComponent> = this.sharedService.addComponent(
+      StockComponent,
       this.el
     );
     const instance = cr.instance;

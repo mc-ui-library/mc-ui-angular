@@ -20,16 +20,21 @@ import {
   BarComponent,
   AxisComponent,
   LineComponent,
-  BoxplotComponent
+  BoxplotComponent,
+  StockComponent
 } from './components';
-import {
-  PerfectScrollbarModule
-} from 'ngx-perfect-scrollbar';
+import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
-  imports: [CommonModule, BrowserModule, RouterModule, HttpClientModule, PerfectScrollbarModule],
+  imports: [
+    CommonModule,
+    BrowserModule,
+    RouterModule,
+    HttpClientModule,
+    PerfectScrollbarModule
+  ],
   declarations: [
     ListComponent,
     IconComponent,
@@ -48,7 +53,8 @@ import { HttpClientModule } from '@angular/common/http';
     TextComponent,
     AxisComponent,
     LineComponent,
-    BoxplotComponent
+    BoxplotComponent,
+    StockComponent
   ],
   exports: [
     ListComponent,
@@ -68,10 +74,9 @@ import { HttpClientModule } from '@angular/common/http';
     TextComponent,
     AxisComponent,
     LineComponent,
-    BoxplotComponent
+    BoxplotComponent,
+    StockComponent
   ],
-  providers: [
-    SharedService
-  ]
+  providers: [SharedService]
 })
 export class McUiModule {}

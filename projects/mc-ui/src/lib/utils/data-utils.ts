@@ -67,25 +67,40 @@ export function convertCsvToVisualizerData(
   const columns = convertKeysToColumns(data[0] || {});
   if (filters) {
     data = data.filter((item: any) =>
-      filters.some(
-        filter => {
-          const value = item[filter.field];
-          const keyword = filter.keyword;
-          switch (filter.type) {
-            case DataType.DATE:
-            case DataType.NUMBER:
-              // TODO: compare conditions
-              return value === keyword;
-            default:
-              // string
-              return (value + '').toLowerCase().includes(keyword.toLowerCase());
-          }
+      filters.some(filter => {
+        const value = item[filter.field];
+        const keyword = filter.keyword;
+        switch (filter.type) {
+          case DataType.DATE:
+          case DataType.NUMBER:
+            // TODO: compare conditions
+            return value === keyword;
+          default:
+            // string
+            return (value + '').toLowerCase().includes(keyword.toLowerCase());
         }
-      )
+      })
     );
   }
   return {
     columns,
     data
   };
+}
+
+export function clone(o: any) {
+  if (
+    !o ||
+    typeof o !== 'object' ||
+    (o instanceof Date && !isNaN(o.valueOf()))
+  ) {
+    return o;
+  } else if (Array.isArray(o)) {
+    return o.map(item => clone(item));
+  } else {
+    return Object.keys(o).reduce((obj, key) => {
+      obj[key] = clone(o[key]);
+      return obj;
+    }, {});
+  }
 }

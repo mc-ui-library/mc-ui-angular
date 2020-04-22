@@ -6,7 +6,7 @@ import {
   VisualizerConfig,
   VisualizerRenderInfo,
   VisualizerChartSize,
-  VisualizerData
+  VisualizerUnit
 } from '../shared.models';
 import * as d3 from 'd3';
 
@@ -30,6 +30,153 @@ export function getMinMax(
   );
   mm.max = mm.max * decorationMaxRate;
   return mm;
+}
+
+export function getLabels(config: VisualizerConfig): Array<string> {
+  const data = config.data;
+  if (data) {
+    const labelField = config.labelField || data.columns[0].field;
+    return data.data.map(d => d[labelField]);
+  }
+  return [];
+}
+
+export function getUnit(
+  config: VisualizerConfig,
+  visualizerSize: VisualizerSize
+): VisualizerUnit {
+  const minMax = getMinMax(
+    config.dataFields,
+    config.data.data,
+    config.decorationMaxRate
+  );
+  // y scale
+  const yScale = d3
+    .scaleLinear()
+    .domain([minMax.min, minMax.max])
+    .rangeRound([visualizerSize.chart.height, 0]);
+
+  const yAxis = d3.axisLeft(yScale).ticks(config.ticks);
+
+  let y2Scale;
+  let y2Axis;
+  let minMax2;
+  if (config.data2Fields) {
+    minMax2 = getMinMax(
+      config.data2Fields,
+      config.data.data,
+      config.decorationMaxRate
+    );
+    y2Scale = d3
+      .scaleLinear()
+      .domain([minMax2.min, minMax2.max])
+      .rangeRound([visualizerSize.chart.height, 0]);
+    y2Axis = d3.axisRight(y2Scale).ticks(config.ticks);
+  }
+
+  // x scale
+  const labels = getLabels(config);
+  let xScale = d3
+    .scaleBand()
+    .domain(labels)
+    .rangeRound([0, visualizerSize.chart.width])
+    .padding(config.scalePadding)
+    .paddingInner(config.scalePaddingInner)
+    .paddingOuter(config.scalePaddingOuter);
+
+  // apply barWidth if needed
+  if (config.barConfig && config.barConfig.barWidth) {
+    const barWidth = config.barConfig.barWidth;
+    const barGroupWidth = xScale.bandwidth();
+    const newBarGroupWidth = barWidth * config.dataFields.length;
+    if (barGroupWidth < newBarGroupWidth) {
+      const widthGap = newBarGroupWidth - barGroupWidth;
+      const extraWidth = widthGap * labels.length;
+      visualizerSize.width += extraWidth;
+      visualizerSize.chart.width += extraWidth;
+      xScale = d3
+        .scaleBand()
+        .domain(labels)
+        .rangeRound([0, visualizerSize.chart.width])
+        .padding(config.scalePadding)
+        .paddingInner(config.scalePaddingInner)
+        .paddingOuter(config.scalePaddingOuter);
+    }
+  }
+
+  const xAxis = d3.axisBottom(xScale);
+  // TODO: you can have a color array instead of "schemeCategory10".
+  const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+  return {
+    yScale,
+    yAxis,
+    xScale,
+    xAxis,
+    y2Scale,
+    y2Axis,
+    labels,
+    colorScale,
+    fields: config.dataFields,
+    fields2: config.data2Fields,
+    minMax,
+    minMax2
+  };
+}
+
+export function getSize(
+  el: HTMLElement,
+  config: VisualizerConfig,
+  visualizerSize: VisualizerSize,
+  unit: VisualizerUnit
+) {
+  // *** render for measuring size ***
+  const svg = renderChartContainer(el, visualizerSize);
+  // left / right margin
+  visualizerSize = getAxisSize(
+    el,
+    svg,
+    Location.LEFT,
+    unit.yAxis,
+    visualizerSize,
+    ['y-axis']
+  );
+  if (config.data2Fields) {
+    visualizerSize = getAxisSize(
+      el,
+      svg,
+      Location.RIGHT,
+      unit.y2Axis,
+      visualizerSize,
+      ['y2-axis']
+    );
+  }
+  visualizerSize = getAxisSize(
+    el,
+    svg,
+    Location.BOTTOM,
+    unit.xAxis,
+    visualizerSize,
+    ['x-axis']
+  );
+
+  visualizerSize = updateChartSize(visualizerSize);
+
+  // *** re-render with correct size ***
+  el.innerHTML = '';
+  return visualizerSize;
+}
+
+export function updateChartSize(visualizerSize: VisualizerSize) {
+  // save for re-use the chart drawing area
+  visualizerSize.chart.height =
+    visualizerSize.height -
+    visualizerSize.margin.top -
+    visualizerSize.margin.bottom;
+  visualizerSize.chart.width =
+    visualizerSize.width -
+    visualizerSize.margin.left -
+    visualizerSize.margin.right;
+  return visualizerSize;
 }
 
 export function renderChartContainer(
@@ -239,7 +386,11 @@ export function renderRects(
     });
 }
 
-export function getLabelValues(labels: Array<string>, fields: Array<string>, data: Array<any>) {
+export function getLabelValues(
+  labels: Array<string>,
+  fields: Array<string>,
+  data: Array<any>
+) {
   const fieldLabelValueMap = labels.reduce((map, label, rowIndex) => {
     fields.forEach(field => {
       const labelValues = map.get(field) || [];
@@ -320,7 +471,6 @@ export function renderLines(
     .style('fill', '#fff');
 }
 
-
 export function renderBoxplots(
   config: VisualizerConfig,
   renderInfo: VisualizerRenderInfo
@@ -331,30 +481,51 @@ export function renderBoxplots(
 
   let min: number;
   let max: number;
-  svg.append('g')
-  .selectAll('line')
+  svg
+    .append('g')
+    .selectAll('line')
     .data(unit.labels)
     .enter()
     .append('line')
     .attr('class', 'item line')
+    .attr('data-max', (label, i) => +data[i][boxplotField.max])
+    .attr('data-end', (label, i) => +data[i][boxplotField.end])
+    .attr('data-start', (label, i) => +data[i][boxplotField.start])
+    .attr('data-min', (label, i) => +data[i][boxplotField.min])
     .attr('x1', label => unit.xScale(label) + unit.xScale.bandwidth(label) / 2)
     .attr('y1', (label, i) => {
       min = +data[i][boxplotField.min];
-      max = +data[i][boxplotField.max];
       return unit.yScale(min);
     })
     .attr('x2', label => unit.xScale(label) + unit.xScale.bandwidth(label) / 2)
-    .attr('y2', label => unit.yScale(max))
+    .attr('y2', (label, i) => {
+      max = +data[i][boxplotField.max];
+      return unit.yScale(max);
+    })
     .style('stroke', 'black');
 
   let start: number;
   let end: number;
-  svg.append('g')
-  .selectAll('rect')
+  svg
+    .append('g')
+    .selectAll('rect')
     .data(unit.labels)
     .enter()
     .append('rect')
     .attr('class', 'item rect')
+    .attr(
+      'title',
+      (label, i) =>
+        `min:${data[i][boxplotField.min]}, max:${
+          data[i][boxplotField.max]
+        }, start:${data[i][boxplotField.start]}, end:${
+          data[i][boxplotField.end]
+        }`
+    )
+    .attr('data-max', (label, i) => +data[i][boxplotField.max])
+    .attr('data-end', (label, i) => +data[i][boxplotField.end])
+    .attr('data-start', (label, i) => +data[i][boxplotField.start])
+    .attr('data-min', (label, i) => +data[i][boxplotField.min])
     .attr('width', label => unit.xScale.bandwidth(label))
     .attr('x', label => unit.xScale(label))
     .attr('fill', (label, i) => {
@@ -362,7 +533,15 @@ export function renderBoxplots(
       end = +data[i][boxplotField.end];
       return start > end ? 'red' : 'blue';
     })
-    .attr('y', (label, i) => size.chart.height - (start > end ? unit.yScale(start) : unit.yScale(end)))
-    .attr('height', (d, i) => Math.abs(unit.yScale(start) - unit.yScale(end)));
-
+    .attr('y', (label, i) => {
+      start = +data[i][boxplotField.start];
+      end = +data[i][boxplotField.end];
+      const height = Math.abs(unit.yScale(start) - unit.yScale(end));
+      return (start > end ? unit.yScale(end) : unit.yScale(start)) - height;
+    })
+    .attr('height', (d, i) => {
+      start = +data[i][boxplotField.start];
+      end = +data[i][boxplotField.end];
+      return Math.abs(unit.yScale(start) - unit.yScale(end)) || 1;
+    });
 }

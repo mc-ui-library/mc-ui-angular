@@ -5,61 +5,69 @@
 }"
   (action)="onTextAction($event)"
 ></mc-text>
-<div class="body">
-  <div class="left">
-    <mc-visualizer
-      [style.height.px]="350"
-      [config]="{
+<mc-visualizer
+  [style.height.px]="200"
+  [config]="{
   themes: ['companies'],
   gridConfig: {
     idField: 'symbol'
   }
 }"
-      [data]="data"
-      (action)="onCompanyVizAction($event)"
-    ></mc-visualizer>
-    <mc-visualizer
-      [style.height.px]="350"
-      [config]="{
+  [data]="data"
+  (action)="onCompanyVizAction($event)"
+></mc-visualizer>
+<!-- <mc-visualizer
+  [style.height.px]="350"
+  [config]="{
   themes: ['daily'],
   gridConfig: {
     idField: 'Date'
   },
   dataFields: ['Open', 'High', 'Low', 'Close']
 }"
-      [data]="dailyData"
-    ></mc-visualizer>
-  </div>
-  <div class="right">
-    <mc-visualizer
-      [style.height.px]="350"
-      [config]="{
+  [data]="dailyData"
+></mc-visualizer> -->
+<mc-visualizer
+  [style.height.px]="350"
+  [config]="{
+  themes: ['daily'],
+  type: VisualizerType.STOCK,
+  labelField: 'Date',
+  dataFields: ['Open', 'High', 'Low', 'Close', 'Volume']
+}"
+  [data]="stockData"
+></mc-visualizer>
+<mc-visualizer
+  [style.height.px]="350"
+  [config]="{
   themes: ['daily'],
   type: VisualizerType.BAR,
   labelField: 'Date',
   dataFields: ['Open', 'High', 'Low', 'Close']
 }"
-      [data]="barData"
-    ></mc-visualizer>
-    <mc-visualizer
-      [style.height.px]="350"
-      [config]="{
+  [data]="barData"
+></mc-visualizer>
+<mc-visualizer
+  [style.height.px]="350"
+  [config]="{
   themes: ['daily'],
   type: VisualizerType.LINE,
   labelField: 'Date',
   dataFields: ['Open', 'High', 'Low', 'Close']
 }"
-      [data]="lineData"
-    ></mc-visualizer>
-    <mc-visualizer
-      [style.height.px]="350"
-      [config]="{
+  [data]="lineData"
+></mc-visualizer>
+<mc-visualizer
+  [style.height.px]="350"
+  [config]="{
   themes: ['daily'],
   type: VisualizerType.BOXPLOT,
   labelField: 'Date',
   dataFields: ['Open', 'High', 'Low', 'Close']
 }"
-      [data]="boxplotData"
-    ></mc-visualizer>
-  </div>
+  [data]="boxplotData"
+></mc-visualizer>
+<div class="body">
+  <div class="left"></div>
+  <div class="right"></div>
 </div>

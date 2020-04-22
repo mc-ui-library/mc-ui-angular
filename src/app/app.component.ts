@@ -22,6 +22,7 @@ export class AppComponent extends AppBaseComponent {
   barData: VisualizerData;
   lineData: VisualizerData;
   boxplotData: VisualizerData;
+  stockData: VisualizerData;
   VisualizerType = VisualizerType;
 
   constructor(protected vcr: ViewContainerRef, private appService: AppService) {
@@ -37,27 +38,29 @@ export class AppComponent extends AppBaseComponent {
   }
 
   loadDailyDataBySymbol(symbol: string) {
-    this.appService
-      .getDailyDataBySymbol(symbol)
-      .subscribe(data => {
-        this.dailyData = {
-          columns: data.columns,
-          data: data.data.slice(0, 10)
-        }
-        // Test data
-        this.barData = {
-          columns: data.columns,
-          data: data.data.slice(0, 10)
-        };
-        this.lineData = {
-          columns: data.columns,
-          data: data.data.slice(0, 10)
-        };
-        this.boxplotData = {
-          columns: data.columns,
-          data: data.data.slice(0, 10)
-        };
-      });
+    this.appService.getDailyDataBySymbol(symbol).subscribe(data => {
+      this.dailyData = {
+        columns: data.columns,
+        data: data.data.slice(0, 10)
+      };
+      // Test data
+      this.barData = {
+        columns: data.columns,
+        data: data.data.slice(0, 10)
+      };
+      this.lineData = {
+        columns: data.columns,
+        data: data.data.slice(0, 10)
+      };
+      this.boxplotData = {
+        columns: data.columns,
+        data: data.data.slice(0, 10)
+      };
+      this.stockData = {
+        columns: data.columns,
+        data: data.data.slice(0, 10)
+      };
+    });
   }
 
   onTextAction(e: InputActionEvent) {

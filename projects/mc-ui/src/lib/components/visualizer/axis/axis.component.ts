@@ -1,24 +1,22 @@
 import { Component, ElementRef, Output, EventEmitter } from '@angular/core';
 import { BaseComponent } from '../../base.component';
 import {
-  VisualizerSize,
   VisualizerActionEvent,
   VisualizerConfig,
   VisualizerType,
   Location,
-  VisualizerUnit,
   VisualizerAction,
-  VisualizerRenderInfo
+  VisualizerRenderInfo,
+  VisualizerSize
 } from '../../../shared.models';
 import {
   renderChartContainer,
-  getAxisSize,
   renderAxis,
   renderGrid,
   initVisualizerSize,
-  getMinMax
+  getUnit,
+  getSize
 } from '../../../utils/viz-utils';
-import * as d3 from 'd3';
 
 @Component({
   selector: 'mc-axis',
@@ -26,7 +24,6 @@ import * as d3 from 'd3';
   template: ''
 })
 export class AxisComponent extends BaseComponent {
-
   renderInfo: VisualizerRenderInfo;
 
   defaultConfig: VisualizerConfig = {
@@ -40,7 +37,8 @@ export class AxisComponent extends BaseComponent {
     scalePaddingInner: 0.2,
     scalePaddingOuter: 0,
     data: null,
-    decorationMaxRate: 1.1
+    decorationMaxRate: 1,
+    isManualRender: false
   };
 
   _config: VisualizerConfig;
@@ -52,7 +50,12 @@ export class AxisComponent extends BaseComponent {
   }
 
   afterInitCmp() {
-    this.render(this._config);
+    const config = this._config;
+    const visualizerSize = this.getSize(config);
+    this.emitBeforeRenderActionEvent(visualizerSize);
+    if (!config.isManualRender) {
+      this.render(config, visualizerSize);
+    }
   }
 
   applyConfig(config: VisualizerConfig) {
@@ -69,131 +72,29 @@ export class AxisComponent extends BaseComponent {
     }
   }
 
-  getLabels(): Array<string> {
-    const data = this._config.data;
-    if (data) {
-      const labelField = this._config.labelField || data.columns[0].field;
-      return data.data.map(d => d[labelField]);
-    }
-    return [];
+  getSize(config: VisualizerConfig): VisualizerSize {
+    const visualizerSize = initVisualizerSize(this.el);
+    const unit = getUnit(config, visualizerSize);
+    return getSize(this.el, config, visualizerSize, unit);
   }
 
-  getUnit(config: VisualizerConfig, visualizerSize: VisualizerSize): VisualizerUnit {
-    const minMax = getMinMax(config.dataFields, config.data.data, config.decorationMaxRate);
-    // y scale
-    const yScale = d3.scaleLinear()
-    .domain([minMax.min, minMax.max])
-    .rangeRound([visualizerSize.chart.height, 0]);
+  render(config: VisualizerConfig, visualizerSize: VisualizerSize) {
+    // update unit by the correct size
+    const unit = getUnit(config, visualizerSize);
 
-    const yAxis = d3.axisLeft(yScale).ticks(config.ticks);
-
-    let y2Scale;
-    let y2Axis;
-    let minMax2;
-    if (config.data2Fields) {
-      minMax2 = getMinMax(config.data2Fields, config.data.data, config.decorationMaxRate);
-      y2Scale = d3.scaleLinear()
-      .domain([minMax2.min, minMax2.max])
-      .rangeRound([visualizerSize.chart.height, 0]);
-      y2Axis = d3.axisRight(y2Scale).ticks(config.ticks);
-    }
-
-    // x scale
-    const labels = this.getLabels();
-    let xScale = d3.scaleBand()
-    .domain(labels)
-    .rangeRound([0, visualizerSize.chart.width])
-    .padding(config.scalePadding)
-    .paddingInner(config.scalePaddingInner)
-    .paddingOuter(config.scalePaddingOuter);
-
-    // apply barWidth if needed
-    if (this._config.barConfig && this._config.barConfig.barWidth) {
-      const barWidth = this._config.barConfig.barWidth;
-      const barGroupWidth = xScale.bandwidth();
-      const newBarGroupWidth = barWidth * config.dataFields.length;
-      if (barGroupWidth < newBarGroupWidth) {
-        const widthGap = newBarGroupWidth - barGroupWidth;
-        const extraWidth = widthGap * labels.length;
-        visualizerSize.width += extraWidth;
-        visualizerSize.chart.width += extraWidth;
-        xScale = d3.scaleBand()
-        .domain(labels)
-        .rangeRound([0, visualizerSize.chart.width])
-        .padding(config.scalePadding)
-        .paddingInner(config.scalePaddingInner)
-        .paddingOuter(config.scalePaddingOuter);
-      }
-    }
-
-    const xAxis = d3.axisBottom(xScale);
-    // TODO: you can have a color array instead of "schemeCategory10".
-    const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
-    return {
-      yScale,
-      yAxis,
-      xScale,
-      xAxis,
-      y2Scale,
-      y2Axis,
-      labels,
-      colorScale,
-      fields: config.dataFields,
-      fields2: config.data2Fields,
-      minMax,
-      minMax2
-    };
-  }
-
-  getSize(
-    visualizerSize,
-    unit
-  ) {
-    // *** render for measuring size ***
+    // *** re-render with correct size ***
     const svg = renderChartContainer(this.el, visualizerSize);
-    // left / right margin
-    visualizerSize = getAxisSize(this.el, svg, Location.LEFT, unit.yAxis, visualizerSize, [
+    renderAxis(svg, Location.LEFT, unit.yAxis, visualizerSize.chart, [
       'y-axis'
     ]);
-    if (this._config.data2Fields) {
-      visualizerSize = getAxisSize(this.el, svg, Location.RIGHT, unit.y2Axis, visualizerSize, [
-        'y2-axis'
-      ]);
-    }
-    visualizerSize = getAxisSize(this.el, svg, Location.BOTTOM, unit.xAxis, visualizerSize, [
-      'x-axis'
-    ]);
-
-    // save for re-use the chart drawing area
-    visualizerSize.chart.height =
-      visualizerSize.height - visualizerSize.margin.top - visualizerSize.margin.bottom;
-    visualizerSize.chart.width =
-      visualizerSize.width - visualizerSize.margin.left - visualizerSize.margin.right;
-
-    // *** re-render with correct size ***
-    this.el.innerHTML = '';
-    return visualizerSize;
-  }
-
-  render(config: VisualizerConfig) {
-    let visualizerSize = initVisualizerSize(this.el);
-    let unit = this.getUnit(config, visualizerSize);
-    visualizerSize = this.getSize(
-      visualizerSize,
-      unit
-    );
-    // update unit by the correct size
-    unit = this.getUnit(config, visualizerSize);
-
-    // *** re-render with correct size ***
-    const svg = renderChartContainer(this.el, visualizerSize);
-    renderAxis(svg, Location.LEFT, unit.yAxis, visualizerSize.chart, ['y-axis']);
     if (config.data2Fields) {
       renderAxis(svg, Location.RIGHT, unit.y2Axis, visualizerSize.chart, [
         'y2-axis'
       ]);
     }
-    renderAxis(svg, Location.BOTTOM, unit.xAxis, visualizerSize.chart, ['x-axis']);
+    renderAxis(svg, Location.BOTTOM, unit.xAxis, visualizerSize.chart, [
+      'x-axis'
+    ]);
 
     // render grid
     if (config.hasGrid) {
@@ -204,6 +105,17 @@ export class AxisComponent extends BaseComponent {
       unit,
       size: visualizerSize
     };
+    return this.renderInfo;
+  }
+
+  emitBeforeRenderActionEvent(visualizerSize: VisualizerSize) {
+    const action: VisualizerActionEvent = {
+      target: this,
+      action: VisualizerAction.BEFORE_RENDER,
+      config: this._config,
+      visualizerSize
+    };
+    this.action.emit(action);
   }
 
   emitRenderedActionEvent() {

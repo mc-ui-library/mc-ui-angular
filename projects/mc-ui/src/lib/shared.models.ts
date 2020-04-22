@@ -127,6 +127,7 @@ export enum InputAction {
 export enum VisualizerAction {
   SELECT_ITEM = 'SELECT_ITEM',
   RENDERED = 'RENDERED',
+  BEFORE_RENDER = 'BEFORE_RENDER'
 }
 
 export enum VisualizerType {
@@ -135,7 +136,8 @@ export enum VisualizerType {
   HORIZONTAL_BAR,
   LINE,
   BAR_LINE,
-  BOXPLOT
+  BOXPLOT,
+  STOCK
 }
 
 export enum VisualizerScaleType {
@@ -296,6 +298,7 @@ export interface VisualizerConfig extends ComponentConfig {
   scalePaddingInner?: number;
   scalePaddingOuter?: number;
   decorationMaxRate?: number;
+  isManualRender?: boolean;
 }
 
 export interface BarConfig {
@@ -407,6 +410,7 @@ export interface VisualizerActionEvent extends ComponentEvent {
   action?: VisualizerAction;
   config?: VisualizerConfig;
   renderInfo?: VisualizerRenderInfo;
+  visualizerSize?: VisualizerSize;
 }
 
 // **** data type ****

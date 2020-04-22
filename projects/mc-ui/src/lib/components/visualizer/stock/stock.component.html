@@ -1,0 +1,12 @@
+<div class="main">
+  <mc-axis
+    [config]="state.mainAxisConfig"
+    (action)="onAxisAction($event, 'main')"
+  ></mc-axis>
+</div>
+<div class="volume">
+  <mc-axis
+    [config]="state.volumeAxisConfig"
+    (action)="onAxisAction($event, 'volume')"
+  ></mc-axis>
+</div>

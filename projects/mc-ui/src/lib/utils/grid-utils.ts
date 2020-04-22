@@ -22,7 +22,8 @@ export function getAutoColumnWidth(
       const adjustContainerWidth = containerWidth - totalFixedWidth;
       let adjustTotalWidth = 0;
       columns = columns.map(column => {
-        // Use Math.floor since the cell width has x.xx, the web browser doesn't display correctly. so, we need integer. If there is a gap, we need to spread it to the columns.
+        // Use Math.floor since the cell width has x.xx, the web browser doesn't display correctly.
+        // so, we need integer. If there is a gap, we need to spread it to the columns.
         column.width = column.fixedWidth
           ? column.width
           : Math.floor((column.width / totalWidth) * adjustContainerWidth);
